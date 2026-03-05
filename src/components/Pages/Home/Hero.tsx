@@ -47,29 +47,44 @@ const slides = [
   },
 ];
 
+type Slide = {
+  id: number;
+  badge: string;
+  title: string;
+  titleAccent: string;
+  subtitle: string;
+  cta: string;
+  ctaSecondary: string;
+  img: string;
+  imgAlt: string;
+  accent: string;
+  tag: string;
+};
+
 export default function HeroSection() {
-  const [current, setCurrent] = useState(0);
-  const [prev, setPrev] = useState(null);
-  const [direction, setDirection] = useState("next");
-  const [animating, setAnimating] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [isPaused, setIsPaused] = useState(false); // Add pause state for hover
-  const timerRef = useRef(null);
+  const [current, setCurrent] = useState<number>(0);
+  const [prev, setPrev] = useState<number | null>(null);
+  const [direction, setDirection] = useState<"next" | "prev">("next");
+  const [animating, setAnimating] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+ const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const progressRef = useRef(null);
   const DELAY = 3000;
+const goTo = (index: number, dir: "next" | "prev" = "next") => {
+  if (animating || index === current) return;
 
-  const goTo = (index, dir = "next") => {
-    if (animating || index === current) return;
-    setDirection(dir);
-    setPrev(current);
-    setAnimating(true);
-    setCurrent(index);
-    setProgress(0);
-    setTimeout(() => {
-      setPrev(null);
-      setAnimating(false);
-    }, 700);
-  };
+  setDirection(dir);
+  setPrev(current);
+  setAnimating(true);
+  setCurrent(index);
+  setProgress(0);
+
+  setTimeout(() => {
+    setPrev(null);
+    setAnimating(false);
+  }, 700);
+};
 
   const goNext = () => goTo((current + 1) % slides.length, "next");
   const goPrev = () => goTo((current - 1 + slides.length) % slides.length, "prev");
@@ -258,7 +273,8 @@ export default function HeroSection() {
   );
 }
 
-function SlideContent({ slide, active, animating }) {
+function SlideContent({slide, active, animating = false,}: {slide: Slide; active: boolean; animating?: boolean;})  
+ {
   const key = active ? slide.id : `s${slide.id}`;
   return (
     <div className="w-full h-full flex items-stretch bg-[#f8f9fb]" style={{ minHeight: "min(90vh, 640px)" }}>

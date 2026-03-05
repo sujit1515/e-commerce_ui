@@ -1,12 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Instagram, Twitter, Youtube, Linkedin, ArrowUpRight } from "lucide-react";
+import { motion } from "framer-motion";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  ContactSocial.tsx
-//  Social media channels section — dark themed.
-//  Edit SOCIALS array to update handles / URLs.
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface Social {
   icon: React.ElementType;
@@ -58,38 +54,59 @@ const SOCIALS: Social[] = [
 ];
 
 function SocialCard({ s, index }: { s: Social; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLAnchorElement | null>(null); 
   const [vis, setVis] = useState(false);
   const Icon = s.icon;
 
   useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVis(true); }, { threshold: 0.15 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
+    if (!ref.current) return;
+
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVis(true);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    obs.observe(ref.current);
+
+    return () => {
+      if (ref.current) obs.unobserve(ref.current);
+    };
   }, []);
 
   return (
     <a
+      ref={ref} 
       href={s.url}
       target="_blank"
       rel="noopener noreferrer"
-      ref={ref}
       className={`group flex flex-col gap-4 bg-white/5 border border-white/10 rounded-2xl p-6 ${s.hoverBg}
         hover:-translate-y-1.5 transition-all duration-300 cursor-pointer
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
       style={{ transitionDelay: vis ? `${index * 80}ms` : "0ms" }}
     >
       <div className="flex items-start justify-between">
-        <div className={`w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center ${s.color}`}>
+        <div
+          className={`w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center ${s.color}`}
+        >
           <Icon className="w-5 h-5" />
         </div>
         <ArrowUpRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" />
       </div>
+
       <div>
         <p className={`font-bold text-sm ${s.color}`}>{s.name}</p>
-        <p className="text-white font-semibold text-xs mt-0.5">{s.handle}</p>
+        <p className="text-white font-semibold text-xs mt-0.5">
+          {s.handle}
+        </p>
       </div>
-      <p className="text-gray-400 text-xs leading-relaxed">{s.desc}</p>
+
+      <p className="text-gray-400 text-xs leading-relaxed">
+        {s.desc}
+      </p>
     </a>
   );
 }

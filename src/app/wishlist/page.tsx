@@ -6,20 +6,6 @@ import {
   ShoppingCart, Eye, Tag,
 } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  WishlistPage.tsx  — Premium LUXE Wishlist
-//  Features:
-//   • Grid / List view toggle
-//   • Sort by: Recently Added / Price / Name
-//   • Remove from wishlist (with undo toast)
-//   • Move all to cart / individual add to cart
-//   • Stock status badges
-//   • Size selector on each card
-//   • Empty state illustration
-//   • Scroll-triggered card reveals
-//   • Share wishlist button
-// ─────────────────────────────────────────────────────────────────────────────
-
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface WishItem {
   id:        string;
