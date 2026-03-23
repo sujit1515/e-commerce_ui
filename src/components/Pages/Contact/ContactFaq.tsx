@@ -2,11 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Plus, Minus } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  ContactFAQ.tsx
-//  Accordion FAQ section. Add / remove items in FAQ_ITEMS.
-// ─────────────────────────────────────────────────────────────────────────────
-
 interface FAQ { q: string; a: string }
 
 const FAQ_ITEMS: FAQ[] = [
@@ -32,21 +27,21 @@ function AccordionItem({ faq, index }: { faq: FAQ; index: number }) {
   return (
     <div
       ref={ref}
-      className={`border border-gray-100 rounded-2xl overflow-hidden shadow-sm transition-all duration-500
-        ${open ? "shadow-md border-blue-200" : "hover:border-gray-200"}
+      className={`border border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-500
+        ${open ? "shadow-md border-red-200" : "hover:border-gray-300"}
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
       style={{ transitionDelay: vis ? `${index * 60}ms` : "0ms" }}
     >
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between gap-4 px-6 py-5 text-left transition-colors duration-200
-          ${open ? "bg-blue-50" : "bg-white hover:bg-gray-50"}`}
+          ${open ? "bg-red-50" : "bg-white hover:bg-gray-50"}`}
       >
-        <span className={`font-bold text-sm sm:text-base ${open ? "text-blue-700" : "text-[#0f172a]"}`}>
+        <span className={`font-bold text-sm sm:text-base ${open ? "text-red-700" : "text-black"}`}>
           {faq.q}
         </span>
         <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200
-          ${open ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-500"}`}
+          ${open ? "bg-red-600 text-white" : "bg-gray-100 text-gray-600"}`}
         >
           {open ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
         </div>
@@ -57,7 +52,7 @@ function AccordionItem({ faq, index }: { faq: FAQ; index: number }) {
         className="overflow-hidden transition-all duration-300 ease-in-out"
         style={{ maxHeight: open ? "300px" : "0px", opacity: open ? 1 : 0 }}
       >
-        <p className="px-6 pb-5 pt-2 text-gray-500 text-sm leading-relaxed border-t border-blue-100">
+        <p className="px-6 pb-5 pt-2 text-gray-600 text-sm leading-relaxed border-t border-red-100">
           {faq.a}
         </p>
       </div>
@@ -75,7 +70,7 @@ export default function ContactFAQ() {
   }, []);
 
   return (
-    <section className="py-20 sm:py-28 bg-[#f8f9fb]">
+    <section className="py-20 sm:py-28 bg-white">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Heading */}
@@ -84,16 +79,16 @@ export default function ContactFAQ() {
           className={`text-center mb-12 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-blue-500" />
-            <span className="text-blue-600 text-xs font-bold tracking-[0.3em] uppercase">FAQ</span>
-            <div className="h-px w-6 bg-blue-500" />
+            <div className="h-px w-6 bg-red-600" />
+            <span className="text-red-600 text-xs font-bold tracking-[0.3em] uppercase">FAQ</span>
+            <div className="h-px w-6 bg-red-600" />
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold text-[#0f172a] leading-tight mb-4">
+          <h2 className="font-display text-4xl sm:text-5xl font-bold text-black leading-tight mb-4">
             Common
             <br />
-            <span className="italic text-blue-600">Questions</span>
+            <span className="italic text-red-600">Questions</span>
           </h2>
-          <p className="text-gray-400 text-sm sm:text-base max-w-sm mx-auto">
+          <p className="text-gray-500 text-sm sm:text-base max-w-sm mx-auto">
             Can't find what you're looking for? Send us a message using the form above.
           </p>
         </div>

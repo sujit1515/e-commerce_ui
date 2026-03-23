@@ -1,8 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { Instagram, Twitter, Youtube, Linkedin, ArrowUpRight } from "lucide-react";
-import { motion } from "framer-motion";
-
 
 interface Social {
   icon: React.ElementType;
@@ -21,8 +19,8 @@ const SOCIALS: Social[] = [
     handle: "@luxe.official",
     desc: "Behind-the-scenes, new drops, and the LUXE lifestyle.",
     url: "https://instagram.com",
-    color: "text-pink-400",
-    hoverBg: "hover:border-pink-500/40 hover:bg-pink-500/5",
+    color: "text-red-400",
+    hoverBg: "hover:border-red-500/40 hover:bg-red-500/5",
   },
   {
     icon: Twitter,
@@ -30,8 +28,8 @@ const SOCIALS: Social[] = [
     handle: "@luxebrand",
     desc: "News, opinions, and conversations that matter.",
     url: "https://twitter.com",
-    color: "text-sky-400",
-    hoverBg: "hover:border-sky-500/40 hover:bg-sky-500/5",
+    color: "text-red-500",
+    hoverBg: "hover:border-red-500/40 hover:bg-red-500/5",
   },
   {
     icon: Youtube,
@@ -39,8 +37,8 @@ const SOCIALS: Social[] = [
     handle: "LUXE Official",
     desc: "Craft films, lookbooks, and the stories behind each collection.",
     url: "https://youtube.com",
-    color: "text-red-400",
-    hoverBg: "hover:border-red-500/40 hover:bg-red-500/5",
+    color: "text-red-600",
+    hoverBg: "hover:border-red-600/40 hover:bg-red-600/5",
   },
   {
     icon: Linkedin,
@@ -48,8 +46,8 @@ const SOCIALS: Social[] = [
     handle: "LUXE Lifestyle Brand",
     desc: "Company updates, sustainability reports, and career opportunities.",
     url: "https://linkedin.com",
-    color: "text-blue-400",
-    hoverBg: "hover:border-blue-500/40 hover:bg-blue-500/5",
+    color: "text-red-400",
+    hoverBg: "hover:border-red-500/40 hover:bg-red-500/5",
   },
 ];
 
@@ -83,7 +81,7 @@ function SocialCard({ s, index }: { s: Social; index: number }) {
       href={s.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group flex flex-col gap-4 bg-white/5 border border-white/10 rounded-2xl p-6 ${s.hoverBg}
+      className={`group flex flex-col gap-4 bg-black/40 border border-white/10 rounded-2xl p-6 ${s.hoverBg}
         hover:-translate-y-1.5 transition-all duration-300 cursor-pointer
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
       style={{ transitionDelay: vis ? `${index * 80}ms` : "0ms" }}
@@ -94,7 +92,7 @@ function SocialCard({ s, index }: { s: Social; index: number }) {
         >
           <Icon className="w-5 h-5" />
         </div>
-        <ArrowUpRight className="w-4 h-4 text-gray-600 group-hover:text-white transition-colors" />
+        <ArrowUpRight className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
       </div>
 
       <div>
@@ -121,8 +119,8 @@ export default function ContactSocial() {
   }, []);
 
   return (
-    <section className="py-20 sm:py-24 bg-[#0f172a] relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+    <section className="py-20 sm:py-24 bg-black relative overflow-hidden">
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
 
       {/* Subtle grid */}
       <div
@@ -139,14 +137,14 @@ export default function ContactSocial() {
           className={`text-center mb-12 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-blue-500" />
-            <span className="text-blue-400 text-xs font-bold tracking-[0.3em] uppercase">Stay Connected</span>
-            <div className="h-px w-6 bg-blue-500" />
+            <div className="h-px w-6 bg-red-600" />
+            <span className="text-red-500 text-xs font-bold tracking-[0.3em] uppercase">Stay Connected</span>
+            <div className="h-px w-6 bg-red-600" />
           </div>
           <h2 className="font-display text-4xl sm:text-5xl font-bold text-white leading-tight">
             Follow the
             <br />
-            <span className="italic text-blue-400">LUXE World</span>
+            <span className="italic text-red-500">LUXE World</span>
           </h2>
         </div>
 

@@ -19,6 +19,7 @@ const STORE = {
 // Replace with your actual embed URL from Google Maps → Share → Embed
 const MAP_EMBED_URL =
   "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3742.26531748305!2d85.723609!3d20.289282300000004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a19077849f9fba1%3A0xa943079bb639666!2sGandhi%20Institute%20of%20Excellent%20Technocrats%20GIET%20Bhubaneswar%20Odisha!5e0!3m2!1sen!2sin!4v1772536525780!5m2!1sen!2sin";
+
 export default function ContactMap() {
   const ref = useRef<HTMLDivElement>(null);
   const [vis, setVis] = useState(false);
@@ -38,14 +39,14 @@ export default function ContactMap() {
           ref={ref}
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-blue-500" />
-            <span className="text-blue-600 text-xs font-bold tracking-[0.3em] uppercase">Find Us</span>
-            <div className="h-px w-6 bg-blue-500" />
+            <div className="h-px w-6 bg-red-600" />
+            <span className="text-red-600 text-xs font-bold tracking-[0.3em] uppercase">Find Us</span>
+            <div className="h-px w-6 bg-red-600" />
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold text-[#0f172a] leading-tight">
+          <h2 className="font-display text-4xl sm:text-5xl font-bold text-black leading-tight">
             Visit Our
             <br />
-            <span className="italic text-blue-600">Bhubaneswar</span>
+            <span className="italic text-red-600">Bhubaneswar</span>
           </h2>
         </div>
 
@@ -54,11 +55,11 @@ export default function ContactMap() {
           className={`relative rounded-2xl overflow-hidden shadow-2xl transition-all duration-700 delay-150
             ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
         >
-          {/* Map iframe */}
+          {/* Map iframe - removed grayscale filter for original colors */}
           <div className="aspect-[16/8] sm:aspect-[16/7] lg:aspect-[16/6] w-full">
             <iframe
               src={MAP_EMBED_URL}
-              className="w-full h-full border-0 grayscale contrast-[1.1]"
+              className="w-full h-full border-0"
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -68,14 +69,14 @@ export default function ContactMap() {
 
           {/* Overlay card */}
           <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 lg:bottom-8 lg:left-8 z-10">
-            <div className="bg-[#0f172a]/95 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl max-w-xs sm:max-w-sm">
+            <div className="bg-black/95 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl max-w-xs sm:max-w-sm">
               {/* Dot + label */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="relative flex-shrink-0">
-                  <div className="w-3 h-3 rounded-full bg-blue-500" />
-                  <div className="absolute inset-0 rounded-full bg-blue-500 animate-ping opacity-50" />
+                  <div className="w-3 h-3 rounded-full bg-red-600" />
+                  <div className="absolute inset-0 rounded-full bg-red-600 animate-ping opacity-50" />
                 </div>
-                <span className="text-blue-400 text-xs font-bold tracking-widest uppercase">Open Now</span>
+                <span className="text-red-500 text-xs font-bold tracking-widest uppercase">Open Now</span>
               </div>
 
               <h3 className="font-bold text-white text-base sm:text-lg mb-1">{STORE.name}</h3>
@@ -92,7 +93,7 @@ export default function ContactMap() {
                 href={STORE.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-4 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md shadow-blue-900/40"
+                className="inline-flex items-center gap-2 mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md shadow-red-900/40"
               >
                 <Navigation className="w-3.5 h-3.5" /> Get Directions
               </a>

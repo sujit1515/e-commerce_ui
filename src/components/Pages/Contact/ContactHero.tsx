@@ -9,14 +9,14 @@
 const CONTENT = {
   eyebrow: "Get In Touch",
   headline: ["We'd Love to", "Hear From", "You."],
-  accentWord: "You.",           // last word rendered in blue italic
+  accentWord: "You.",           // last word rendered in red italic
   subtext:
     "Whether it's a question about an order, a collaboration idea, or simply a desire to know more — our team is here, and we reply within 24 hours.",
 };
 
 export default function ContactHero() {
   return (
-    <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center overflow-hidden bg-[#0a0f1a]">
+    <section className="relative min-h-[70vh] sm:min-h-[80vh] flex items-center overflow-hidden bg-black">
 
       {/* ── Background image ── */}
       <div className="absolute inset-0">
@@ -25,17 +25,17 @@ export default function ContactHero() {
           alt=""
           className="w-full h-full object-cover opacity-15"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0f1a] via-[#0a0f1a]/85 to-[#0a0f1a]/60" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1a] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/85 to-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
       </div>
 
       {/* ── Floating orbs ── */}
       <div
-        className="absolute top-16 right-[10%] w-72 h-72 sm:w-[420px] sm:h-[420px] rounded-full bg-blue-600/8 blur-3xl pointer-events-none"
+        className="absolute top-16 right-[10%] w-72 h-72 sm:w-[420px] sm:h-[420px] rounded-full bg-red-600/8 blur-3xl pointer-events-none"
         style={{ animation: "heroFloat 8s ease-in-out infinite" }}
       />
       <div
-        className="absolute bottom-16 left-[5%] w-48 h-48 rounded-full bg-indigo-500/6 blur-2xl pointer-events-none"
+        className="absolute bottom-16 left-[5%] w-48 h-48 rounded-full bg-red-500/6 blur-2xl pointer-events-none"
         style={{ animation: "heroFloat 11s ease-in-out infinite reverse" }}
       />
 
@@ -45,9 +45,9 @@ export default function ContactHero() {
 
           {/* Eyebrow */}
           <div className="inline-flex items-center gap-3 mb-8 opacity-0" style={{ animation: "fadeUp 0.6s ease 0.1s forwards" }}>
-            <div className="h-px w-8 bg-blue-500" />
-            <span className="text-blue-400 text-xs font-bold tracking-[0.3em] uppercase">{CONTENT.eyebrow}</span>
-            <div className="h-px w-8 bg-blue-500" />
+            <div className="h-px w-8 bg-red-600" />
+            <span className="text-red-500 text-xs font-bold tracking-[0.3em] uppercase">{CONTENT.eyebrow}</span>
+            <div className="h-px w-8 bg-red-600" />
           </div>
 
           {/* Headline */}
@@ -58,7 +58,7 @@ export default function ContactHero() {
                   {line}
                 </span>
               ))}
-              <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-[88px] font-bold italic text-blue-400">
+              <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-[88px] font-bold italic text-red-500">
                 {CONTENT.headline[CONTENT.headline.length - 1]}
               </span>
             </h1>
@@ -78,7 +78,7 @@ export default function ContactHero() {
             style={{ animation: "fadeUp 0.6s ease 0.58s forwards" }}
           >
             <div className="w-6 h-10 rounded-full border border-white/20 flex items-start justify-center pt-2">
-              <div className="w-1 h-2 rounded-full bg-blue-400" style={{ animation: "scrollCue 1.8s ease-in-out infinite" }} />
+              <div className="w-1 h-2 rounded-full bg-red-500" style={{ animation: "scrollCue 1.8s ease-in-out infinite" }} />
             </div>
             <span className="text-gray-500 text-xs tracking-widest uppercase font-medium">Scroll to explore</span>
           </div>

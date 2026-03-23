@@ -34,7 +34,7 @@ const TESTIMONIALS: Testimonial[] = [
 
 // ── Single testimonial card ──────────────────────────────────────────────────
 function TestimonialCard({ t, index, delay }: { t: Testimonial; index: number; delay: number }) {
-  const ref              = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [vis, setVis] = useState(false);
   const isDark = index === 1; // centre card inverted for hierarchy
 
@@ -52,11 +52,11 @@ function TestimonialCard({ t, index, delay }: { t: Testimonial; index: number; d
       ref={ref}
       className={`h-full rounded-2xl p-7 sm:p-8 border flex flex-col
         transition-all duration-500 hover:-translate-y-1.5
-        ${isDark ? "bg-[#0f172a] border-white/10 shadow-xl shadow-blue-900/20" : "bg-[#f8f9fb] border-gray-100 hover:shadow-lg"}
+        ${isDark ? "bg-black border-white/10 shadow-xl shadow-red-900/20" : "bg-white border-gray-200 hover:shadow-lg"}
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
       style={{ transitionDelay: vis ? `${delay}ms` : "0ms" }}
     >
-      <Quote className={`w-7 h-7 mb-4 flex-shrink-0 ${isDark ? "text-blue-500/40" : "text-blue-200"}`} />
+      <Quote className={`w-7 h-7 mb-4 flex-shrink-0 ${isDark ? "text-red-500/40" : "text-red-200"}`} />
 
       {/* Stars */}
       <div className="flex gap-0.5 mb-4">
@@ -65,19 +65,19 @@ function TestimonialCard({ t, index, delay }: { t: Testimonial; index: number; d
         ))}
       </div>
 
-      <p className={`text-sm sm:text-base leading-relaxed mb-6 flex-1 font-medium ${isDark ? "text-gray-200" : "text-gray-600"}`}>
+      <p className={`text-sm sm:text-base leading-relaxed mb-6 flex-1 font-medium ${isDark ? "text-gray-200" : "text-gray-700"}`}>
         "{t.quote}"
       </p>
 
       <div className={`flex items-center gap-3 pt-5 border-t ${isDark ? "border-white/[0.07]" : "border-gray-200"}`}>
         <div
-          className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${isDark ? "bg-blue-600 text-white" : "bg-[#0f172a] text-white"}`}
+          className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${isDark ? "bg-red-600 text-white" : "bg-black text-white"}`}
         >
           {t.author[0]}
         </div>
         <div>
-          <p className={`text-sm font-bold ${isDark ? "text-white" : "text-[#0f172a]"}`}>{t.author}</p>
-          <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-400"}`}>{t.role}</p>
+          <p className={`text-sm font-bold ${isDark ? "text-white" : "text-black"}`}>{t.author}</p>
+          <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>{t.role}</p>
         </div>
       </div>
     </div>
@@ -86,7 +86,7 @@ function TestimonialCard({ t, index, delay }: { t: Testimonial; index: number; d
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AboutTestimonials() {
-  const headRef              = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
   const [headVis, setHeadVis] = useState(false);
 
   useEffect(() => {
@@ -107,14 +107,14 @@ export default function AboutTestimonials() {
           className={`text-center mb-14 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-blue-500" />
-            <span className="text-blue-600 text-xs font-bold tracking-[0.3em] uppercase">Voices</span>
-            <div className="h-px w-6 bg-blue-500" />
+            <div className="h-px w-6 bg-red-600" />
+            <span className="text-red-600 text-xs font-bold tracking-[0.3em] uppercase">Voices</span>
+            <div className="h-px w-6 bg-red-600" />
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-[#0f172a] leading-tight">
+          <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-black leading-tight">
             Worn Around
             <br />
-            <span className="italic text-blue-600">the World</span>
+            <span className="italic text-red-600">the World</span>
           </h2>
         </div>
 

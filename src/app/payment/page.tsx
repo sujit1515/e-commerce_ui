@@ -5,11 +5,7 @@ import {
   ChevronDown, ChevronUp, ArrowRight, Check, Lock, Wifi,
 } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  PaymentPage.tsx — Payment Method + Order Summary
-//  Methods: UPI · Credit/Debit Card · Netbanking · Cash on Delivery
-//  Fully reusable — swap ORDER_ITEMS / SUMMARY for real cart data
-// ─────────────────────────────────────────────────────────────────────────────
+
 
 // ── Order data (swap with real cart) ─────────────────────────────────────────
 const ORDER_ITEMS = [

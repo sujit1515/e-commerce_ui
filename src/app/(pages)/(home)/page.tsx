@@ -1,12 +1,12 @@
 import Footer from '@/components/Common/Footer';
 import Navbar from '@/components/Common/Navbar';
-import CultureShift from '@/components/Pages/Home/Cultureshift';
-import CuratedWonder from '@/components/Pages/Home/Curatedwonder';
+import ConsciousLuxury from '@/components/Pages/Home/ConsciousLuxury';
 import Hero from '@/components/Pages/Home/Hero';
 import InstagramFollow from '@/components/Pages/Home/InstagramFollow';
-import LinearPrecision from '@/components/Pages/Home/Linearprecision';
 import ShopByCategory from '@/components/Pages/Home/Shopbycategory';
-import WomenPhilosophySection from '@/components/Pages/Home/WomenPhilosophySection';
+import SummerCollection from '@/components/Pages/Home/SummerCollection'; 
+import TrustedCompanies from '@/components/Pages/Home/TrustedCompanies';
+// import WomenPhilosophySection from '@/components/Pages/Home/WomenPhilosophySection';
 import React from 'react';
 
 export default function Homepage() {
@@ -15,10 +15,9 @@ export default function Homepage() {
       <Navbar/>
       <Hero/>
       <ShopByCategory/>
-      {/* <WomenPhilosophySection/> */}
-      <LinearPrecision/>
-      <CuratedWonder/>
-      <CultureShift/>
+      <SummerCollection/>
+      <TrustedCompanies/>
+      <ConsciousLuxury/>
       <InstagramFollow/>
       <Footer/>
     </div>

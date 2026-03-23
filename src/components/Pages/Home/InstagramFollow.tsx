@@ -1,107 +1,218 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { Instagram } from "lucide-react";
 
-const CONTENT = {
-  handle:   "@sujit.pattnaik_",
-  label:    "Follow on Instagram",
-  url:      "https://www.instagram.com/sujit.pattnaik_?igsh=bmZva3U4M3N1b2Fn",
-//   tagline:  "Join 246 who live the LUXE life",
-};
+import React, { useEffect, useRef } from "react";
+import Head from "next/head";
 
-export default function InstagramFollow() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [vis, setVis] = useState(false);
-  const [hovered, setHovered] = useState(false);
+/* ── Instagram icon as inline SVG so no icon-lib dependency needed ── */
+const InstagramIcon = ({ size = 28 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-hidden="true"
+  >
+    <rect x="2" y="2" width="20" height="20" rx="6" ry="6" stroke="url(#igGrad)" strokeWidth="1.8" />
+    <circle cx="12" cy="12" r="4.5" stroke="url(#igGrad)" strokeWidth="1.8" />
+    <circle cx="17.5" cy="6.5" r="1.1" fill="url(#igGrad)" />
+    <defs>
+      <linearGradient id="igGrad" x1="2" y1="22" x2="22" y2="2" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stopColor="#f09433" />
+        <stop offset="25%" stopColor="#e6683c" />
+        <stop offset="50%" stopColor="#dc2743" />
+        <stop offset="75%" stopColor="#cc2366" />
+        <stop offset="100%" stopColor="#bc1888" />
+      </linearGradient>
+    </defs>
+  </svg>
+);
 
+/* ── Verified badge ── */
+const VerifiedBadge = ({ size = 18 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    aria-label="Verified"
+  >
+    <circle cx="12" cy="12" r="11" fill="#3897f0" />
+    <path
+      d="M7 12.5l3.5 3.5 6.5-7"
+      stroke="#fff"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export default function PareenitaInstagram() {
+  const bgTextRef = useRef(null);
+
+  /* subtle parallax on background text */
   useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVis(true); },
-      { threshold: 0.15 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
+    const el = bgTextRef.current;
+    if (!el) return;
+    const handleMouseMove = (e) => {
+      const { clientX, clientY } = e;
+      const xOffset = ((clientX / window.innerWidth) - 0.5) * 18;
+      const yOffset = ((clientY / window.innerHeight) - 0.5) * 8;
+      el.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
   return (
-    <section className="bg-white py-16 sm:py-20 overflow-hidden">
-      <div
-        ref={ref}
-        className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-700
-          ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+    <>
+      <Head>
+        <title>Pareenita – Follow Us on Instagram</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* Elegant serif + script via Google Fonts */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Dancing+Script:wght@600&display=swap"
+          rel="stylesheet"
+        />
+      </Head>
+
+      {/*
+        ── Wrapper ──────────────────────────────────────────────────────────
+        White background, height only as tall as the content
+      */}
+      <section
+        className="relative flex items-center justify-center overflow-hidden w-full bg-white py-16 sm:py-20"
       >
-
-        {/* ── Tagline ── */}
-        {/* <p
-          className={`text-center text-gray-400 text-xs sm:text-sm tracking-widest uppercase font-medium mb-8
-            transition-all duration-700 delay-[60ms]
-            ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-        >
-          {CONTENT.tagline}
-        </p> */}
-
-        {/* ── Main CTA button ── */}
+        {/* ── Ghost / watermark brand name ── */}
         <div
-          className={`flex justify-center transition-all duration-700 delay-[120ms]
-            ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
+          ref={bgTextRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center transition-transform duration-75 ease-out"
+          style={{ willChange: "transform" }}
         >
-          <a
-            href={CONTENT.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            className="group relative flex items-center gap-3 bg-[#0f172a] hover:bg-[#1e293b]
-              text-white font-bold tracking-[0.18em] uppercase text-xs sm:text-sm
-              px-8 sm:px-10 py-4 sm:py-5 rounded-full shadow-xl shadow-[#0f172a]/20
-              hover:shadow-2xl hover:shadow-[#0f172a]/30
-              transition-all duration-300 hover:scale-[1.03] active:scale-[0.98]"
+          <span
+            className="select-none whitespace-nowrap font-[Cormorant_Garamond] font-bold uppercase tracking-widest"
+            style={{
+              fontSize: "clamp(5rem, 18vw, 16rem)",
+              color: "transparent",
+              WebkitTextStroke: "1px rgba(185,165,130,0.15)",
+              letterSpacing: "0.06em",
+              lineHeight: 1,
+            }}
           >
-            {/* Animated gradient ring on hover */}
-            <span
-              className={`absolute inset-0 rounded-full transition-opacity duration-300 pointer-events-none
-                ${hovered ? "opacity-100" : "opacity-0"}`}
-              style={{
-                background: "linear-gradient(90deg,#3b82f6,#6366f1,#3b82f6)",
-                backgroundSize: "200%",
-                padding: "2px",
-                WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                WebkitMaskComposite: "destination-out",
-                maskComposite: "exclude",
-                animation: hovered ? "gradientSpin 2s linear infinite" : "none",
-              }}
-            />
-
-            {/* Globe-style Instagram icon */}
-            <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-white/20 transition-colors">
-              <Instagram className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
-            </span>
-
-            <span>{CONTENT.label}</span>
-
-            {/* Live follower count badge */}
-            <span className="ml-1 bg-blue-600 text-white text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full">
-              246
-            </span>
-          </a>
+            QUICK KART
+          </span>
         </div>
 
-        {/* ── Handle label ── */}
-        <p
-          className={`text-center text-gray-300 text-xs mt-5 font-medium tracking-wider
-            transition-all duration-700 delay-[180ms]
-            ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}`}
-        >
-          {CONTENT.handle}
-        </p>
-      </div>
+        {/* ── Soft decorative circle blobs (very subtle on white) ── */}
+        <div
+          className="pointer-events-none absolute -top-32 -right-32 rounded-full opacity-5 blur-3xl"
+          style={{ width: 480, height: 480, background: "#D4B896" }}
+        />
+        <div
+          className="pointer-events-none absolute -bottom-24 -left-24 rounded-full opacity-5 blur-3xl"
+          style={{ width: 360, height: 360, background: "#C9A87C" }}
+        />
 
-      <style>{`
-        @keyframes gradientSpin {
-          0%   { background-position: 0% 50%; }
-          100% { background-position: 200% 50%; }
-        }
-      `}</style>
-    </section>
+        {/* ── Foreground content ── */}
+        <div className="relative z-10 flex flex-col items-center justify-center px-4 text-center">
+          {/* Thin top rule */}
+          <div
+            className="mb-6 h-px w-24 opacity-30"
+            style={{ background: "linear-gradient(90deg, transparent, #8B6B52, transparent)" }}
+          />
+
+          {/* "Follow Us on Instagram" label */}
+          <p
+            className="mb-4 font-[Cormorant_Garamond] italic text-[#7A3A2A] opacity-80"
+            style={{
+              fontSize: "clamp(1rem, 2.5vw, 1.4rem)",
+              fontWeight: 300,
+              letterSpacing: "0.04em",
+            }}
+          >
+            Follow Us on{" "}
+            <span
+              className="not-italic font-[Dancing_Script]"
+              style={{
+                fontWeight: 600,
+                fontSize: "1.25em",
+                color: "#5A2215",
+              }}
+            >
+              Instagram
+            </span>
+          </p>
+
+          {/* Handle pill */}
+          <a
+            href="https://www.instagram.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center gap-3 rounded-full px-6 py-3 transition-all duration-300"
+            style={{
+              background: "rgba(255,255,255,0.8)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(185,155,120,0.2)",
+              boxShadow: "0 4px 16px rgba(0,0,0,0.03)",
+            }}
+            aria-label="Follow @pareenitabbsr on Instagram"
+          >
+            {/* Instagram icon */}
+            <span className="flex-shrink-0 transition-transform duration-300 group-hover:scale-110">
+              <InstagramIcon size={26} />
+            </span>
+
+            {/* Handle text */}
+            <span
+              className="font-[Cormorant_Garamond] tracking-wide"
+              style={{
+                fontSize: "clamp(0.95rem, 2.2vw, 1.15rem)",
+                fontWeight: 400,
+                color: "#3D1F10",
+                letterSpacing: "0.03em",
+              }}
+            >
+              @sujit.pattnaik_
+            </span>
+
+            {/* Verified badge */}
+            <span className="flex-shrink-0">
+              <VerifiedBadge size={18} />
+            </span>
+          </a>
+
+          {/* Thin bottom rule */}
+          <div
+            className="mt-6 h-px w-24 opacity-30"
+            style={{ background: "linear-gradient(90deg, transparent, #8B6B52, transparent)" }}
+          />
+        </div>
+
+        {/* ── Fade-in animation via style tag ── */}
+        <style>{`
+          @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          section > div.relative.z-10 > * {
+            animation: fadeUp 0.9s cubic-bezier(0.22,1,0.36,1) both;
+          }
+          section > div.relative.z-10 > *:nth-child(1) { animation-delay: 0.1s; }
+          section > div.relative.z-10 > *:nth-child(2) { animation-delay: 0.25s; }
+          section > div.relative.z-10 > *:nth-child(3) { animation-delay: 0.4s; }
+
+          /* hover lift on pill */
+          a[href*="instagram"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+          }
+        `}</style>
+      </section>
+    </>
   );
 }

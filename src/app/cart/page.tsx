@@ -5,22 +5,23 @@ import {
   ChevronRight, ShieldCheck, Truck, RefreshCcw, Star,
   ArrowRight, Lock, Check, Gift, Package,
 } from "lucide-react";
+import Navbar from "@/components/Common/Navbar";
+import Footer from "@/components/Common/Footer";
+import { getCart ,updateCartQuantity, removeCartItem} from "@/api/cart";
+import AuthManager from "@/components/Auth/AuthManager/AuthManager";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  CartPage.tsx  — Premium LUXE Shopping Cart
-//  Features:
-//   • Quantity increment / decrement
-//   • Remove item with animated exit + undo toast
-//   • Move to wishlist
-//   • Promo code input with validation
-//   • Order summary with live total
-//   • Free shipping threshold progress bar
-//   • Suggested / recommended products
-//   • Trust badges
-//   • Fully responsive (mobile-first)
-// ─────────────────────────────────────────────────────────────────────────────
+// Define Product type
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  category?: string;
+  images?: string[];
+  sizes?: string[];
+  colors?: string[];
+  rating?: number;
+}
 
-// ── Types ─────────────────────────────────────────────────────────────────────
 interface CartItem {
   id:        string;
   name:      string;
@@ -43,32 +44,6 @@ interface SuggestedItem {
   rating: number;
 }
 
-// ── Seed cart ─────────────────────────────────────────────────────────────────
-const SEED_CART: CartItem[] = [
-  {
-    id: "1", name: "Signature Wool Overcoat", category: "Outerwear",
-    price: 895, img: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=500&q=85",
-    size: "M", color: "Black", colorHex: "#111111", qty: 1, maxQty: 5, badge: "Bestseller",
-  },
-  {
-    id: "2", name: "Italian Cashmere Rollneck", category: "Knitwear",
-    price: 450, img: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&q=85",
-    size: "L", color: "Camel", colorHex: "#c19a6b", qty: 1, maxQty: 3, badge: "New",
-  },
-  {
-    id: "3", name: "Wool Pleated Trouser", category: "Trousers",
-    price: 320, img: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&q=85",
-    size: "M", color: "Grey", colorHex: "#9ca3af", qty: 2, maxQty: 4,
-  },
-];
-
-const SUGGESTED: SuggestedItem[] = [
-  { id: "s1", name: "Linen Oxford Shirt",  price: 195, rating: 4.6, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80" },
-  { id: "s2", name: "Urban Suede Bomber",  price: 1100, rating: 4.9, img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80" },
-  { id: "s3", name: "Leather Chelsea Boot",price: 580, rating: 4.8, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" },
-  { id: "s4", name: "Heritage Gold Watch", price: 1250, rating: 4.9, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80" },
-];
-
 const VALID_CODES: Record<string, { type: "percent" | "flat"; value: number; label: string }> = {
   "LUXE20": { type: "percent", value: 20, label: "20% off" },
   "SAVE50": { type: "flat",    value: 50, label: "$50 off" },
@@ -77,10 +52,83 @@ const VALID_CODES: Record<string, { type: "percent" | "flat"; value: number; lab
 
 const FREE_SHIPPING_THRESHOLD = 500;
 const BADGE_STYLE: Record<string, string> = {
-  Bestseller: "bg-amber-500 text-white",
-  New:        "bg-blue-600  text-white",
-  Limited:    "bg-rose-600  text-white",
+  Bestseller: "bg-red-600 text-white",
+  New:        "bg-[#0f172a] text-white",
+  Limited:    "bg-red-700 text-white",
 };
+
+// ── Auth helper ───────────────────────────────────────────────────────────────
+const getAuthToken = (): string | null => {
+  const token = localStorage.getItem("authToken") || localStorage.getItem("token");
+  return token;
+};
+
+const isAuthenticated = (): boolean => {
+  return !!getAuthToken();
+};
+
+// ── Login Prompt Modal ────────────────────────────────────────────────────────
+interface LoginPromptModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onLoginClick: () => void;
+  onSignupClick: () => void;
+}
+
+function LoginPromptModal({ isOpen, onClose, onLoginClick, onSignupClick }: LoginPromptModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+        >
+          <X className="w-4 h-4 text-gray-600" />
+        </button>
+
+        <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
+          <Heart className="w-8 h-8 text-red-500" />
+        </div>
+
+        <h3 className="font-bold text-[#0f172a] text-2xl text-center mb-2">
+          Login Required
+        </h3>
+        <p className="text-gray-600 text-sm text-center mb-6">
+          Please login or create an account to view your cart.
+        </p>
+
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={onLoginClick}
+            className="w-full bg-[#0f172a] text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-colors"
+          >
+            Login
+          </button>
+          <button
+            onClick={onSignupClick}
+            className="w-full border border-gray-200 text-[#0f172a] font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors"
+          >
+            Create Account
+          </button>
+          <button
+            onClick={onClose}
+            className="text-sm text-gray-400 hover:text-gray-600 mt-2"
+          >
+            Continue Browsing
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Scroll reveal ─────────────────────────────────────────────────────────────
 function useFadeIn() {
@@ -151,8 +199,8 @@ function CartRow({
           </div>
           <button
             onClick={handleRemove}
-            className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-rose-50 flex items-center
-              justify-center text-gray-300 hover:text-rose-500 transition-all"
+            className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-red-50 flex items-center
+              justify-center text-gray-300 hover:text-red-500 transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -204,9 +252,9 @@ function CartRow({
             <button
               onClick={handleWishlist}
               className={`flex items-center gap-1 text-[10px] font-bold transition-all
-                ${wishlisted ? "text-rose-500" : "text-gray-400 hover:text-rose-500"}`}
+                ${wishlisted ? "text-red-500" : "text-gray-400 hover:text-red-500"}`}
             >
-              <Heart className={`w-3.5 h-3.5 ${wishlisted ? "fill-rose-500" : ""}`} />
+              <Heart className={`w-3.5 h-3.5 ${wishlisted ? "fill-red-500" : ""}`} />
               <span className="hidden sm:inline">{wishlisted ? "Saved" : "Wishlist"}</span>
             </button>
             {/* Line total */}
@@ -246,8 +294,8 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
   return (
     <div>
       <div className={`flex gap-2 rounded-xl border-2 overflow-hidden transition-all
-        ${state === "ok"  ? "border-emerald-400" :
-          state === "err" ? "border-rose-400"    : "border-gray-200 focus-within:border-blue-400"}`}>
+        ${state === "ok"  ? "border-red-500" :
+          state === "err" ? "border-red-500"    : "border-gray-200 focus-within:border-red-500"}`}>
         <div className="flex items-center pl-3.5 text-gray-300 flex-shrink-0">
           <Tag className="w-4 h-4" />
         </div>
@@ -263,8 +311,8 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
           disabled={state === "ok"}
           className={`px-5 text-[11px] font-black tracking-wider uppercase flex-shrink-0 transition-all
             ${state === "ok"
-              ? "bg-emerald-500 text-white"
-              : "bg-[#0f172a] hover:bg-blue-700 text-white"}`}
+              ? "bg-red-600 text-white"
+              : "bg-[#0f172a] hover:bg-red-600 text-white"}`}
         >
           {state === "loading" ? (
             <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -275,7 +323,7 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
         </button>
       </div>
       {message && (
-        <p className={`mt-1.5 text-xs font-semibold ${state === "ok" ? "text-emerald-600" : "text-rose-500"}`}>
+        <p className={`mt-1.5 text-xs font-semibold ${state === "ok" ? "text-red-600" : "text-red-500"}`}>
           {message}
         </p>
       )}
@@ -284,8 +332,15 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
 }
 
 // ── Suggested card ────────────────────────────────────────────────────────────
-function SuggestedCard({ item }: { item: SuggestedItem }) {
+function SuggestedCard({ item, onAdd }: { item: SuggestedItem; onAdd: (item: SuggestedItem) => void }) {
   const [added, setAdded] = useState(false);
+  
+  const handleAdd = () => {
+    setAdded(true);
+    onAdd(item);
+    setTimeout(() => setAdded(false), 1800);
+  };
+
   return (
     <div className="group flex-shrink-0 w-36 sm:w-44">
       <div className="relative rounded-xl overflow-hidden bg-[#f0f0ee] mb-2.5"
@@ -296,10 +351,10 @@ function SuggestedCard({ item }: { item: SuggestedItem }) {
         <div className="absolute bottom-0 inset-x-0 p-2
           translate-y-full group-hover:translate-y-0 transition-transform duration-300">
           <button
-            onClick={() => { setAdded(true); setTimeout(() => setAdded(false), 1800); }}
+            onClick={handleAdd}
             className="w-full bg-[#0f172a]/90 backdrop-blur-sm text-white text-[9px]
               font-bold tracking-widest uppercase py-1.5 rounded-lg flex items-center
-              justify-center gap-1 hover:bg-[#0f172a] transition-colors"
+              justify-center gap-1 hover:bg-red-600 transition-colors"
           >
             {added ? <><Check className="w-2.5 h-2.5" /> Added</> : <><Plus className="w-2.5 h-2.5" /> Add</>}
           </button>
@@ -310,7 +365,7 @@ function SuggestedCard({ item }: { item: SuggestedItem }) {
         <span className="font-black text-[#0f172a] text-sm">${item.price.toLocaleString()}</span>
         <div className="flex gap-0.5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className={`w-2.5 h-2.5 ${i < Math.floor(item.rating) ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"}`} />
+            <Star key={i} className={`w-2.5 h-2.5 ${i < Math.floor(item.rating) ? "fill-red-500 text-red-500" : "fill-gray-200 text-gray-200"}`} />
           ))}
         </div>
       </div>
@@ -323,11 +378,11 @@ function EmptyCart() {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="relative mb-6">
-        <div className="w-24 h-24 rounded-3xl bg-blue-50 border-2 border-blue-100
+        <div className="w-24 h-24 rounded-3xl bg-red-50 border-2 border-red-100
           flex items-center justify-center shadow-lg">
-          <ShoppingBag className="w-10 h-10 text-blue-300" />
+          <ShoppingBag className="w-10 h-10 text-red-300" />
         </div>
-        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-rose-500
+        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-[#0f172a]
           flex items-center justify-center shadow-md text-white font-black text-sm">
           0
         </div>
@@ -338,7 +393,7 @@ function EmptyCart() {
       </p>
       <a
         href="/mens-collection"
-        className="flex items-center gap-2 bg-[#0f172a] hover:bg-blue-700 text-white
+        className="flex items-center gap-2 bg-[#0f172a] hover:bg-red-600 text-white
           font-bold text-sm tracking-wider uppercase px-7 py-3.5 rounded-2xl
           transition-all shadow-lg hover:shadow-xl"
       >
@@ -350,33 +405,90 @@ function EmptyCart() {
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function CartPage() {
-  const [items, setItems]             = useState<CartItem[]>(SEED_CART);
-  const [discount, setDiscount]       = useState(0);
-  const [appliedCode, setApplied]     = useState("");
-  const [toast, setToast]             = useState<{ msg: string; item: CartItem } | null>(null);
-  const [checkoutLoading, setLoading] = useState(false);
-  const [checkoutDone, setDone]       = useState(false);
+  const [items, setItems] = useState<CartItem[]>([]);
+  const [suggestedItems, setSuggestedItems] = useState<SuggestedItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [appliedCode, setApplied] = useState("");
+  const [toast, setToast] = useState<{ msg: string; item: CartItem } | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutDone, setDone] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authView, setAuthView] = useState<"login" | "signup" | "forgot-password" | "reset-password" | null>("login");
+
+  // Check authentication first
+  useEffect(() => {
+    if (!isAuthenticated()) {
+      setShowLoginPrompt(true);
+      setLoading(false);
+    } else {
+      fetchCartData();
+    }
+  }, []);
+
+  // Fetch cart data from API
+  const fetchCartData = async () => {
+    try {
+      setLoading(true);
+      const cartData = await getCart();
+      
+      if (cartData && Array.isArray(cartData)) {
+        // Transform API response to CartItem format
+        const cartItems: CartItem[] = cartData.map((item: any, index: number) => ({
+          id: item._id || item.id || `temp-${index}`,
+          name: item.name || "Product",
+          category: item.category || "Uncategorized",
+          price: item.price || 0,
+          img: item.images?.[0] || item.img || "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=500&q=85",
+          size: item.size || "M",
+          color: item.color || "Black",
+          colorHex: getColorHex(item.color || "Black"),
+          qty: item.quantity || item.qty || 1,
+          maxQty: 5,
+          badge: item.badge,
+        }));
+
+        setItems(cartItems);
+        
+        // Create suggested items (you might want to fetch these from a separate API)
+        setSuggestedItems([
+          { id: "s1", name: "Linen Oxford Shirt", price: 195, rating: 4.6, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80" },
+          { id: "s2", name: "Urban Suede Bomber", price: 1100, rating: 4.9, img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80" },
+          { id: "s3", name: "Leather Chelsea Boot", price: 580, rating: 4.8, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" },
+        ]);
+      }
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Calculate total number of items in cart
+  const totalCartItems = items.reduce((sum, item) => sum + item.qty, 0);
 
   // Totals
-  const subtotal     = items.reduce((s, i) => s + i.price * i.qty, 0);
-  const discountAmt  = appliedCode
-    ? VALID_CODES[appliedCode].type === "flat"
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  const discountAmt = appliedCode
+    ? VALID_CODES[appliedCode]?.type === "flat"
       ? VALID_CODES[appliedCode].value
-      : Math.round(subtotal * VALID_CODES[appliedCode].value / 100)
+      : Math.round(subtotal * (VALID_CODES[appliedCode]?.value || 0) / 100)
     : 0;
-  const shipping     = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 15;
-  const tax          = Math.round((subtotal - discountAmt) * 0.08 * 100) / 100;
-  const total        = subtotal - discountAmt + shipping + tax;
-  const toFreeShip   = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : 15;
+  const tax = Math.round((subtotal - discountAmt) * 0.08 * 100) / 100;
+  const total = subtotal - discountAmt + shipping + tax;
+  const toFreeShip = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   const freeProgress = Math.min((subtotal / FREE_SHIPPING_THRESHOLD) * 100, 100);
 
   const handleQty = (id: string, delta: number) =>
     setItems(prev => prev.map(i => i.id === id ? { ...i, qty: Math.max(1, Math.min(i.maxQty, i.qty + delta)) } : i));
 
   const handleRemove = (id: string) => {
-    const item = items.find(i => i.id === id)!;
-    setItems(prev => prev.filter(i => i.id !== id));
-    setToast({ msg: `"${item.name}" removed`, item });
+    const item = items.find(i => i.id === id);
+    if (item) {
+      setItems(prev => prev.filter(i => i.id !== id));
+      setToast({ msg: `"${item.name}" removed`, item });
+    }
   };
 
   const handleUndo = () => {
@@ -389,33 +501,100 @@ export default function CartPage() {
     setItems(prev => prev.filter(i => i.id !== id));
   };
 
-  const handleCheckout = () => {
-    setLoading(true);
-    setTimeout(() => { setLoading(false); setDone(true); }, 2000);
+  const handleAddSuggested = (suggestedItem: SuggestedItem) => {
+    const newCartItem: CartItem = {
+      id: suggestedItem.id,
+      name: suggestedItem.name,
+      category: "Suggested",
+      price: suggestedItem.price,
+      img: suggestedItem.img,
+      size: "M",
+      color: "Black",
+      colorHex: "#111111",
+      qty: 1,
+      maxQty: 5,
+    };
+    setItems(prev => [...prev, newCartItem]);
   };
+
+  const handleCheckout = () => {
+    if (!isAuthenticated()) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    
+    setCheckoutLoading(true);
+    setTimeout(() => { 
+      setCheckoutLoading(false); 
+      setDone(true); 
+    }, 2000);
+  };
+
+  const handleLoginClick = () => {
+    setShowLoginPrompt(false);
+    setAuthView("login");
+    setShowAuthModal(true);
+  };
+
+  const handleSignupClick = () => {
+    setShowLoginPrompt(false);
+    setAuthView("signup");
+    setShowAuthModal(true);
+  };
+
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    fetchCartData(); // Refetch cart after successful login
+  };
+
+  const handleAuthClose = () => {
+    setShowAuthModal(false);
+  };
+
+  const handleLoginPromptClose = () => {
+    setShowLoginPrompt(false);
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Navbar wishlistCount={0} cartCount={0} />
+        <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center">
+          <div className="text-center">
+            <svg className="animate-spin w-10 h-10 mx-auto mb-4 text-red-600" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+            </svg>
+            <p className="text-gray-500">Loading your cart...</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   if (checkoutDone) {
     return (
-      <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center">
-          <div className="relative inline-flex mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-              <Check className="w-8 h-8 text-emerald-500" />
+      <>
+        <Navbar wishlistCount={0} cartCount={0} />
+        <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center">
+            <div className="relative inline-flex mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
+                <Check className="w-8 h-8 text-red-500" />
+              </div>
+              <div className="absolute -inset-2 rounded-3xl bg-red-500/5 animate-ping" style={{ animationDuration: "2s" }} />
             </div>
-            <div className="absolute -inset-2 rounded-3xl bg-emerald-500/5 animate-ping" style={{ animationDuration: "2s" }} />
+            <h2 className="font-display italic font-bold text-[#0f172a] text-3xl mb-2">Order Placed!</h2>
+            <p className="text-gray-400 text-sm mb-1">Your order has been confirmed</p>
+            <p className="font-black text-red-600 text-2xl mb-7">${total.toFixed(2)}</p>
+            <a href="/" className="block w-full bg-[#0f172a] text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-red-600 transition-colors">
+              Continue Shopping
+            </a>
           </div>
-          <h2 className="font-display italic font-bold text-[#0f172a] text-3xl mb-2">Order Placed!</h2>
-          <p className="text-gray-400 text-sm mb-1">Your order has been confirmed</p>
-          <p className="font-black text-blue-600 text-2xl mb-7">${total.toFixed(2)}</p>
-          <a href="/" className="block w-full bg-[#0f172a] text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-blue-700 transition-colors">
-            Continue Shopping
-          </a>
         </div>
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,700&display=swap');
-          .font-display{font-family:'Cormorant Garamond',serif;}
-        `}</style>
-      </div>
+        <Footer />
+      </>
     );
   }
 
@@ -428,17 +607,21 @@ export default function CartPage() {
         @keyframes toastIn{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
         .animate-toastIn{animation:toastIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);}
         .scale-98{transform:scale(0.98);}
+        .scrollbar-hide::-webkit-scrollbar{display:none;}
+        .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
       `}</style>
+
+      <Navbar wishlistCount={0} cartCount={totalCartItems} />
 
       <div className="min-h-screen bg-[#f8f9fb]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
 
-          {/* ── Header ── */}
+          {/* Header */}
           <div className="flex items-end justify-between mb-10 gap-4">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="h-px w-6 bg-blue-500" />
-                <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-blue-500">
+                <div className="h-px w-6 bg-red-600" />
+                <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-red-600">
                   My Bag
                 </span>
               </div>
@@ -447,13 +630,13 @@ export default function CartPage() {
               </h1>
               {items.length > 0 && (
                 <p className="text-gray-400 text-sm mt-1.5">
-                  {items.reduce((s, i) => s + i.qty, 0)} item{items.reduce((s, i) => s + i.qty, 0) !== 1 ? "s" : ""}
+                  {totalCartItems} item{totalCartItems !== 1 ? "s" : ""}
                 </p>
               )}
             </div>
             <a href="/mens-collection"
               className="hidden sm:flex items-center gap-1.5 text-[11px] font-bold tracking-wider
-                uppercase text-gray-400 hover:text-[#0f172a] transition-colors">
+                uppercase text-gray-400 hover:text-red-600 transition-colors">
               Continue Shopping <ChevronRight className="w-3.5 h-3.5" />
             </a>
           </div>
@@ -463,17 +646,14 @@ export default function CartPage() {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] xl:grid-cols-[1fr_400px] gap-7 lg:gap-8 items-start">
 
-              {/* ── LEFT: cart items ── */}
+              {/* LEFT: cart items */}
               <div className="space-y-4">
 
                 {/* Free shipping bar */}
-                <div className={`rounded-2xl p-4 sm:p-5 border transition-all
-                  ${shipping === 0
-                    ? "bg-emerald-50 border-emerald-200"
-                    : "bg-blue-50 border-blue-200"}`}>
+                <div className={`rounded-2xl p-4 sm:p-5 border transition-all bg-red-50 border-red-200`}>
                   <div className="flex items-center gap-2.5 mb-3">
-                    <Truck className={`w-4 h-4 flex-shrink-0 ${shipping === 0 ? "text-emerald-600" : "text-blue-600"}`} />
-                    <p className={`text-xs font-bold ${shipping === 0 ? "text-emerald-700" : "text-blue-700"}`}>
+                    <Truck className={`w-4 h-4 flex-shrink-0 text-red-600`} />
+                    <p className={`text-xs font-bold text-red-700`}>
                       {shipping === 0
                         ? "🎉 You've unlocked FREE shipping!"
                         : `Add $${toFreeShip.toFixed(2)} more for FREE shipping`}
@@ -481,8 +661,7 @@ export default function CartPage() {
                   </div>
                   <div className="h-1.5 bg-white/60 rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-700
-                        ${shipping === 0 ? "bg-emerald-500" : "bg-blue-500"}`}
+                      className={`h-full rounded-full transition-all duration-700 bg-red-600`}
                       style={{ width: `${freeProgress}%` }}
                     />
                   </div>
@@ -491,7 +670,9 @@ export default function CartPage() {
                 {/* Cart rows */}
                 {items.map((item, i) => (
                   <CartRow
-                    key={item.id} item={item} index={i}
+                    key={item.id}
+                    item={item}
+                    index={i}
                     onQtyChange={handleQty}
                     onRemove={handleRemove}
                     onWishlist={handleWishlist}
@@ -499,22 +680,30 @@ export default function CartPage() {
                 ))}
 
                 {/* Suggested items */}
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Gift className="w-4 h-4 text-blue-500" />
-                    <h3 className="font-bold text-[#0f172a] text-sm">You Might Also Like</h3>
+                {suggestedItems.length > 0 && (
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Gift className="w-4 h-4 text-red-600" />
+                      <h3 className="font-bold text-[#0f172a] text-sm">You Might Also Like</h3>
+                    </div>
+                    <div className="flex gap-4 overflow-x-auto pb-1 scrollbar-hide snap-x snap-mandatory">
+                      {suggestedItems.map(s => (
+                        <SuggestedCard 
+                          key={s.id} 
+                          item={s} 
+                          onAdd={handleAddSuggested}
+                        />
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex gap-4 overflow-x-auto pb-1 scrollbar-hide snap-x snap-mandatory">
-                    {SUGGESTED.map(s => <SuggestedCard key={s.id} item={s} />)}
-                  </div>
-                </div>
+                )}
               </div>
 
-              {/* ── RIGHT: order summary ── */}
+              {/* RIGHT: order summary */}
               <div className="lg:sticky lg:top-6">
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
                   {/* Top accent */}
-                  <div className="h-1 bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600" />
+                  <div className="h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600" />
 
                   <div className="p-5 sm:p-6 space-y-5">
                     <h2 className="font-bold text-[#0f172a] text-lg">Order Summary</h2>
@@ -542,16 +731,16 @@ export default function CartPage() {
                       </div>
                       {discountAmt > 0 && (
                         <div className="flex justify-between text-sm items-center">
-                          <span className="text-emerald-600 flex items-center gap-1">
+                          <span className="text-red-600 flex items-center gap-1">
                             <Tag className="w-3 h-3" /> {appliedCode}
                           </span>
-                          <span className="font-bold text-emerald-600">−${discountAmt}</span>
+                          <span className="font-bold text-red-600">−${discountAmt}</span>
                         </div>
                       )}
                       <div className="flex justify-between text-sm items-center">
                         <span className="text-gray-500">Shipping</span>
                         {shipping === 0
-                          ? <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">FREE</span>
+                          ? <span className="text-[10px] font-black text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">FREE</span>
                           : <span className="font-semibold text-[#0f172a]">${shipping}</span>}
                       </div>
                       <div className="flex justify-between text-sm">
@@ -563,7 +752,7 @@ export default function CartPage() {
                     {/* Total */}
                     <div className="flex justify-between items-center pb-5 border-b border-gray-100">
                       <span className="font-black text-[#0f172a] text-base">Total</span>
-                      <span className="font-black text-blue-600 text-2xl">${total.toFixed(2)}</span>
+                      <span className="font-black text-red-600 text-2xl">${total.toFixed(2)}</span>
                     </div>
 
                     {/* Promo code */}
@@ -573,7 +762,7 @@ export default function CartPage() {
                     <button
                       onClick={handleCheckout}
                       disabled={checkoutLoading}
-                      className="w-full bg-[#0f172a] hover:bg-blue-700 disabled:bg-gray-300 text-white
+                      className="w-full bg-[#0f172a] hover:bg-red-600 disabled:bg-gray-300 text-white
                         font-black text-sm tracking-wide uppercase py-4 rounded-xl transition-all
                         shadow-md hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2"
                     >
@@ -595,9 +784,9 @@ export default function CartPage() {
                         { icon: Package,     label: "Fast Delivery" },
                       ].map(({ icon: Icon, label }) => (
                         <div key={label} className="flex flex-col items-center gap-1 text-center">
-                          <div className="w-8 h-8 rounded-xl bg-gray-50 border border-gray-100
+                          <div className="w-8 h-8 rounded-xl bg-red-50 border border-red-100
                             flex items-center justify-center">
-                            <Icon className="w-3.5 h-3.5 text-gray-400" />
+                            <Icon className="w-3.5 h-3.5 text-red-500" />
                           </div>
                           <span className="text-[9px] font-bold text-gray-400 leading-tight">{label}</span>
                         </div>
@@ -610,7 +799,8 @@ export default function CartPage() {
                 <div className="mt-4 flex items-center justify-center gap-3 flex-wrap">
                   {["Visa", "Mastercard", "Amex", "PayPal", "Apple Pay"].map(p => (
                     <span key={p} className="text-[9px] font-black tracking-wider uppercase
-                      text-gray-300 bg-white border border-gray-100 px-2.5 py-1 rounded-lg shadow-sm">
+                      text-gray-300 bg-white border border-gray-100 px-2.5 py-1 rounded-lg shadow-sm
+                      hover:text-red-600 hover:border-red-200 transition-colors">
                       {p}
                     </span>
                   ))}
@@ -621,13 +811,31 @@ export default function CartPage() {
         </div>
       </div>
 
-      {/* ── Remove toast ── */}
+      <Footer />
+
+      {/* Login Prompt Modal */}
+      <LoginPromptModal
+        isOpen={showLoginPrompt}
+        onClose={handleLoginPromptClose}
+        onLoginClick={handleLoginClick}
+        onSignupClick={handleSignupClick}
+      />
+
+      {/* Auth Manager Modal */}
+      <AuthManager 
+        isOpen={showAuthModal}
+        onClose={handleAuthClose}
+        initialView={authView}
+        onSuccess={handleAuthSuccess}
+      />
+
+      {/* Remove toast */}
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3
           bg-[#0f172a] text-white text-sm font-semibold px-5 py-3.5 rounded-2xl shadow-2xl
-          animate-toastIn whitespace-nowrap">
+          border-l-4 border-red-500 animate-toastIn whitespace-nowrap">
           <span>{toast.msg}</span>
-          <button onClick={handleUndo} className="text-blue-400 hover:text-blue-300 font-bold underline text-xs">
+          <button onClick={handleUndo} className="text-red-400 hover:text-red-300 font-bold underline text-xs">
             Undo
           </button>
           <button onClick={() => setToast(null)} className="text-gray-400 hover:text-white ml-1">
@@ -637,4 +845,37 @@ export default function CartPage() {
       )}
     </>
   );
+}
+
+// Helper function to convert color names to hex values
+function getColorHex(colorName: string): string {
+  const colorMap: Record<string, string> = {
+    'black': '#111111',
+    'white': '#FFFFFF',
+    'red': '#FF0000',
+    'blue': '#0000FF',
+    'green': '#00FF00',
+    'yellow': '#FFFF00',
+    'purple': '#800080',
+    'orange': '#FFA500',
+    'brown': '#A52A2A',
+    'pink': '#FFC0CB',
+    'gray': '#808080',
+    'grey': '#808080',
+    'navy': '#000080',
+    'beige': '#F5F5DC',
+    'camel': '#C19A6B',
+    'olive': '#6B7C45',
+    'maroon': '#800000',
+    'teal': '#008080',
+    'lavender': '#E6E6FA',
+    'coral': '#FF7F50',
+    'peach': '#FFE5B4',
+    'mint': '#98FB98',
+    'gold': '#FFD700',
+    'silver': '#C0C0C0',
+    'bronze': '#CD7F32',
+  };
+  
+  return colorMap[colorName.toLowerCase()] || '#CCCCCC';
 }

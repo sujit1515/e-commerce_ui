@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Instagram, Twitter, Linkedin } from "lucide-react";
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// ── Types
 interface TeamMember {
   name: string;
   role: string;
@@ -11,7 +11,7 @@ interface TeamMember {
   social: { ig: string; tw: string; li: string };
 }
 
-// ── Data ─────────────────────────────────────────────────────────────────────
+// ── Data 
 const TEAM: TeamMember[] = [
   {
     name: "Eleanor Voss",
@@ -45,7 +45,7 @@ const TEAM: TeamMember[] = [
 
 // ── Single team card ──────────────────────────────────────────────────────────
 function TeamCard({ member, delay }: { member: TeamMember; delay: number }) {
-  const ref              = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [vis, setVis] = useState(false);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ function TeamCard({ member, delay }: { member: TeamMember; delay: number }) {
   return (
     <div
       ref={ref}
-      className={`group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl
+      className={`group bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl
         transition-all duration-500 hover:-translate-y-2
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
       style={{ transitionDelay: vis ? `${delay}ms` : "0ms" }}
@@ -71,12 +71,13 @@ function TeamCard({ member, delay }: { member: TeamMember; delay: number }) {
           src={member.img}
           alt={member.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          loading="lazy"
         />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a]/90 via-[#0f172a]/20 to-transparent" />
+        {/* Gradient overlay - changed to black */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
         {/* Social icons — slide up on hover */}
-        <div className="absolute bottom-4 left-4 right-4 flex gap-2 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+        <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 flex gap-1.5 sm:gap-2 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
           {[
             { Icon: Instagram, href: member.social.ig },
             { Icon: Twitter,   href: member.social.tw },
@@ -85,19 +86,20 @@ function TeamCard({ member, delay }: { member: TeamMember; delay: number }) {
             <a
               key={j}
               href={href}
-              className="w-8 h-8 bg-white/15 backdrop-blur-sm border border-white/20 rounded-lg flex items-center justify-center text-white hover:bg-blue-600 transition-colors"
+              className="w-7 sm:w-8 h-7 sm:h-8 bg-white/15 backdrop-blur-sm border border-white/20 rounded-lg flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+              aria-label={`${member.name}'s social link ${j + 1}`}
             >
-              <Icon className="w-3.5 h-3.5" />
+              <Icon className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             </a>
           ))}
         </div>
       </div>
 
       {/* Text */}
-      <div className="p-5">
-        <h3 className="font-bold text-[#0f172a] text-base">{member.name}</h3>
-        <p className="text-blue-600 text-xs font-semibold mb-2">{member.role}</p>
-        <p className="text-gray-400 text-xs leading-relaxed">{member.bio}</p>
+      <div className="p-3 sm:p-4 lg:p-5">
+        <h3 className="font-bold text-black text-sm sm:text-base lg:text-lg leading-tight">{member.name}</h3>
+        <p className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1.5 sm:mb-2">{member.role}</p>
+        <p className="text-gray-500 text-[10px] sm:text-xs leading-relaxed line-clamp-3 sm:line-clamp-none">{member.bio}</p>
       </div>
     </div>
   );
@@ -105,7 +107,7 @@ function TeamCard({ member, delay }: { member: TeamMember; delay: number }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AboutTeam() {
-  const headRef              = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
   const [headVis, setHeadVis] = useState(false);
 
   useEffect(() => {
@@ -118,36 +120,56 @@ export default function AboutTeam() {
   }, []);
 
   return (
-    <section id="team" className="py-20 sm:py-28 bg-[#f8f9fb]">
+    <section id="team" className="py-16 sm:py-20 lg:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div
           ref={headRef}
-          className={`text-center mb-14 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
+          className={`text-center mb-10 sm:mb-12 lg:mb-14 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
-          <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-blue-500" />
-            <span className="text-blue-600 text-xs font-bold tracking-[0.3em] uppercase">The People</span>
-            <div className="h-px w-6 bg-blue-500" />
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
+            <div className="h-px w-4 sm:w-6 bg-red-600" />
+            <span className="text-red-600 text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase">
+              The People
+            </span>
+            <div className="h-px w-4 sm:w-6 bg-red-600" />
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-[#0f172a] leading-tight">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-black leading-tight px-4 sm:px-0">
             The Minds Behind
             <br />
-            <span className="italic text-blue-600">Every Detail</span>
+            <span className="italic text-red-600">Every Detail</span>
           </h2>
-          <p className="text-gray-400 text-sm sm:text-base mt-4 max-w-xl mx-auto">
+          <p className="text-gray-500 text-xs sm:text-sm lg:text-base mt-3 sm:mt-4 max-w-xl mx-auto px-4 sm:px-6 lg:px-0">
             A small, fiercely dedicated team united by one belief: that the objects we surround
             ourselves with shape who we become.
           </p>
         </div>
 
-        {/* Team grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
+        {/* Team grid - Responsive: 2 on mobile, 2 on tablet, 4 on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-5 xl:gap-6">
           {TEAM.map((member, i) => (
             <TeamCard key={i} member={member} delay={i * 100} />
           ))}
         </div>
       </div>
+
+      {/* Custom styles */}
+      <style>{`
+        @media (max-width: 380px) {
+          .grid {
+            gap: 0.5rem;
+          }
+          .p-3 {
+            padding: 0.5rem;
+          }
+          .text-sm {
+            font-size: 0.7rem;
+          }
+          .text-red-600 {
+            font-size: 0.6rem;
+          }
+        }
+      `}</style>
     </section>
   );
 }

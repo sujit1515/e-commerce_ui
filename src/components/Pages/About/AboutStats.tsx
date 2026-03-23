@@ -18,14 +18,14 @@ const STATS: Stat[] = [
 
 // ── Animated counter ─────────────────────────────────────────────────────────
 function Counter({ value, suffix, inView }: { value: string; suffix: string; inView: boolean }) {
-  const num        = parseFloat(value);
-  const isDecimal  = value.includes(".");
+  const num = parseFloat(value);
+  const isDecimal = value.includes(".");
   const [count, setCount] = useState(0);
 
   useEffect(() => {
     if (!inView) return;
     const DURATION = 1800;
-    const STEPS    = 60;
+    const STEPS = 60;
     let step = 0;
     const id = setInterval(() => {
       step++;
@@ -46,7 +46,7 @@ function Counter({ value, suffix, inView }: { value: string; suffix: string; inV
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AboutStats() {
-  const ref              = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
@@ -61,20 +61,19 @@ export default function AboutStats() {
   return (
     <section className="bg-white py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* <div className="w-screen px-4 md:px-8 lg:px-8"> */}
         <div
           ref={ref}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-gray-100 rounded-2xl overflow-hidden shadow-sm"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-gray-200 rounded-2xl overflow-hidden shadow-sm"
         >
           {STATS.map((s, i) => (
             <div
               key={i}
-              className="bg-white px-6 sm:px-8 py-10 text-center group hover:bg-[#0f172a] transition-colors duration-300 cursor-default"
+              className="bg-white px-6 sm:px-8 py-10 text-center group hover:bg-black transition-colors duration-300 cursor-default"
             >
-              <p className="font-display text-4xl sm:text-5xl font-bold text-[#0f172a] group-hover:text-white transition-colors mb-2">
+              <p className="font-display text-4xl sm:text-5xl font-bold text-black group-hover:text-white transition-colors mb-2">
                 <Counter value={s.value} suffix={s.suffix} inView={inView} />
               </p>
-              <p className="text-xs font-bold tracking-widest uppercase text-gray-400 group-hover:text-blue-400 transition-colors">
+              <p className="text-xs font-bold tracking-widest uppercase text-gray-400 group-hover:text-red-500 transition-colors">
                 {s.label}
               </p>
             </div>

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 
 function useFadeIn() {
-  const ref              = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [vis, setVis] = useState(false);
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -16,11 +16,11 @@ function useFadeIn() {
 }
 
 export default function AboutStory() {
-  const left  = useFadeIn();
+  const left = useFadeIn();
   const right = useFadeIn();
 
   return (
-    <section id="story" className="py-20 sm:py-28 bg-[#f8f9fb]">
+    <section id="story" className="py-20 sm:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
@@ -39,8 +39,8 @@ export default function AboutStory() {
                 />
               </div>
 
-              {/* Floating quality card */}
-              <div className="absolute -bottom-6 -right-3 sm:-right-8 bg-[#0f172a] text-white rounded-2xl p-5 shadow-2xl w-44 sm:w-56">
+              {/* Floating quality card - changed to black */}
+              <div className="absolute -bottom-6 -right-3 sm:-right-8 bg-black text-white rounded-2xl p-5 shadow-2xl w-44 sm:w-56">
                 <div className="flex items-center gap-1.5 mb-2">
                   <div className="flex gap-0.5">
                     {[1, 0.65, 0.35].map((op, i) => (
@@ -49,16 +49,16 @@ export default function AboutStory() {
                   </div>
                   <span className="text-white font-black tracking-widest text-[10px] ml-1">LUXE</span>
                 </div>
-                <p className="text-blue-400 font-bold text-2xl">47</p>
+                <p className="text-red-500 font-bold text-2xl">47</p>
                 <p className="text-gray-400 text-xs leading-snug mt-0.5">
                   Quality checkpoints on every single piece
                 </p>
               </div>
 
-              {/* Year badge */}
-              <div className="absolute -top-4 -left-3 sm:-left-6 bg-blue-600 text-white rounded-2xl p-4 shadow-xl text-center">
+              {/* Year badge - changed to red */}
+              <div className="absolute -top-4 -left-3 sm:-left-6 bg-red-600 text-white rounded-2xl p-4 shadow-xl text-center">
                 <p className="font-display text-3xl font-bold leading-none">12</p>
-                <p className="text-blue-200 text-[10px] font-bold tracking-widest">YEARS</p>
+                <p className="text-red-200 text-[10px] font-bold tracking-widest">YEARS</p>
               </div>
             </div>
           </div>
@@ -70,17 +70,17 @@ export default function AboutStory() {
           >
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 mb-6">
-              <div className="h-px w-6 bg-blue-500" />
-              <span className="text-blue-600 text-xs font-bold tracking-[0.3em] uppercase">Our Story</span>
+              <div className="h-px w-6 bg-red-600" />
+              <span className="text-red-600 text-xs font-bold tracking-[0.3em] uppercase">Our Story</span>
             </div>
 
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-[#0f172a] leading-tight mb-6">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold text-black leading-tight mb-6">
               Born From a Refusal to
               <br />
-              <span className="italic text-blue-600">Compromise</span>
+              <span className="italic text-red-600">Compromise</span>
             </h2>
 
-            <div className="space-y-4 text-gray-500 text-sm sm:text-base leading-relaxed">
+            <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
               <p>
                 In 2012, Eleanor Voss walked away from her position as lead designer at a storied
                 Parisian house. Not out of frustration — but conviction. She believed that true luxury
@@ -93,7 +93,7 @@ export default function AboutStory() {
               </p>
               <p>
                 Today, with 2.4 million customers across 180 countries, the philosophy remains unchanged:{" "}
-                <span className="text-[#0f172a] font-semibold">
+                <span className="text-black font-semibold">
                   design everything as if it will be owned for a lifetime.
                 </span>
               </p>
@@ -104,11 +104,11 @@ export default function AboutStory() {
               <img
                 src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&q=85"
                 alt="Eleanor Voss"
-                className="w-12 h-12 rounded-full object-cover border-2 border-blue-100 flex-shrink-0"
+                className="w-12 h-12 rounded-full object-cover border-2 border-red-100 flex-shrink-0"
               />
               <div>
-                <p className="font-bold text-[#0f172a] text-sm">Eleanor Voss</p>
-                <p className="text-gray-400 text-xs">Founder & Creative Director</p>
+                <p className="font-bold text-black text-sm">Eleanor Voss</p>
+                <p className="text-gray-500 text-xs">Founder & Creative Director</p>
               </div>
             </div>
           </div>

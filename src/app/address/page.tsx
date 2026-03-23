@@ -1,34 +1,32 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
-  MapPin, Plus, Star, Pencil, Trash2, ChevronDown, ChevronUp,
+  MapPin, Plus, Pencil, Trash2, ChevronDown, ChevronUp,
   Home, Briefcase, Building2, Check, X, Phone, User,
-  Globe, Map, Hash, Navigation,
+  Globe, Map, Hash, Navigation, ArrowRight,
 } from "lucide-react";
+import Navbar from "../../components/Common/Navbar";
+import Footer from "../../components/Common/Footer";
+import {
+  addAddress,
+  updateAddress,
+  deleteAddress,
+  getAddresses,
+  setDefaultAddress,
+} from "../../api/address";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  AddressPage.tsx  — Full address management page
-//  Features:
-//   • Add / Edit / Delete addresses
-//   • Set default address (toggle)
-//   • Show only 2 addresses by default → "View All" expands rest
-//   • Form validation
-//   • Map preview placeholder
-//   • Responsive for all screen sizes
-// ─────────────────────────────────────────────────────────────────────────────
-
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ── Types 
 interface Address {
-  id:        string;
-  label:     "Home" | "Office" | "Other";
-  fullName:  string;
-  phone:     string;
-  street:    string;
-  apt:       string;
-  city:      string;
-  state:     string;
-  zip:       string;
-  country:   string;
+  id: string;
+  label: "Home" | "Office" | "Other";
+  fullName: string;
+  phone: string;
+  street: string;
+  apt: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
   isDefault: boolean;
 }
 
@@ -41,33 +39,22 @@ const LABEL_ICONS: Record<string, React.ElementType> = {
   Home: Home, Office: Briefcase, Other: Building2,
 };
 const LABEL_COLORS: Record<string, string> = {
-  Home:   "bg-blue-50   text-blue-600   border-blue-200",
-  Office: "bg-amber-50  text-amber-600  border-amber-200",
-  Other:  "bg-violet-50 text-violet-600 border-violet-200",
+  Home:   "bg-red-50    text-red-600    border-red-200",
+  Office: "bg-gray-100  text-gray-700   border-gray-200",
+  Other:  "bg-gray-100  text-gray-700   border-gray-200",
 };
 
-// ── Seed addresses ────────────────────────────────────────────────────────────
-const SEED: Address[] = [
-  {
-    id: "1", label: "Home", fullName: "Alexander McQueen", phone: "+1 (555) 000-0000",
-    street: "123 Luxury Avenue", apt: "Suite 405",
-    city: "New York", state: "NY", zip: "10001", country: "United States", isDefault: true,
-  },
-  {
-    id: "2", label: "Office", fullName: "Alexander McQueen", phone: "+1 (555) 100-2000",
-    street: "740 Park Avenue", apt: "Floor 12",
-    city: "New York", state: "NY", zip: "10021", country: "United States", isDefault: false,
-  },
-  {
-    id: "3", label: "Other", fullName: "Alexander McQueen", phone: "+44 20 7946 0958",
-    street: "10 Downing Street", apt: "",
-    city: "London", state: "England", zip: "SW1A 2AA", country: "United Kingdom", isDefault: false,
-  },
-];
-
 const EMPTY: Omit<Address, "id"> = {
-  label: "Home", fullName: "", phone: "", street: "",
-  apt: "", city: "", state: "", zip: "", country: "United States", isDefault: false,
+  label: "Home",
+  fullName: "",
+  phone: "",
+  street: "",
+  apt: "",
+  city: "",
+  state: "",
+  zip: "",
+  country: "India",
+  isDefault: false,
 };
 
 // ── Input field ───────────────────────────────────────────────────────────────
@@ -83,12 +70,12 @@ function Field({
   return (
     <div className="flex flex-col gap-1.5">
       <label className="text-[10px] font-black tracking-[0.22em] uppercase text-gray-500">
-        {label}{required && <span className="text-rose-400 ml-0.5">*</span>}
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
       <div className={`relative rounded-xl border transition-all duration-200 bg-white
-        ${error ? "border-rose-400 ring-2 ring-rose-50" : focused ? "border-blue-500 ring-2 ring-blue-50" : "border-gray-200 hover:border-gray-300"}`}>
+        ${error ? "border-red-400 ring-2 ring-red-50" : focused ? "border-red-500 ring-2 ring-red-50" : "border-gray-200 hover:border-gray-300"}`}>
         <Icon className={`absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none
-          ${error ? "text-rose-400" : focused ? "text-blue-500" : "text-gray-300"}`} />
+          ${error ? "text-red-400" : focused ? "text-red-500" : "text-gray-300"}`} />
         <input
           type={type}
           name={name}
@@ -97,11 +84,11 @@ function Field({
           placeholder={placeholder}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="w-full bg-transparent pl-10 pr-4 py-3 text-sm text-[#0f172a] placeholder-gray-300
+          className="w-full bg-transparent pl-10 pr-4 py-3 text-sm text-black placeholder-gray-300
             outline-none rounded-xl"
         />
       </div>
-      {error && <p className="text-[11px] text-rose-500 font-semibold">{error}</p>}
+      {error && <p className="text-[11px] text-red-500 font-semibold">{error}</p>}
     </div>
   );
 }
@@ -120,12 +107,12 @@ function AddressCard({
 
   return (
     <div className={`relative rounded-2xl border-2 p-5 sm:p-6 transition-all duration-300 bg-white
-      ${address.isDefault ? "border-[#0f172a] shadow-lg" : "border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md"}`}>
+      ${address.isDefault ? "border-black shadow-lg" : "border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md"}`}>
 
       {/* Default badge */}
       {address.isDefault && (
         <div className="absolute -top-3 left-5">
-          <span className="flex items-center gap-1 bg-[#0f172a] text-white text-[9px] font-black
+          <span className="flex items-center gap-1 bg-black text-white text-[9px] font-black
             tracking-[0.18em] uppercase px-3 py-1 rounded-full shadow-md">
             <Check className="w-2.5 h-2.5" /> Default
           </span>
@@ -143,15 +130,15 @@ function AddressCard({
         <div className="flex items-center gap-1">
           <button
             onClick={() => onEdit(address)}
-            className="w-8 h-8 rounded-lg hover:bg-blue-50 flex items-center justify-center
-              text-gray-400 hover:text-blue-600 transition-all"
+            className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center
+              text-gray-400 hover:text-red-600 transition-all"
           >
             <Pencil className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => onDelete(address.id)}
-            className="w-8 h-8 rounded-lg hover:bg-rose-50 flex items-center justify-center
-              text-gray-400 hover:text-rose-500 transition-all"
+            className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center
+              text-gray-400 hover:text-red-500 transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -160,7 +147,7 @@ function AddressCard({
 
       {/* Address details */}
       <div className="space-y-1.5 mb-5">
-        <p className="font-bold text-[#0f172a] text-sm">{address.fullName}</p>
+        <p className="font-bold text-black text-sm">{address.fullName}</p>
         <p className="text-gray-400 text-sm">{address.phone}</p>
         <div className="flex items-start gap-1.5">
           <MapPin className="w-3.5 h-3.5 text-gray-300 flex-shrink-0 mt-0.5" />
@@ -177,11 +164,11 @@ function AddressCard({
         <button
           onClick={() => onSetDefault(address.id)}
           className="flex items-center gap-2 text-[11px] font-bold text-gray-400
-            hover:text-[#0f172a] transition-colors group"
+            hover:text-black transition-colors group"
         >
-          <span className="w-4 h-4 rounded-full border-2 border-gray-300 group-hover:border-[#0f172a]
+          <span className="w-4 h-4 rounded-full border-2 border-gray-300 group-hover:border-black
             flex items-center justify-center transition-colors">
-            <span className="w-1.5 h-1.5 rounded-full bg-transparent group-hover:bg-[#0f172a] transition-colors" />
+            <span className="w-1.5 h-1.5 rounded-full bg-transparent group-hover:bg-black transition-colors" />
           </span>
           Set as Default Address
         </button>
@@ -236,12 +223,12 @@ function AddressForm({
         shadow-2xl overflow-hidden max-h-[95vh] flex flex-col">
 
         {/* Top accent */}
-        <div className="h-1 w-full bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600 flex-shrink-0" />
+        <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-red-600 flex-shrink-0" />
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100 flex-shrink-0">
           <div>
-            <h2 className="font-display font-bold text-[#0f172a] text-2xl">
+            <h2 className="font-display font-bold text-black text-2xl">
               {form.id ? "Edit Address" : "Add New Address"}
             </h2>
             <p className="text-gray-400 text-xs mt-0.5">
@@ -272,7 +259,7 @@ function AddressForm({
                       type="button"
                       onClick={() => setForm(p => ({ ...p, label: lbl }))}
                       className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border-2 text-xs font-bold transition-all
-                        ${active ? "border-[#0f172a] bg-[#0f172a] text-white" : "border-gray-200 text-gray-500 hover:border-gray-400"}`}
+                        ${active ? "border-black bg-black text-white" : "border-gray-200 text-gray-500 hover:border-gray-400"}`}
                     >
                       <LIcon className="w-3.5 h-3.5" /> {lbl}
                     </button>
@@ -303,7 +290,7 @@ function AddressForm({
             {/* Country */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[10px] font-black tracking-[0.22em] uppercase text-gray-500">
-                Country <span className="text-rose-400">*</span>
+                Country <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 pointer-events-none" />
@@ -312,8 +299,8 @@ function AddressForm({
                   value={form.country}
                   onChange={handleChange}
                   className="w-full appearance-none bg-white border border-gray-200 hover:border-gray-300
-                    focus:border-blue-500 focus:ring-2 focus:ring-blue-50 rounded-xl
-                    pl-10 pr-10 py-3 text-sm text-[#0f172a] outline-none cursor-pointer transition-all"
+                    focus:border-red-500 focus:ring-2 focus:ring-red-50 rounded-xl
+                    pl-10 pr-10 py-3 text-sm text-black outline-none cursor-pointer transition-all"
                 >
                   {COUNTRIES.map(c => <option key={c}>{c}</option>)}
                 </select>
@@ -324,14 +311,14 @@ function AddressForm({
             {/* Default toggle */}
             <div className="flex items-start justify-between gap-4 py-4 px-4 bg-gray-50 rounded-xl">
               <div>
-                <p className="font-bold text-[#0f172a] text-sm">Set as Default Address</p>
+                <p className="font-bold text-black text-sm">Set as Default Address</p>
                 <p className="text-gray-400 text-xs mt-0.5">This will be used for all future orders.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setDefault(!defaultToggle)}
                 className={`w-12 h-6 rounded-full relative flex-shrink-0 transition-all duration-300
-                  ${defaultToggle ? "bg-blue-600" : "bg-gray-200"}`}
+                  ${defaultToggle ? "bg-red-600" : "bg-gray-200"}`}
               >
                 <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-md transition-all duration-300
                   ${defaultToggle ? "left-6" : "left-0.5"}`} />
@@ -347,7 +334,7 @@ function AddressForm({
               />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 shadow-md">
-                  <MapPin className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
                   <span className="text-[11px] font-semibold text-gray-600">
                     {form.street && form.city
                       ? `${form.street}, ${form.city}`
@@ -363,7 +350,7 @@ function AddressForm({
         <div className="px-6 pb-6 pt-4 border-t border-gray-100 space-y-3 flex-shrink-0">
           <button
             onClick={handleSubmit}
-            className="w-full bg-[#0f172a] hover:bg-blue-700 text-white font-black text-[11px]
+            className="w-full bg-black hover:bg-red-700 text-white font-black text-[11px]
               tracking-[0.25em] uppercase py-4 rounded-xl transition-all shadow-md
               hover:shadow-xl active:scale-[0.98]"
           >
@@ -371,7 +358,7 @@ function AddressForm({
           </button>
           <button
             onClick={onCancel}
-            className="w-full text-gray-400 hover:text-gray-700 text-xs font-semibold
+            className="w-full text-gray-400 hover:text-black text-xs font-semibold
               tracking-wider uppercase py-2 transition-colors"
           >
             Cancel and Go Back
@@ -384,52 +371,151 @@ function AddressForm({
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function AddressPage() {
-  const [addresses, setAddresses] = useState<Address[]>(SEED);
-  const [showAll,   setShowAll]   = useState(false);
-  const [formData,  setFormData]  = useState<(Omit<Address, "id"> & { id?: string }) | null>(null);
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [showAll, setShowAll] = useState(false);
+  const [formData, setFormData] = useState<(Omit<Address, "id"> & { id?: string }) | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const displayed = showAll ? addresses : addresses.slice(0, 2);
 
-  const handleSave = (data: Omit<Address, "id"> & { id?: string }) => {
-    if (data.id) {
-      setAddresses(prev =>
-        prev.map(a => {
-          if (data.isDefault && a.id !== data.id) return { ...a, isDefault: false };
-          if (a.id === data.id) return { ...a, ...data } as Address;
-          return a;
-        })
-      );
-    } else {
-      const newAddr: Address = {
-        ...data,
-        id: Date.now().toString(),
-        isDefault: data.isDefault || addresses.length === 0,
-      };
-      setAddresses(prev => {
-        let updated = newAddr.isDefault
-          ? prev.map(a => ({ ...a, isDefault: false }))
-          : prev;
-        return [...updated, newAddr];
-      });
-    }
-    setFormData(null);
-  };
+  // ✅ FETCH ADDRESSES FROM BACKEND
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        setLoading(true);
+        const res = await getAddresses();
+        
+        const formatted: Address[] = res.addresses.map((a: any) => ({
+          id: a._id,
+          label: a.label || "Home",
+          fullName: a.fullName,
+          phone: a.phone,
+          street: a.street,
+          apt: a.apt || "",
+          city: a.city,
+          state: a.state,
+          zip: a.postalCode,
+          country: a.country,
+          isDefault: a.isDefault,
+        }));
 
-  const handleDelete = (id: string) => {
-    setAddresses(prev => {
-      const filtered = prev.filter(a => a.id !== id);
-      // If deleted was default, make first remaining one default
-      if (filtered.length > 0 && !filtered.some(a => a.isDefault)) {
-        filtered[0].isDefault = true;
+        setAddresses(formatted);
+      } catch (error) {
+        console.error("Error fetching addresses:", error);
+      } finally {
+        setLoading(false);
       }
-      return filtered;
-    });
-    setDeleteConfirm(null);
+    };
+
+    fetchAddresses();
+  }, []);
+
+  // ✅ SAVE (ADD + UPDATE)
+  const handleSave = async (data: Omit<Address, "id"> & { id?: string }) => {
+    try {
+      if (data.id) {
+        // Update existing address
+        const res = await updateAddress(data.id, {
+          label: data.label,
+          fullName: data.fullName,
+          phone: data.phone,
+          street: data.street,
+          apt: data.apt,
+          city: data.city,
+          state: data.state,
+          postalCode: data.zip,
+          country: data.country,
+          isDefault: data.isDefault,
+        });
+
+        setAddresses((prev) =>
+          prev.map((a) =>
+            a.id === data.id
+              ? {
+                  ...res.address,
+                  id: res.address._id,
+                  zip: res.address.postalCode,
+                  label: res.address.label || "Home",
+                }
+              : a
+          )
+        );
+      } else {
+        // Add new address
+        const res = await addAddress({
+          label: data.label,
+          fullName: data.fullName,
+          phone: data.phone,
+          street: data.street,
+          apt: data.apt,
+          city: data.city,
+          state: data.state,
+          postalCode: data.zip,
+          country: data.country,
+          isDefault: data.isDefault,
+        });
+
+        const newAddress: Address = {
+          ...res.address,
+          id: res.address._id,
+          zip: res.address.postalCode,
+          label: res.address.label || "Home",
+        };
+
+        setAddresses((prev) => [...prev, newAddress]);
+      }
+
+      setFormData(null);
+    } catch (error) {
+      console.error("Error saving address:", error);
+    }
   };
 
-  const handleSetDefault = (id: string) => {
-    setAddresses(prev => prev.map(a => ({ ...a, isDefault: a.id === id })));
+  // ✅ DELETE
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteAddress(id);
+      setAddresses((prev) => prev.filter((a) => a.id !== id));
+      setDeleteConfirm(null);
+    } catch (error) {
+      console.error("Error deleting address:", error);
+    }
+  };
+
+  // ✅ SET DEFAULT
+  const handleSetDefault = async (id: string) => {
+    try {
+      await setDefaultAddress(id);
+      setAddresses((prev) =>
+        prev.map((a) => ({
+          ...a,
+          isDefault: a.id === id,
+        }))
+      );
+    } catch (error) {
+      console.error("Error setting default address:", error);
+    }
+  };
+
+  // ✅ NEXT BUTTON HANDLER
+  const handleNext = () => {
+    // Check if at least one address exists
+    if (addresses.length === 0) {
+      alert("Please add at least one address before proceeding.");
+      return;
+    }
+    
+    // Check if a default address is set
+    const hasDefault = addresses.some(addr => addr.isDefault);
+    if (!hasDefault) {
+      alert("Please set a default address before proceeding.");
+      return;
+    }
+    
+    // Navigate to next page or perform next action
+    console.log("Proceeding to next step...");
+    alert("Proceeding to next step!");
   };
 
   return (
@@ -440,15 +526,19 @@ export default function AddressPage() {
         * { font-family:'DM Sans',sans-serif; }
       `}</style>
 
-      <div className="min-h-screen bg-[#f8f9fb] py-10 sm:py-14">
+      {/* Navbar */}
+      <Navbar />
+
+      {/* Main Content */}
+      <div className="min-h-screen bg-gray-50 py-10 sm:py-14">
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
           {/* ── Page header ── */}
           <div className="text-center mb-10">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-[#0f172a] mb-4 shadow-lg">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-black mb-4 shadow-lg">
               <MapPin className="w-5 h-5 text-white" />
             </div>
-            <h1 className="font-display font-bold text-[#0f172a] text-3xl sm:text-4xl mb-2">
+            <h1 className="font-display font-bold text-black text-3xl sm:text-4xl mb-2">
               My Addresses
             </h1>
             <p className="text-gray-400 text-sm">
@@ -460,62 +550,83 @@ export default function AddressPage() {
           <button
             onClick={() => setFormData({ ...EMPTY })}
             className="w-full flex items-center justify-center gap-2.5 border-2 border-dashed border-gray-300
-              hover:border-blue-400 hover:bg-blue-50/50 text-gray-400 hover:text-blue-600
+              hover:border-red-400 hover:bg-red-50/50 text-gray-400 hover:text-red-600
               font-bold text-sm tracking-wide rounded-2xl py-4 mb-6 transition-all duration-200 group"
           >
-            <div className="w-8 h-8 rounded-xl bg-gray-100 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
+            <div className="w-8 h-8 rounded-xl bg-gray-100 group-hover:bg-red-100 flex items-center justify-center transition-colors">
               <Plus className="w-4 h-4" />
             </div>
             Add New Address
           </button>
 
-          {/* ── Address list ── */}
-          {addresses.length === 0 ? (
+          {/* ── Loading State ── */}
+          {loading ? (
+            <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
+              <p className="text-gray-400 text-sm mt-4">Loading your addresses...</p>
+            </div>
+          ) : addresses.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
               <MapPin className="w-10 h-10 text-gray-200 mx-auto mb-3" />
               <p className="font-bold text-gray-400 text-base">No saved addresses yet</p>
               <p className="text-gray-300 text-sm mt-1">Add an address to get started</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {displayed.map(addr => (
-                <AddressCard
-                  key={addr.id}
-                  address={addr}
-                  onEdit={a => setFormData({ ...a })}
-                  onDelete={id => setDeleteConfirm(id)}
-                  onSetDefault={handleSetDefault}
-                />
-              ))}
+            <>
+              <div className="space-y-4">
+                {displayed.map(addr => (
+                  <AddressCard
+                    key={addr.id}
+                    address={addr}
+                    onEdit={a => setFormData({ ...a })}
+                    onDelete={id => setDeleteConfirm(id)}
+                    onSetDefault={handleSetDefault}
+                  />
+                ))}
 
-              {/* View All / Show Less */}
-              {addresses.length > 2 && (
+                {/* View All / Show Less */}
+                {addresses.length > 2 && (
+                  <button
+                    onClick={() => setShowAll(!showAll)}
+                    className="w-full flex items-center justify-center gap-2 text-[11px] font-black
+                      tracking-[0.2em] uppercase text-gray-400 hover:text-black py-3.5
+                      border border-gray-200 rounded-2xl hover:border-gray-300 hover:bg-white
+                      transition-all duration-200 bg-white/60 shadow-sm"
+                  >
+                    {showAll ? (
+                      <><ChevronUp className="w-3.5 h-3.5" /> Show Less</>
+                    ) : (
+                      <><ChevronDown className="w-3.5 h-3.5" /> View All {addresses.length} Addresses</>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* Summary bar */}
+              <p className="text-center text-xs text-gray-300 font-medium mt-6">
+                {addresses.length} address{addresses.length !== 1 ? "es" : ""} saved ·{" "}
+                {addresses.find(a => a.isDefault)?.city || "—"} is your default
+              </p>
+
+              {/* ── Next Button (Inline) ── */}
+              <div className="mt-8 pt-4 border-t border-gray-200">
                 <button
-                  onClick={() => setShowAll(!showAll)}
-                  className="w-full flex items-center justify-center gap-2 text-[11px] font-black
-                    tracking-[0.2em] uppercase text-gray-400 hover:text-[#0f172a] py-3.5
-                    border border-gray-200 rounded-2xl hover:border-gray-300 hover:bg-white
-                    transition-all duration-200 bg-white/60 shadow-sm"
+                  onClick={handleNext}
+                  className="w-full flex items-center justify-center gap-3 bg-black hover:bg-red-700 
+                    text-white font-bold text-sm tracking-wide py-4 rounded-xl 
+                    transition-all duration-300 shadow-md hover:shadow-lg group"
                 >
-                  {showAll ? (
-                    <><ChevronUp className="w-3.5 h-3.5" /> Show Less</>
-                  ) : (
-                    <><ChevronDown className="w-3.5 h-3.5" /> View All {addresses.length} Addresses</>
-                  )}
+                  <span>Proceed to Next Step</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
-              )}
-            </div>
-          )}
-
-          {/* Summary bar */}
-          {addresses.length > 0 && (
-            <p className="text-center text-xs text-gray-300 font-medium mt-6">
-              {addresses.length} address{addresses.length !== 1 ? "es" : ""} saved ·{" "}
-              {addresses.find(a => a.isDefault)?.city || "—"} is your default
-            </p>
+              </div>
+            </>
           )}
         </div>
       </div>
+
+      {/* Footer */}
+      <Footer />
 
       {/* ── Add / Edit form modal ── */}
       {formData !== null && (
@@ -531,10 +642,10 @@ export default function AddressPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)} />
           <div className="relative bg-white rounded-2xl shadow-2xl p-7 max-w-sm w-full">
-            <div className="w-12 h-12 rounded-2xl bg-rose-50 flex items-center justify-center mb-4 mx-auto">
-              <Trash2 className="w-5 h-5 text-rose-500" />
+            <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mb-4 mx-auto">
+              <Trash2 className="w-5 h-5 text-red-500" />
             </div>
-            <h3 className="font-bold text-[#0f172a] text-lg text-center mb-2">Remove Address?</h3>
+            <h3 className="font-bold text-black text-lg text-center mb-2">Remove Address?</h3>
             <p className="text-gray-400 text-sm text-center mb-6">
               This address will be permanently removed from your account.
             </p>
@@ -548,7 +659,7 @@ export default function AddressPage() {
               </button>
               <button
                 onClick={() => handleDelete(deleteConfirm)}
-                className="flex-1 bg-rose-600 hover:bg-rose-700 text-white font-bold text-sm
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold text-sm
                   py-3 rounded-xl transition-colors shadow-md"
               >
                 Remove

@@ -19,7 +19,7 @@ const MILESTONES: Milestone[] = [
 
 // ── Single milestone card ────────────────────────────────────────────────────
 function MilestoneCard({ m, index }: { m: Milestone; index: number }) {
-  const ref              = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [vis, setVis] = useState(false);
   const isRight = index % 2 === 1; // alternates left / right on desktop
 
@@ -38,12 +38,12 @@ function MilestoneCard({ m, index }: { m: Milestone; index: number }) {
       {/* ── Desktop left column ── */}
       <div className={`hidden lg:block ${isRight ? "lg:col-start-3" : "lg:col-start-1"}`}>
         <div
-          className={`bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-blue-500/30 hover:bg-white/[0.07]
+          className={`bg-black/40 border border-white/10 rounded-2xl p-6 sm:p-8 hover:border-red-500/30 hover:bg-black/60
             transition-all duration-500 ${isRight ? "text-left" : "text-right"}
             ${vis ? "opacity-100 translate-x-0" : `opacity-0 ${isRight ? "translate-x-8" : "-translate-x-8"}`}`}
           style={{ transitionDelay: vis ? "100ms" : "0ms" }}
         >
-          <span className="inline-block text-blue-400 text-xs font-bold tracking-widest mb-2">{m.year}</span>
+          <span className="inline-block text-red-500 text-xs font-bold tracking-widest mb-2">{m.year}</span>
           <h3 className="font-bold text-white text-lg sm:text-xl mb-2">{m.title}</h3>
           <p className="text-gray-400 text-sm leading-relaxed">{m.desc}</p>
         </div>
@@ -52,10 +52,10 @@ function MilestoneCard({ m, index }: { m: Milestone; index: number }) {
       {/* ── Center dot (desktop) ── */}
       <div className="hidden lg:flex lg:col-start-2 items-center justify-center">
         <div
-          className={`w-11 h-11 rounded-full bg-blue-600 border-4 border-[#0f172a] shadow-lg shadow-blue-600/40 flex items-center justify-center z-10
+          className={`w-11 h-11 rounded-full bg-red-600 border-4 border-black shadow-lg shadow-red-600/40 flex items-center justify-center z-10
             transition-all duration-500 ${vis ? "opacity-100 scale-100" : "opacity-0 scale-50"}`}
         >
-          <div className="w-3 h-3 rounded-full bg-blue-200" />
+          <div className="w-3 h-3 rounded-full bg-red-200" />
         </div>
       </div>
 
@@ -67,15 +67,15 @@ function MilestoneCard({ m, index }: { m: Milestone; index: number }) {
       <div className="lg:hidden">
         {/* Mobile dot + line */}
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-md shadow-blue-600/30">
-            <div className="w-2.5 h-2.5 rounded-full bg-blue-200" />
+          <div className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center flex-shrink-0 shadow-md shadow-red-600/30">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-200" />
           </div>
-          <span className="text-blue-400 text-xs font-bold tracking-widest">{m.year}</span>
-          <div className="h-px flex-1 bg-blue-500/20" />
+          <span className="text-red-500 text-xs font-bold tracking-widest">{m.year}</span>
+          <div className="h-px flex-1 bg-red-500/20" />
         </div>
 
         <div
-          className={`bg-white/5 border border-white/10 rounded-2xl p-5
+          className={`bg-black/40 border border-white/10 rounded-2xl p-5
             transition-all duration-500 ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
           style={{ transitionDelay: vis ? "80ms" : "0ms" }}
         >
@@ -89,7 +89,7 @@ function MilestoneCard({ m, index }: { m: Milestone; index: number }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 export default function AboutTimeline() {
-  const headRef              = useRef<HTMLDivElement>(null);
+  const headRef = useRef<HTMLDivElement>(null);
   const [headVis, setHeadVis] = useState(false);
 
   useEffect(() => {
@@ -102,7 +102,7 @@ export default function AboutTimeline() {
   }, []);
 
   return (
-    <section className="py-20 sm:py-28 bg-[#0f172a] relative overflow-hidden">
+    <section className="py-20 sm:py-28 bg-black relative overflow-hidden">
       {/* Subtle grid background */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"
@@ -112,8 +112,8 @@ export default function AboutTimeline() {
           backgroundSize: "60px 60px",
         }}
       />
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
@@ -122,14 +122,14 @@ export default function AboutTimeline() {
           className={`text-center mb-14 sm:mb-20 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-blue-500" />
-            <span className="text-blue-400 text-xs font-bold tracking-[0.3em] uppercase">Our Journey</span>
-            <div className="h-px w-6 bg-blue-500" />
+            <div className="h-px w-6 bg-red-600" />
+            <span className="text-red-500 text-xs font-bold tracking-[0.3em] uppercase">Our Journey</span>
+            <div className="h-px w-6 bg-red-600" />
           </div>
           <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
             A Decade of
             <br />
-            <span className="italic text-blue-400">Milestones</span>
+            <span className="italic text-red-500">Milestones</span>
           </h2>
         </div>
 
@@ -140,7 +140,7 @@ export default function AboutTimeline() {
             className="hidden lg:block absolute left-1/2 -translate-x-px top-6 bottom-6 w-px"
             style={{
               background:
-                "linear-gradient(to bottom, transparent, #3b82f6 15%, #3b82f6 85%, transparent)",
+                "linear-gradient(to bottom, transparent, #ef4444 15%, #ef4444 85%, transparent)",
             }}
           />
 

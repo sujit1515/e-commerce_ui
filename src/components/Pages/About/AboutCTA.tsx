@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowRight } from "lucide-react";
 
 export default function AboutCTA() {
-  const ref              = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [vis, setVis] = useState(false);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export default function AboutCTA() {
   }, []);
 
   return (
-    <section className="py-20 sm:py-28 bg-[#0f172a] relative overflow-hidden">
+    <section className="py-20 sm:py-28 bg-black relative overflow-hidden">
       {/* Subtle background image */}
       <div className="absolute inset-0">
         <img
@@ -24,12 +24,12 @@ export default function AboutCTA() {
           alt=""
           className="w-full h-full object-cover opacity-10"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a] via-[#0f172a]/95 to-[#0f172a]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black via-black/95 to-black/80" />
       </div>
 
       {/* Top / bottom accent lines */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div
@@ -38,15 +38,15 @@ export default function AboutCTA() {
         >
           {/* Eyebrow */}
           <div className="inline-flex items-center gap-2 mb-6">
-            <div className="h-px w-6 bg-blue-500" />
-            <span className="text-blue-400 text-xs font-bold tracking-[0.3em] uppercase">Join LUXE</span>
-            <div className="h-px w-6 bg-blue-500" />
+            <div className="h-px w-6 bg-red-600" />
+            <span className="text-red-500 text-xs font-bold tracking-[0.3em] uppercase">Join LUXE</span>
+            <div className="h-px w-6 bg-red-600" />
           </div>
 
           <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
             Own Something
             <br />
-            <span className="italic text-blue-400">Worth Keeping</span>
+            <span className="italic text-red-500">Worth Keeping</span>
           </h2>
 
           <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -57,7 +57,7 @@ export default function AboutCTA() {
           <div className="flex flex-wrap justify-center gap-4">
             <a
               href="/shop"
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg shadow-blue-900/40 text-sm"
+              className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg shadow-red-900/40 text-sm"
             >
               Shop the Collection <ArrowRight className="w-4 h-4" />
             </a>
