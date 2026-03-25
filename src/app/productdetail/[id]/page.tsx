@@ -4,16 +4,19 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 import { 
   ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ZoomIn, 
-  Heart, Eye, Star, Ruler, Zap, ShoppingCart, Image as ImageIcon
+  Heart, Eye, Star, Ruler, Zap, ShoppingCart, Image as ImageIcon, Minus, Plus
 } from "lucide-react";
 
 import { getProductById } from "@/api/product";
+import { 
+  getWishlist, 
+  toggleWishlist 
+} from "@/api/wishlist";
 import Navbar from "@/components/Common/Navbar";
 import Footer from "@/components/Common/Footer";
 
-// ============================================================================
+
 // TYPES
-// ============================================================================
 
 interface Product {
   _id: string;
@@ -25,6 +28,7 @@ interface Product {
   colors?: string[];
   rating?: number;
   reviewCount?: number;
+  stock?: number; // Add stock field
 }
 
 interface GalleryImage {
@@ -46,12 +50,114 @@ interface ProductData {
   description: string;
   material: string;
   shipping: string;
+  stock?: number;
 }
 
 interface Recommendation {
   name: string;
   price: number;
   img: string;
+}
+
+// Toast Notification Component
+function Toast({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) {
+  useEffect(() => {
+    const timer = setTimeout(onClose, 3000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div className={`fixed bottom-20 left-4 right-4 sm:left-auto sm:right-4 sm:bottom-4 z-50 animate-in`}>
+      <div className={`px-4 py-3 rounded-lg shadow-lg ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+      } text-white text-center text-sm font-medium`}>
+        {message}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// COMPONENT: QuantitySelector (New)
+// ============================================================================
+
+function QuantitySelector({ 
+  quantity, 
+  onQuantityChange, 
+  maxStock = 99,
+  disabled = false 
+}: { 
+  quantity: number; 
+  onQuantityChange: (quantity: number) => void;
+  maxStock?: number;
+  disabled?: boolean;
+}) {
+  const increment = () => {
+    if (quantity < maxStock && !disabled) {
+      onQuantityChange(quantity + 1);
+    }
+  };
+
+  const decrement = () => {
+    if (quantity > 1 && !disabled) {
+      onQuantityChange(quantity - 1);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value);
+    if (!isNaN(value) && value >= 1 && value <= maxStock && !disabled) {
+      onQuantityChange(value);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={decrement}
+        disabled={quantity <= 1 || disabled}
+        className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
+          ${quantity <= 1 || disabled
+            ? "border-gray-200 text-gray-300 cursor-not-allowed"
+            : "border-gray-300 text-gray-600 hover:border-[#0f172a] hover:text-[#0f172a] hover:bg-gray-50"
+          }`}
+        aria-label="Decrease quantity"
+      >
+        <Minus className="w-3 h-3" />
+      </button>
+      
+      <input
+        type="number"
+        value={quantity}
+        onChange={handleInputChange}
+        disabled={disabled}
+        min="1"
+        max={maxStock}
+        className="w-14 h-8 text-center border border-gray-200 rounded-lg text-sm font-medium
+          focus:outline-none focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a]
+          disabled:bg-gray-50 disabled:text-gray-400"
+      />
+      
+      <button
+        onClick={increment}
+        disabled={quantity >= maxStock || disabled}
+        className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
+          ${quantity >= maxStock || disabled
+            ? "border-gray-200 text-gray-300 cursor-not-allowed"
+            : "border-gray-300 text-gray-600 hover:border-[#0f172a] hover:text-[#0f172a] hover:bg-gray-50"
+          }`}
+        aria-label="Increase quantity"
+      >
+        <Plus className="w-3 h-3" />
+      </button>
+      
+      {maxStock < 10 && (
+        <span className="text-[10px] text-gray-400 ml-1">
+          Only {maxStock} left
+        </span>
+      )}
+    </div>
+  );
 }
 
 // ============================================================================
@@ -78,11 +184,9 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
 
   const handleTouchEnd = () => {
     if (touchStart - touchEnd > 50) {
-      // Swipe left
       next();
     }
     if (touchStart - touchEnd < -50) {
-      // Swipe right
       prev();
     }
   };
@@ -245,16 +349,81 @@ function Accordion({ title, children }: { title: string; children: React.ReactNo
 }
 
 // ============================================================================
-// COMPONENT: ProductInfo (Mobile Optimized)
+// COMPONENT: ProductInfo (Mobile Optimized with Quantity)
 // ============================================================================
 
-function ProductInfo({ product }: { product: ProductData }) {
+function ProductInfo({ 
+  product, 
+  onToast 
+}: { 
+  product: ProductData;
+  onToast: (message: string, type: 'success' | 'error') => void;
+}) {
   const router = useRouter();
   const [selectedColor, setColor] = useState(product.colors[0]?.name || "");
   const [selectedSize, setSize] = useState("");
+  const [quantity, setQuantity] = useState(1);
   const [wishlisted, setWish] = useState(false);
   const [cartFlash, setCart] = useState(false);
   const [sizeError, setSizeError] = useState(false);
+  const [quantityError, setQuantityError] = useState(false);
+  const [isWishlistLoading, setIsWishlistLoading] = useState(false);
+  const [maxStock, setMaxStock] = useState(product.stock || 99);
+
+  // Check if product is in wishlist on component mount
+  useEffect(() => {
+    const checkWishlistStatus = async () => {
+      try {
+        const wishlistData = await getWishlist();
+        if (wishlistData?.success && wishlistData?.wishlist) {
+          const isInWishlist = wishlistData.wishlist.items?.some(
+            (item: any) => item.productId === product._id
+          );
+          setWish(isInWishlist);
+        }
+      } catch (error) {
+        console.error("Error checking wishlist status:", error);
+      }
+    };
+    
+    checkWishlistStatus();
+  }, [product._id]);
+
+  // Update max stock when size changes (if different sizes have different stock)
+  useEffect(() => {
+    if (selectedSize && product.stock) {
+      // You can implement size-based stock logic here
+      setMaxStock(product.stock);
+    }
+    setQuantity(1); // Reset quantity when size changes
+  }, [selectedSize, product.stock]);
+
+  const handleToggleWishlist = async () => {
+    if (isWishlistLoading) return;
+    
+    setIsWishlistLoading(true);
+    try {
+      const result = await toggleWishlist(product._id);
+      
+      if (result?.success) {
+        setWish(!wishlisted);
+        onToast(
+          !wishlisted ? "Added to wishlist" : "Removed from wishlist",
+          "success"
+        );
+      } else {
+        onToast(
+          result?.message || "Failed to update wishlist",
+          "error"
+        );
+      }
+    } catch (error) {
+      console.error("Wishlist toggle error:", error);
+      onToast("Something went wrong", "error");
+    } finally {
+      setIsWishlistLoading(false);
+    }
+  };
 
   const handleBuy = () => {
     if (!selectedSize) { 
@@ -263,14 +432,22 @@ function ProductInfo({ product }: { product: ProductData }) {
     }
     setSizeError(false);
     
+    if (quantity > maxStock) {
+      setQuantityError(true);
+      onToast(`Only ${maxStock} items available`, "error");
+      return;
+    }
+    setQuantityError(false);
+    
     const queryParams = new URLSearchParams({
       productId: product._id,
       size: selectedSize,
       color: selectedColor,
-      price: product.price.toString()
+      price: product.price.toString(),
+      quantity: quantity.toString()
     }).toString();
     
-    router.push(`/payment?${queryParams}`);
+    router.push(`/address?${queryParams}`);
   };
 
   const handleCart = () => {
@@ -279,9 +456,20 @@ function ProductInfo({ product }: { product: ProductData }) {
       return; 
     }
     setSizeError(false);
+    
+    if (quantity > maxStock) {
+      setQuantityError(true);
+      onToast(`Only ${maxStock} items available`, "error");
+      return;
+    }
+    setQuantityError(false);
+    
     setCart(true);
     setTimeout(() => setCart(false), 1800);
+    onToast(`${quantity} item${quantity > 1 ? 's' : ''} added to cart`, "success");
   };
+
+  const totalPrice = product.price * quantity;
 
   return (
     <div className="flex flex-col gap-0">
@@ -305,9 +493,16 @@ function ProductInfo({ product }: { product: ProductData }) {
 
       {/* Price + Stars - stacked on mobile */}
       <div className="flex flex-col xs:flex-row xs:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-gray-100">
-        <span className="font-black text-[#0f172a] text-2xl sm:text-3xl">
-          ${product.price.toFixed(2)}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-black text-[#0f172a] text-2xl sm:text-3xl">
+            ${totalPrice.toFixed(2)}
+          </span>
+          {quantity > 1 && (
+            <span className="text-sm text-gray-400">
+              (${product.price.toFixed(2)} each)
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -393,6 +588,24 @@ function ProductInfo({ product }: { product: ProductData }) {
         </div>
       )}
 
+      {/* Quantity Selector - New Section */}
+      <div className="mb-4 sm:mb-6">
+        <p className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#0f172a] mb-2 sm:mb-3">
+          Quantity
+        </p>
+        <QuantitySelector 
+          quantity={quantity}
+          onQuantityChange={setQuantity}
+          maxStock={maxStock}
+          disabled={!selectedSize}
+        />
+        {quantityError && (
+          <p className="mt-2 text-[10px] sm:text-xs font-semibold text-red-500">
+            Selected quantity exceeds available stock
+          </p>
+        )}
+      </div>
+
       {/* CTAs - stack on mobile, row on tablet/desktop */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4 sm:mb-6">
         <button
@@ -415,9 +628,11 @@ function ProductInfo({ product }: { product: ProductData }) {
         </button>
         
         <button
-          onClick={() => setWish(!wishlisted)}
+          onClick={handleToggleWishlist}
+          disabled={isWishlistLoading}
           className={`w-full sm:w-14 h-12 sm:h-14 rounded-xl sm:rounded-2xl border-2 flex items-center justify-center flex-shrink-0
             transition-all duration-200 hover:scale-105 active:scale-95
+            ${isWishlistLoading ? "opacity-50 cursor-wait" : ""}
             ${wishlisted
               ? "border-red-500 bg-red-50 text-red-500"
               : "border-gray-200 text-gray-400 hover:border-gray-400"}`}
@@ -576,25 +791,57 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [stickyBar, setStickyBar] = useState(false);
   const [mobileWishlist, setMobileWishlist] = useState(false);
+  const [isMobileWishlistLoading, setIsMobileWishlistLoading] = useState(false);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [selectedSizeForMobile, setSelectedSizeForMobile] = useState("");
+  const [selectedColorForMobile, setSelectedColorForMobile] = useState("");
+  const [mobileQuantity, setMobileQuantity] = useState(1);
+  const [maxMobileStock, setMaxMobileStock] = useState(99);
 
   // 🔹 Fetch Product
-  useEffect(() => {
-    const fetchProduct = async () => {
-      if (!id) return;
+ useEffect(() => {
+  const fetchProduct = async () => {
+    if (!id) return;
 
+    try {
+      const data = await getProductById(id as string);
+      console.log('Fetched product:', data);
+
+      if (!data) return; 
+
+      setProduct(data);
+      setMaxMobileStock(data.stock ?? 99); 
+
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProduct();
+}, [id]);
+
+  // Check mobile wishlist status on product load
+  useEffect(() => {
+    const checkMobileWishlistStatus = async () => {
+      if (!product) return;
+      
       try {
-        const data = await getProductById(id as string);
-        console.log('Fetched product:', data);
-        setProduct(data);
+        const wishlistData = await getWishlist();
+        if (wishlistData?.success && wishlistData?.wishlist) {
+          const isInWishlist = wishlistData.wishlist.items?.some(
+            (item: any) => item.productId === product._id
+          );
+          setMobileWishlist(isInWishlist);
+        }
       } catch (error) {
-        console.error('Error fetching product:', error);
-      } finally {
-        setLoading(false);
+        console.error("Error checking mobile wishlist status:", error);
       }
     };
-
-    fetchProduct();
-  }, [id]);
+    
+    checkMobileWishlistStatus();
+  }, [product]);
 
   // 🔹 Sticky bar on scroll (mobile only)
   useEffect(() => {
@@ -608,6 +855,69 @@ export default function ProductDetailPage() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleToast = (message: string, type: 'success' | 'error') => {
+    setToast({ message, type });
+  };
+
+  const handleMobileToggleWishlist = async () => {
+    if (isMobileWishlistLoading || !product) return;
+    
+    setIsMobileWishlistLoading(true);
+    try {
+      const result = await toggleWishlist(product._id);
+      if (result?.success) {
+        setMobileWishlist(!mobileWishlist);
+        handleToast(
+          !mobileWishlist ? "Added to wishlist" : "Removed from wishlist",
+          "success"
+        );
+      } else {
+        handleToast(
+          result?.message || "Failed to update wishlist",
+          "error"
+        );
+      }
+    } catch (error) {
+      console.error("Mobile wishlist toggle error:", error);
+      handleToast("Something went wrong", "error");
+    } finally {
+      setIsMobileWishlistLoading(false);
+    }
+  };
+
+  const handleMobileAddToCart = () => {
+    if (!selectedSizeForMobile) {
+      handleToast("Please select a size", "error");
+      return;
+    }
+    if (mobileQuantity > maxMobileStock) {
+      handleToast(`Only ${maxMobileStock} items available`, "error");
+      return;
+    }
+    handleToast(`${mobileQuantity} item${mobileQuantity > 1 ? 's' : ''} added to cart`, "success");
+  };
+
+  const handleMobileBuyNow = () => {
+    if (!selectedSizeForMobile) {
+      handleToast("Please select a size", "error");
+      return;
+    }
+    if (mobileQuantity > maxMobileStock) {
+      handleToast(`Only ${maxMobileStock} items available`, "error");
+      return;
+    }
+    
+    const queryParams = new URLSearchParams({
+      productId: product!._id,
+      size: selectedSizeForMobile,
+      color: selectedColorForMobile,
+      price: product!.price.toString(),
+      quantity: mobileQuantity.toString()
+    }).toString();
+    
+    router.push(`/address?${queryParams}`);
+  };
 
   // 🔹 Loading State
   if (loading) {
@@ -675,6 +985,7 @@ export default function ProductDetailPage() {
     description: product.description,
     material: "Premium Fabric",
     shipping: "Free shipping available",
+    stock: product.stock || 99,
   };
 
   // 🔹 Mock recommendations
@@ -723,7 +1034,7 @@ export default function ProductDetailPage() {
 
             {/* Product Info */}
             <div className="w-full lg:sticky lg:top-6 lg:self-start">
-              <ProductInfo product={productInfo} />
+              <ProductInfo product={productInfo} onToast={handleToast} />
             </div>
           </div>
         </div>
@@ -731,33 +1042,77 @@ export default function ProductDetailPage() {
         {/* Style Recommendations */}
         <StyleRecommendations recommendations={recommendations} />
 
-        {/* Mobile Sticky Bottom Bar - Buy Now / Add to Cart */}
+        {/* Mobile Sticky Bar with Quantity Selector */}
         {stickyBar && (
           <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 sm:hidden z-50 animate-in">
-            <div className="flex gap-2">
-              <button
-                onClick={() => setMobileWishlist(!mobileWishlist)}
-                className={`w-12 h-12 rounded-xl border-2 flex items-center justify-center flex-shrink-0
-                  ${mobileWishlist
-                    ? "border-red-500 bg-red-50 text-red-500"
-                    : "border-gray-200 text-gray-400"}`}
-              >
-                <Heart className={`w-5 h-5 ${mobileWishlist ? "fill-red-500" : ""}`} />
-              </button>
-              <button
-                className="flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-black text-xs
-                  tracking-widest uppercase rounded-xl transition-all"
-              >
-                Add to Cart
-              </button>
-              <button
-                className="flex-1 border-2 border-[#0f172a] text-[#0f172a] font-black text-xs
-                  tracking-widest uppercase rounded-xl transition-all"
-              >
-                Buy Now
-              </button>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <select
+                  value={selectedSizeForMobile}
+                  onChange={(e) => setSelectedSizeForMobile(e.target.value)}
+                  className="flex-1 p-2 border border-gray-200 rounded-lg text-sm"
+                >
+                  <option value="">Select Size</option>
+                  {product.sizes?.map((size) => (
+                    <option key={size} value={size}>{size}</option>
+                  ))}
+                </select>
+                
+                <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-2">
+                  <button
+                    onClick={() => mobileQuantity > 1 && setMobileQuantity(mobileQuantity - 1)}
+                    className="w-7 h-7 flex items-center justify-center text-gray-600"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </button>
+                  <span className="w-8 text-center text-sm font-medium">{mobileQuantity}</span>
+                  <button
+                    onClick={() => mobileQuantity < maxMobileStock && setMobileQuantity(mobileQuantity + 1)}
+                    className="w-7 h-7 flex items-center justify-center text-gray-600"
+                  >
+                    <Plus className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                <button
+                  onClick={handleMobileToggleWishlist}
+                  disabled={isMobileWishlistLoading}
+                  className={`w-12 h-12 rounded-xl border-2 flex items-center justify-center flex-shrink-0
+                    ${isMobileWishlistLoading ? "opacity-50 cursor-wait" : ""}
+                    ${mobileWishlist
+                      ? "border-red-500 bg-red-50 text-red-500"
+                      : "border-gray-200 text-gray-400"}`}
+                >
+                  <Heart className={`w-5 h-5 ${mobileWishlist ? "fill-red-500" : ""}`} />
+                </button>
+                <button
+                  onClick={handleMobileAddToCart}
+                  className="flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-black text-xs
+                    tracking-widest uppercase rounded-xl transition-all"
+                >
+                  Add to Cart ({mobileQuantity})
+                </button>
+                <button
+                  onClick={handleMobileBuyNow}
+                  className="flex-1 border-2 border-[#0f172a] text-[#0f172a] font-black text-xs
+                    tracking-widest uppercase rounded-xl transition-all"
+                >
+                  Buy Now
+                </button>
+              </div>
             </div>
           </div>
+        )}
+
+        {/* Toast Notifications */}
+        {toast && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)}
+          />
         )}
       </div>
 

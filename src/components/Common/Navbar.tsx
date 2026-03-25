@@ -6,6 +6,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthManager from "../Auth/AuthManager/AuthManager";
 import { logoutApi } from "@/api/auth";
+import { Variants } from "framer-motion";
 
 // Define types
 interface NavLink {
@@ -83,8 +84,8 @@ export default function Navbar({
   // Check login when Navbar loads
   useEffect(() => {
     const token =
-      localStorage.getItem("authToken") ||
-      sessionStorage.getItem("authToken");
+      localStorage.getItem("token") ||
+      sessionStorage.getItem("token");
 
     const storedUser =
       localStorage.getItem("user") ||
@@ -225,35 +226,34 @@ export default function Navbar({
   const totalCartItems = cartCount;
 
   // Animation variants for user menu
-  const userMenuVariants = {
-    hidden: { 
-      opacity: 0, 
-      scale: 0.95,
-      y: -10,
-      transition: {
-        duration: 0.2
-      }
-    },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 25,
-        duration: 0.3
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      scale: 0.95,
-      y: -10,
-      transition: {
-        duration: 0.2
-      }
+  const userMenuVariants: Variants = {
+  hidden: { 
+    opacity: 0, 
+    scale: 0.95,
+    y: -10,
+    transition: {
+      duration: 0.2
     }
-  };
+  },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 300,
+      damping: 25
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.95,
+    y: -10,
+    transition: {
+      duration: 0.2
+    }
+  }
+};
 
   // Animation variants for menu items
   const menuItemVariants = {

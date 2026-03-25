@@ -3,14 +3,16 @@ import axiosInstance from "./axiosInstance";
 // Types
 export interface Address {
   _id?: string;
+  label: "Home" | "Office" | "Other";
   fullName: string;
   phone: string;
   street: string;
+  apt: string;
   city: string;
   state: string;
-  postalCode: string;
-  country?: string;
-  isDefault?: boolean;
+  zip: string;
+  country: string;
+  isDefault: boolean;
 }
 
 // ADD ADDRESS

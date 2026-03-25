@@ -1,10 +1,4 @@
 "use client";
-// ─────────────────────────────────────────────────────────────────────────────
-//  HeroBanner.jsx  — Electronics Hero Section
-//  Requires: Next.js + Tailwind CSS + framer-motion
-//  Install : npm install framer-motion
-//  Fonts   : Barlow Condensed (display) + Barlow (body) via Google Fonts
-// ─────────────────────────────────────────────────────────────────────────────
 
 import React from "react";
 import Head from "next/head";
@@ -15,19 +9,31 @@ import { motion } from "framer-motion";
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 32 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.72, ease: [0.22, 1, 0.36, 1], delay },
+  transition: { 
+    duration: 0.72, 
+    ease: [0.22, 1, 0.36, 1] as const, // ✅ FIX
+    delay 
+  },
 });
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0 },
   animate: { opacity: 1 },
-  transition: { duration: 0.6, ease: "easeOut", delay },
+  transition: { 
+    duration: 0.6, 
+    ease: "easeOut" as const, // fix
+    delay 
+  },
 });
 
 const slideRight = (delay = 0) => ({
   initial: { opacity: 0, x: 60 },
   animate: { opacity: 1, x: 0 },
-  transition: { duration: 0.9, ease: [0.22, 1, 0.36, 1], delay },
+  transition: { 
+    duration: 0.9, 
+    ease: [0.22, 1, 0.36, 1] as const, // ✅ FIX
+    delay 
+  },
 });
 
 export default function HeroBanner() {

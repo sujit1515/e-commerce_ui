@@ -269,7 +269,7 @@ export default function ContactForm() {
 
                     <p className="text-center text-gray-500 text-xs">
                       By submitting, you agree to our{" "}
-                      <a href="/privacy" className="text-red-500 hover:underline">Privacy Policy</a>.
+                      <a href="/privacypolicy" className="text-red-500 hover:underline">Privacy Policy</a>.
                     </p>
                   </form>
                 ) : (

@@ -50,21 +50,24 @@ const VerifiedBadge = ({ size = 18 }) => (
 );
 
 export default function PareenitaInstagram() {
-  const bgTextRef = useRef(null);
+  const bgTextRef = useRef<HTMLDivElement | null>(null);
 
-  /* subtle parallax on background text */
-  useEffect(() => {
-    const el = bgTextRef.current;
-    if (!el) return;
-    const handleMouseMove = (e) => {
-      const { clientX, clientY } = e;
-      const xOffset = ((clientX / window.innerWidth) - 0.5) * 18;
-      const yOffset = ((clientY / window.innerHeight) - 0.5) * 8;
-      el.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+useEffect(() => {
+  const el = bgTextRef.current;
+  if (!el) return;
+
+  const handleMouseMove = (e: MouseEvent) => {
+    const { clientX, clientY } = e;
+
+    const xOffset = ((clientX / window.innerWidth) - 0.5) * 18;
+    const yOffset = ((clientY / window.innerHeight) - 0.5) * 8;
+
+    el.style.transform = `translate(${xOffset}px, ${yOffset}px)`;
+  };
+
+  window.addEventListener("mousemove", handleMouseMove);
+  return () => window.removeEventListener("mousemove", handleMouseMove);
+}, []);
 
   return (
     <>

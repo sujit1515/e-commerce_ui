@@ -53,7 +53,6 @@
 //   }
 // };
 
-
 import axiosInstance from "./axiosInstance";
 
 // ✅ Product Type
@@ -71,19 +70,26 @@ export interface Product {
   updatedAt?: string;
 }
 
-// ✅ Filters Type
+// ✅ Filters Type (FIXED)
 export interface ProductFilters {
   category?: "men" | "women" | "kids";
   minPrice?: number;
   maxPrice?: number;
-  size?: string;
-  color?: string;
+
+  // ✅ CHANGE THESE
+  sizes?: string[];   // array
+  colors?: string[];  // array
+
   search?: string;
   page?: number;
   limit?: number;
+
+  // ✅ ADD THIS (for sorting)
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }
 
-// ✅ API Response Type (Pagination)
+// ✅ API Response Type
 export interface ProductResponse {
   success: boolean;
   totalProducts: number;
@@ -92,23 +98,41 @@ export interface ProductResponse {
   products: Product[];
 }
 
-
 // 🔹 GET ALL PRODUCTS
 export const getAllProducts = async (
   filters: ProductFilters = {}
 ): Promise<ProductResponse | null> => {
   try {
-    const params = Object.fromEntries(
-      Object.entries(filters).filter(
-        ([_, value]) => value !== undefined && value !== null && value !== ""
-      )
-    );
+    const params: any = {};
+
+    if (filters.category) params.category = filters.category;
+
+    // ✅ IMPORTANT FIX (array → comma string)
+    if (filters.sizes?.length) {
+      params.size = filters.sizes.join(",");
+    }
+
+    if (filters.colors?.length) {
+      params.color = filters.colors.join(",");
+    }
+
+    if (filters.minPrice) params.minPrice = filters.minPrice;
+    if (filters.maxPrice) params.maxPrice = filters.maxPrice;
+
+    if (filters.search) params.search = filters.search;
+    if (filters.page) params.page = filters.page;
+    if (filters.limit) params.limit = filters.limit;
+
+    // ✅ SORTING
+    if (filters.sortBy) params.sortBy = filters.sortBy;
+    if (filters.sortOrder) params.sortOrder = filters.sortOrder;
 
     const res = await axiosInstance.get<ProductResponse>("/product", {
       params,
     });
 
     return res.data;
+
   } catch (error) {
     console.error("Get All Products Error:", error);
     return null;

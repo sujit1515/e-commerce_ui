@@ -4,6 +4,7 @@ import React from "react";
 import Head from "next/head";
 import { motion } from "framer-motion";
 import Image from "next/image"; // Use Next.js Image component for better optimization
+import type { Easing } from "framer-motion";
 
 // ── Products data — Add actual image dimensions ────────────────────────────
 const FEATURED = {
@@ -11,8 +12,8 @@ const FEATURED = {
   name: "Computing Slate",
   bg: "#F5F5F5", // Light gray
   image: "/Images/electronics/laptop.png",
-  width: 800,  // Add actual width
-  height: 600, // Add actual height
+  width: 800, 
+  height: 600, 
 };
 
 const SOUND = {
@@ -42,15 +43,32 @@ const CHRONO = {
 };
 
 // ── Shared animation ───────────────────────────────────────────────────────
+const ease: Easing = [0.22, 1, 0.36, 1];
 const cardAnim = (delay = 0) => ({
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, margin: "-60px" },
-  transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
+  transition: { duration: 0.7, ease, delay },
 });
 
 // ── Image component with fixed container ────────────────────────────────
-function ProductImage({ src, alt, bg, width, height, className = "" }) {
+interface ProductImageProps {
+  src?: string;
+  alt?: string;
+  bg?: string;
+  width?: number;
+  height?: number;
+  className?: string;
+}
+
+function ProductImage({
+  src,
+  alt,
+  bg,
+  width,
+  height,
+  className = "",
+}: ProductImageProps) {
   const [imageError, setImageError] = React.useState(false);
 
   if (!src || imageError) {
@@ -59,10 +77,7 @@ function ProductImage({ src, alt, bg, width, height, className = "" }) {
         className={`flex items-center justify-center ${className}`}
         style={{ background: bg }}
       >
-        <span
-          className="text-xs font-medium uppercase tracking-widest opacity-25"
-          style={{ fontFamily: "'Barlow', sans-serif", color: "#000000" }}
-        >
+        <span className="text-xs font-medium uppercase tracking-widest opacity-25">
           {alt || "Product Image"}
         </span>
       </div>

@@ -56,7 +56,7 @@ export default function AboutCTA() {
 
           <div className="flex flex-wrap justify-center gap-4">
             <a
-              href="/shop"
+              href="/"
               className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg shadow-red-900/40 text-sm"
             >
               Shop the Collection <ArrowRight className="w-4 h-4" />

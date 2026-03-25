@@ -5,6 +5,7 @@ import {
   Home, Briefcase, Building2, Check, X, Phone, User,
   Globe, Map, Hash, Navigation, ArrowRight,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Navbar from "../../components/Common/Navbar";
 import Footer from "../../components/Common/Footer";
 import {
@@ -14,6 +15,7 @@ import {
   getAddresses,
   setDefaultAddress,
 } from "../../api/address";
+import { buyNowApi } from "../../api/buynow"; 
 
 // ── Types 
 interface Address {
@@ -371,6 +373,7 @@ function AddressForm({
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function AddressPage() {
+  const router = useRouter();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showAll, setShowAll] = useState(false);
   const [formData, setFormData] = useState<(Omit<Address, "id"> & { id?: string }) | null>(null);
@@ -424,7 +427,7 @@ export default function AddressPage() {
           apt: data.apt,
           city: data.city,
           state: data.state,
-          postalCode: data.zip,
+          zip: data.zip,
           country: data.country,
           isDefault: data.isDefault,
         });
@@ -451,7 +454,7 @@ export default function AddressPage() {
           apt: data.apt,
           city: data.city,
           state: data.state,
-          postalCode: data.zip,
+          zip: data.zip,
           country: data.country,
           isDefault: data.isDefault,
         });
@@ -498,25 +501,56 @@ export default function AddressPage() {
     }
   };
 
-  // ✅ NEXT BUTTON HANDLER
-  const handleNext = () => {
-    // Check if at least one address exists
+  // ✅ NEXT BUTTON HANDLER - Redirect to Payment Page
+  const handleNext = async () => {
+  try {
     if (addresses.length === 0) {
-      alert("Please add at least one address before proceeding.");
+      alert("Please add address");
       return;
     }
-    
-    // Check if a default address is set
-    const hasDefault = addresses.some(addr => addr.isDefault);
-    if (!hasDefault) {
-      alert("Please set a default address before proceeding.");
+
+    const defaultAddress = addresses.find(addr => addr.isDefault);
+
+    if (!defaultAddress) {
+      alert("Select default address");
       return;
     }
-    
-    // Navigate to next page or perform next action
-    console.log("Proceeding to next step...");
-    alert("Proceeding to next step!");
-  };
+
+    // ✅ Get product data from URL
+    const params = new URLSearchParams(window.location.search);
+
+    const productId = params.get("productId");
+    const size = params.get("size");
+    const color = params.get("color");
+    const quantity = Number(params.get("quantity"));
+
+    if (!productId || !quantity) {
+      alert("Invalid product data");
+      return;
+    }
+
+    // ✅ CALL BUY NOW API
+    const res = await buyNowApi({
+      productId,
+      quantity,
+      size: size || undefined,
+      color: color || undefined,
+      addressId: defaultAddress.id,
+    });
+
+    console.log("Order Created:", res);
+
+    // ✅ Save orderId
+    localStorage.setItem("orderId", res.order._id);
+
+    // ✅ Go to payment page
+    router.push("/payment");
+
+  } catch (error) {
+    console.error(error);
+    alert("Failed to create order");
+  }
+};
 
   return (
     <>
@@ -616,7 +650,7 @@ export default function AddressPage() {
                     text-white font-bold text-sm tracking-wide py-4 rounded-xl 
                     transition-all duration-300 shadow-md hover:shadow-lg group"
                 >
-                  <span>Proceed to Next Step</span>
+                  <span>Proceed to Payment</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                 </button>
               </div>

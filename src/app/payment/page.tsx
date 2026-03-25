@@ -4,8 +4,8 @@ import {
   ShieldCheck, CreditCard, Smartphone, Landmark, Package,
   ChevronDown, ChevronUp, ArrowRight, Check, Lock, Wifi,
 } from "lucide-react";
-
-
+import Navbar from "../../components/Common/Navbar";
+import Footer from "../../components/Common/Footer";
 
 // ── Order data (swap with real cart) ─────────────────────────────────────────
 const ORDER_ITEMS = [
@@ -42,7 +42,7 @@ function Input({
         </label>
       )}
       <div className={`relative rounded-xl border transition-all duration-200 bg-white
-        ${focused ? "border-blue-500 ring-2 ring-blue-50" : "border-gray-200 hover:border-gray-300"}`}>
+        ${focused ? "border-red-500 ring-2 ring-red-50" : "border-gray-200 hover:border-gray-300"}`}>
         <input
           type={type}
           value={value}
@@ -51,7 +51,7 @@ function Input({
           maxLength={maxLength}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          className="w-full bg-transparent px-4 py-3 text-sm text-[#0f172a] placeholder-gray-300
+          className="w-full bg-transparent px-4 py-3 text-sm text-black placeholder-gray-300
             outline-none rounded-xl pr-10"
         />
         {icon && (
@@ -74,7 +74,7 @@ function MethodBlock({
 }) {
   return (
     <div className={`rounded-2xl border-2 transition-all duration-300 overflow-hidden bg-white
-      ${active ? "border-blue-500 shadow-md shadow-blue-100" : "border-gray-100 hover:border-gray-200 shadow-sm"}`}>
+      ${active ? "border-red-500 shadow-md shadow-red-100" : "border-gray-100 hover:border-gray-200 shadow-sm"}`}>
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between px-5 py-4 text-left"
@@ -84,19 +84,19 @@ function MethodBlock({
             <Icon className="w-5 h-5" />
           </div>
           <div>
-            <p className="font-bold text-[#0f172a] text-sm">{title}</p>
+            <p className="font-bold text-black text-sm">{title}</p>
             <p className="text-gray-400 text-xs mt-0.5">{subtitle}</p>
           </div>
         </div>
         <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-colors
-          ${active ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-400"}`}>
+          ${active ? "bg-red-100 text-red-600" : "bg-gray-100 text-gray-400"}`}>
           {active ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </div>
       </button>
 
       {/* Expanded content */}
       {active && children && (
-        <div className="px-5 pb-5 pt-1 border-t border-blue-100 animate-slideDown">
+        <div className="px-5 pb-5 pt-1 border-t border-red-100 animate-slideDown">
           {children}
         </div>
       )}
@@ -145,26 +145,30 @@ export default function PaymentPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center">
-          <div className="relative inline-flex mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center">
-              <Check className="w-8 h-8 text-emerald-500" />
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center">
+            <div className="relative inline-flex mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
+                <Check className="w-8 h-8 text-red-600" />
+              </div>
+              <div className="absolute -inset-2 rounded-3xl bg-red-500/5 animate-ping" style={{ animationDuration: "2s" }} />
             </div>
-            <div className="absolute -inset-2 rounded-3xl bg-emerald-500/5 animate-ping" style={{ animationDuration: "2s" }} />
+            <h2 className="font-display font-bold text-black text-3xl mb-2">Payment Successful!</h2>
+            <p className="text-gray-400 text-sm mb-1">Order confirmed</p>
+            <p className="font-black text-red-600 text-xl mb-7">${total.toFixed(2)}</p>
+            <a href="/" className="block w-full bg-black text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-red-700 transition-colors">
+              Continue Shopping
+            </a>
           </div>
-          <h2 className="font-display font-bold text-[#0f172a] text-3xl mb-2">Payment Successful!</h2>
-          <p className="text-gray-400 text-sm mb-1">Order confirmed</p>
-          <p className="font-black text-blue-600 text-xl mb-7">${total.toFixed(2)}</p>
-          <a href="/" className="block w-full bg-[#0f172a] text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-blue-700 transition-colors">
-            Continue Shopping
-          </a>
+          <style>{`
+            @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@400;700;900&display=swap');
+            .font-display{font-family:'Cormorant Garamond',serif;}
+          `}</style>
         </div>
-        <style>{`
-          @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@400;700;900&display=swap');
-          .font-display{font-family:'Cormorant Garamond',serif;}
-        `}</style>
-      </div>
+        <Footer />
+      </>
     );
   }
 
@@ -178,15 +182,17 @@ export default function PaymentPage() {
         .animate-slideDown{animation:slideDown 0.22s ease;}
       `}</style>
 
-      <div className="min-h-screen bg-[#f8f9fb] py-8 sm:py-12">
+      <Navbar />
+
+      <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* ── Page title + SSL badge ── */}
           <div className="flex items-center justify-between mb-8">
-            <h1 className="font-black text-[#0f172a] text-2xl sm:text-3xl tracking-tight">
+            <h1 className="font-black text-black text-2xl sm:text-3xl tracking-tight">
               Payment Method
             </h1>
-            <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-200 text-emerald-700
+            <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-700
               text-[10px] font-black tracking-[0.18em] uppercase px-3 py-1.5 rounded-full">
               <ShieldCheck className="w-3.5 h-3.5" /> Secure SSL
             </div>
@@ -213,7 +219,7 @@ export default function PaymentPage() {
                         onClick={() => setUpiApp(app)}
                         className={`py-2 px-2 text-[10px] font-bold rounded-xl border transition-all
                           ${upiApp === app
-                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                            ? "border-red-500 bg-red-50 text-red-700"
                             : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
                       >
                         {app}
@@ -234,7 +240,7 @@ export default function PaymentPage() {
                 id="card" active={activeMethod === "card"} onToggle={() => setActiveMethod("card")}
                 icon={CreditCard} title="Credit / Debit / ATM Card"
                 subtitle="Visa, Mastercard, RuPay & More"
-                iconBg="bg-blue-50 text-blue-600"
+                iconBg="bg-red-50 text-red-600"
               >
                 <div className="space-y-4 pt-3">
                   <Input
@@ -273,8 +279,8 @@ export default function PaymentPage() {
                   <label className="flex items-center gap-2.5 cursor-pointer group">
                     <div
                       onClick={() => setSaveCard(!saveCard)}
-                      className={`w-4.5 h-4.5 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all flex-shrink-0
-                        ${saveCard ? "bg-blue-600 border-blue-600" : "border-gray-300 group-hover:border-blue-400"}`}
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all flex-shrink-0
+                        ${saveCard ? "bg-red-600 border-red-600" : "border-gray-300 group-hover:border-red-400"}`}
                     >
                       {saveCard && <Check className="w-3 h-3 text-white" />}
                     </div>
@@ -303,7 +309,7 @@ export default function PaymentPage() {
                         onClick={() => setBank(b)}
                         className={`py-2.5 px-2 text-[11px] font-bold rounded-xl border transition-all text-center
                           ${bank === b
-                            ? "border-blue-500 bg-blue-50 text-blue-700"
+                            ? "border-red-500 bg-red-50 text-red-700"
                             : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
                       >
                         {b}
@@ -311,7 +317,7 @@ export default function PaymentPage() {
                     ))}
                   </div>
                   {bank && (
-                    <p className="text-xs text-emerald-600 font-semibold">
+                    <p className="text-xs text-red-600 font-semibold">
                       ✓ You'll be redirected to {bank}'s secure portal
                     </p>
                   )}
@@ -326,7 +332,7 @@ export default function PaymentPage() {
                 iconBg="bg-rose-50 text-rose-500"
               >
                 <div className="pt-3">
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-700 font-medium leading-relaxed">
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-xs text-red-700 font-medium leading-relaxed">
                     ⚠️ An additional handling fee of <strong>$2.00</strong> applies for Cash on Delivery orders.
                     Payment must be made in exact change to the delivery agent.
                   </div>
@@ -336,19 +342,19 @@ export default function PaymentPage() {
 
             {/* ── RIGHT: Order Summary ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden lg:sticky lg:top-6">
-              <div className="h-1 bg-gradient-to-r from-blue-600 via-blue-400 to-blue-600" />
+              <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-red-600" />
               <div className="p-6">
-                <h2 className="font-bold text-[#0f172a] text-lg mb-5">Order Summary</h2>
+                <h2 className="font-bold text-black text-lg mb-5">Order Summary</h2>
 
                 {/* Items */}
                 <div className="space-y-3 mb-5 pb-5 border-b border-gray-100">
                   {ORDER_ITEMS.map((item, i) => (
                     <div key={i} className="flex justify-between items-start gap-3">
                       <div>
-                        <p className="text-sm font-semibold text-[#0f172a] leading-snug">{item.name}</p>
+                        <p className="text-sm font-semibold text-black leading-snug">{item.name}</p>
                         <p className="text-[11px] text-gray-400 mt-0.5">Size: {item.size} · Qty: {item.qty}</p>
                       </div>
-                      <span className="text-sm font-bold text-[#0f172a] flex-shrink-0">${item.price}.00</span>
+                      <span className="text-sm font-bold text-black flex-shrink-0">${item.price}.00</span>
                     </div>
                   ))}
                 </div>
@@ -357,31 +363,31 @@ export default function PaymentPage() {
                 <div className="space-y-3 mb-5 pb-5 border-b border-gray-100">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal</span>
-                    <span className="font-semibold text-[#0f172a]">${SUMMARY.subtotal.toFixed(2)}</span>
+                    <span className="font-semibold text-black">${SUMMARY.subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-gray-500">Shipping</span>
                     {SUMMARY.shipping === 0
-                      ? <span className="text-[10px] font-black tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">FREE</span>
-                      : <span className="font-semibold text-[#0f172a]">${SUMMARY.shipping.toFixed(2)}</span>
+                      ? <span className="text-[10px] font-black tracking-wider text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">FREE</span>
+                      : <span className="font-semibold text-black">${SUMMARY.shipping.toFixed(2)}</span>
                     }
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Tax</span>
-                    <span className="font-semibold text-[#0f172a]">${SUMMARY.tax.toFixed(2)}</span>
+                    <span className="font-semibold text-black">${SUMMARY.tax.toFixed(2)}</span>
                   </div>
                   {activeMethod === "cod" && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-amber-600">COD Fee</span>
-                      <span className="font-semibold text-amber-600">$2.00</span>
+                      <span className="text-red-600">COD Fee</span>
+                      <span className="font-semibold text-red-600">$2.00</span>
                     </div>
                   )}
                 </div>
 
                 {/* Total */}
                 <div className="flex justify-between items-center mb-6">
-                  <span className="font-bold text-[#0f172a] text-base">Total Amount</span>
-                  <span className="font-black text-blue-600 text-2xl">
+                  <span className="font-bold text-black text-base">Total Amount</span>
+                  <span className="font-black text-red-600 text-2xl">
                     ${(total + (activeMethod === "cod" ? 2 : 0)).toFixed(2)}
                   </span>
                 </div>
@@ -390,8 +396,8 @@ export default function PaymentPage() {
                 <button
                   onClick={handlePay}
                   disabled={loading}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-black
-                    text-sm tracking-wide py-4 rounded-xl transition-all shadow-md shadow-blue-200
+                  className="w-full bg-black hover:bg-red-700 disabled:bg-gray-400 text-white font-black
+                    text-sm tracking-wide py-4 rounded-xl transition-all shadow-md shadow-black/20
                     hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   {loading ? (
@@ -427,6 +433,8 @@ export default function PaymentPage() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </>
   );
 }

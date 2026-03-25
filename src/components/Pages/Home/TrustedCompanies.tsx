@@ -1,9 +1,5 @@
 "use client";
-// ─────────────────────────────────────────────────────────────────────────────
-//  PartnerCompanies.tsx - Fully Responsive with TypeScript
-//  Requires:  next, tailwindcss, framer-motion
-//  Install:   npm install framer-motion
-// ─────────────────────────────────────────────────────────────────────────────
+
 
 import React, { useEffect, useState } from "react";
 import Head from "next/head";

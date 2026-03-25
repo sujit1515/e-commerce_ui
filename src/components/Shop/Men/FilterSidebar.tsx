@@ -2,12 +2,6 @@
 import { useState } from "react";
 import { ChevronUp, ChevronDown, SlidersHorizontal, X } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  FilterSidebar.tsx  — Color · Size · Price Range
-//  No category filter (as requested). Fully collapsible sections.
-//  Mobile: slides in as a drawer overlay
-// ─────────────────────────────────────────────────────────────────────────────
-
 export interface Filters {
   colors:   string[];
   sizes:    string[];

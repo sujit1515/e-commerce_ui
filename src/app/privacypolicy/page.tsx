@@ -8,22 +8,6 @@ import {
 import Navbar from "@/components/Common/Navbar"; 
 import Footer from "@/components/Common/Footer"; 
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  PrivacyPolicyPage.tsx  — LUXE Privacy Policy
-//
-//  Fully reusable — all text lives in POLICY_DATA below.
-//  Swap brand name, dates, email, and section content freely.
-//
-//  Features:
-//   • Sticky left sidebar table-of-contents (desktop)
-//   • Active section highlight as you scroll
-//   • Collapsible accordion on mobile
-//   • Back-to-top button
-//   • Last updated badge + version pill
-//   • Key highlights summary cards at top
-//   • Responsive for all screen sizes
-// ─────────────────────────────────────────────────────────────────────────────
-
 // ── Brand / meta — EDIT THIS ──────────────────────────────────────────────────
 const META = {
   brand:       "LUXE",
@@ -36,17 +20,15 @@ const META = {
 
 // ── Highlight summary cards ────────────────────────────────────────────────────
 const HIGHLIGHTS = [
-  { icon: Eye,       color: "blue",    title: "Transparent",     desc: "We never sell your data or share it with advertisers." },
-  { icon: Lock,      color: "emerald", title: "Secure",          desc: "All data is encrypted at rest and in transit (TLS 1.3)." },
-  { icon: UserCheck, color: "amber",   title: "Your Control",    desc: "You can access, correct, or delete your data any time." },
-  { icon: Cookie,    color: "rose",    title: "Minimal Cookies", desc: "We use only essential and analytics cookies — no ad tracking." },
+  { icon: Eye,       color: "red",    title: "Transparent",     desc: "We never sell your data or share it with advertisers." },
+  { icon: Lock,      color: "black",  title: "Secure",          desc: "All data is encrypted at rest and in transit (TLS 1.3)." },
+  { icon: UserCheck, color: "red",    title: "Your Control",    desc: "You can access, correct, or delete your data any time." },
+  { icon: Cookie,    color: "black",  title: "Minimal Cookies", desc: "We use only essential and analytics cookies — no ad tracking." },
 ];
 
 const COLOR_MAP: Record<string, { bg: string; border: string; icon: string }> = {
-  blue:    { bg: "bg-blue-50",    border: "border-blue-200",    icon: "text-blue-600"    },
-  emerald: { bg: "bg-emerald-50", border: "border-emerald-200", icon: "text-emerald-600" },
-  amber:   { bg: "bg-amber-50",   border: "border-amber-200",   icon: "text-amber-600"   },
-  rose:    { bg: "bg-rose-50",    border: "border-rose-200",    icon: "text-rose-600"    },
+  red:    { bg: "bg-red-50",    border: "border-red-200",    icon: "text-red-600"    },
+  black:  { bg: "bg-gray-900",  border: "border-gray-700",   icon: "text-white"      },
 };
 
 // ── Policy sections — EDIT CONTENT HERE ──────────────────────────────────────
@@ -73,9 +55,9 @@ const SECTIONS: PolicySection[] = [
           This policy applies to all information collected through our website (<strong>luxe.com</strong>),
           mobile applications, and any related services, sales, marketing, or events.
         </p>
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex gap-3">
-          <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-          <p className="text-blue-800 text-sm font-medium leading-relaxed">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-3">
+          <CheckCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <p className="text-red-800 text-sm font-medium leading-relaxed">
             <strong>Summary:</strong> We collect only what we need, use it only for the purpose it was
             collected, never sell it to third parties, and give you full control to manage or delete it.
           </p>
@@ -92,7 +74,7 @@ const SECTIONS: PolicySection[] = [
         <p>We collect information you provide directly and information generated automatically when you use our services.</p>
 
         <div>
-          <h4 className="font-bold text-[#0f172a] text-sm mb-3">Information You Provide</h4>
+          <h4 className="font-bold text-gray-900 text-sm mb-3">Information You Provide</h4>
           <ul className="space-y-2">
             {[
               "Name, email address, phone number, and billing/shipping address when you create an account or place an order",
@@ -102,7 +84,7 @@ const SECTIONS: PolicySection[] = [
               "Reviews, feedback, or survey responses you submit",
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-1.5" />
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0 mt-1.5" />
                 {item}
               </li>
             ))}
@@ -110,7 +92,7 @@ const SECTIONS: PolicySection[] = [
         </div>
 
         <div>
-          <h4 className="font-bold text-[#0f172a] text-sm mb-3">Information Collected Automatically</h4>
+          <h4 className="font-bold text-gray-900 text-sm mb-3">Information Collected Automatically</h4>
           <ul className="space-y-2">
             {[
               "IP address, browser type, device identifiers, and operating system",
@@ -119,7 +101,7 @@ const SECTIONS: PolicySection[] = [
               "Location data (country/region level only, unless you enable precise location)",
             ].map((item, i) => (
               <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-1.5" />
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0 mt-1.5" />
                 {item}
               </li>
             ))}
@@ -147,14 +129,14 @@ const SECTIONS: PolicySection[] = [
             { title: "Marketing (opt-in)",    desc: "Send promotional emails only if you have subscribed." },
           ].map((item, i) => (
             <div key={i} className="bg-gray-50 border border-gray-100 rounded-xl p-3.5">
-              <p className="font-bold text-[#0f172a] text-sm mb-1">{item.title}</p>
-              <p className="text-gray-400 text-xs leading-relaxed">{item.desc}</p>
+              <p className="font-bold text-gray-900 text-sm mb-1">{item.title}</p>
+              <p className="text-gray-500 text-xs leading-relaxed">{item.desc}</p>
             </div>
           ))}
         </div>
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex gap-3">
-          <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-          <p className="text-amber-800 text-sm font-medium leading-relaxed">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-3">
+          <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <p className="text-red-800 text-sm font-medium leading-relaxed">
             We will <strong>never</strong> use your data for purposes incompatible with those listed above
             without your explicit consent.
           </p>
@@ -180,11 +162,11 @@ const SECTIONS: PolicySection[] = [
             { title: "With Your Consent",   desc: "Any other sharing only occurs with your explicit, informed consent, which you can revoke at any time.", type: "positive" },
           ].map((item, i) => (
             <div key={i} className={`rounded-xl border p-4 flex gap-3
-              ${item.type === "positive" ? "bg-emerald-50 border-emerald-200" : "bg-white border-gray-100 shadow-sm"}`}>
+              ${item.type === "positive" ? "bg-red-50 border-red-200" : "bg-white border-gray-100 shadow-sm"}`}>
               <span className={`w-1 rounded-full flex-shrink-0 self-stretch
-                ${item.type === "positive" ? "bg-emerald-500" : "bg-blue-200"}`} />
+                ${item.type === "positive" ? "bg-red-500" : "bg-gray-300"}`} />
               <div>
-                <p className="font-bold text-[#0f172a] text-sm mb-0.5">{item.title}</p>
+                <p className="font-bold text-gray-900 text-sm mb-0.5">{item.title}</p>
                 <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
               </div>
             </div>
@@ -221,14 +203,14 @@ const SECTIONS: PolicySection[] = [
                 { type: "Marketing",   purpose: "Not used — we do not run ad tracking", duration: "—",       required: false },
               ].map((row, i) => (
                 <tr key={i} className="hover:bg-gray-50 transition-colors">
-                  <td className="py-3 px-4 font-bold text-[#0f172a]">{row.type}</td>
+                  <td className="py-3 px-4 font-bold text-gray-900">{row.type}</td>
                   <td className="py-3 px-4 text-gray-500">{row.purpose}</td>
                   <td className="py-3 px-4 text-gray-500">{row.duration}</td>
                   <td className="py-3 px-4">
                     {row.required
-                      ? <span className="text-[10px] font-black bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Required</span>
+                      ? <span className="text-[10px] font-black bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Required</span>
                       : <span className="text-[10px] font-black bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">Optional</span>}
-                  </td>
+                   </td>
                 </tr>
               ))}
             </tbody>
@@ -261,10 +243,10 @@ const SECTIONS: PolicySection[] = [
             { title: "Incident Response Plan",  desc: "We will notify you within 72 hours of any confirmed breach." },
           ].map((item, i) => (
             <div key={i} className="flex gap-3 bg-white border border-gray-100 rounded-xl p-3.5 shadow-sm">
-              <CheckCircle className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-[#0f172a] text-sm">{item.title}</p>
-                <p className="text-gray-400 text-xs mt-0.5 leading-relaxed">{item.desc}</p>
+                <p className="font-bold text-gray-900 text-sm">{item.title}</p>
+                <p className="text-gray-500 text-xs mt-0.5 leading-relaxed">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -293,18 +275,18 @@ const SECTIONS: PolicySection[] = [
             { right: "Withdraw Consent",       desc: "Revoke previously given consent at any time with immediate effect." },
           ].map((item, i) => (
             <div key={i} className="flex gap-3 rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 font-black text-[10px]
+              <span className="w-5 h-5 rounded-full bg-red-100 text-red-600 font-black text-[10px]
                 flex items-center justify-center flex-shrink-0 mt-0.5">
                 {i + 1}
               </span>
               <div>
-                <p className="font-bold text-[#0f172a] text-sm">{item.right}</p>
-                <p className="text-gray-400 text-xs mt-0.5">{item.desc}</p>
+                <p className="font-bold text-gray-900 text-sm">{item.right}</p>
+                <p className="text-gray-500 text-xs mt-0.5">{item.desc}</p>
               </div>
             </div>
           ))}
         </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 text-sm text-blue-800 font-medium">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-800 font-medium">
           To exercise any of these rights, email us at{" "}
           <a href={`mailto:${META.email}`} className="underline font-bold">{META.email}</a>.
           We will respond within <strong>30 days</strong>.
@@ -330,7 +312,7 @@ const SECTIONS: PolicySection[] = [
             "Adequacy decisions issued by the European Commission where applicable",
           ].map((item, i) => (
             <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-              <Globe className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+              <Globe className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
               {item}
             </li>
           ))}
@@ -348,9 +330,9 @@ const SECTIONS: PolicySection[] = [
     title: "Children's Privacy",
     content: (
       <div className="space-y-4">
-        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 flex gap-3">
-          <AlertTriangle className="w-5 h-5 text-rose-600 flex-shrink-0 mt-0.5" />
-          <p className="text-rose-800 text-sm font-medium leading-relaxed">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4 flex gap-3">
+          <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+          <p className="text-red-800 text-sm font-medium leading-relaxed">
             Our services are not directed to children under the age of <strong>16</strong>.
             We do not knowingly collect personal information from children.
           </p>
@@ -358,7 +340,7 @@ const SECTIONS: PolicySection[] = [
         <p className="text-sm text-gray-600 leading-relaxed">
           If you are a parent or guardian and believe your child has provided us with personal
           information, please contact us immediately at{" "}
-          <a href={`mailto:${META.email}`} className="text-blue-600 font-semibold underline">{META.email}</a>.
+          <a href={`mailto:${META.email}`} className="text-red-600 font-semibold underline">{META.email}</a>.
           We will take steps to remove that information from our systems promptly.
         </p>
       </div>
@@ -392,7 +374,7 @@ const SECTIONS: PolicySection[] = [
                 { type: "Security & fraud logs", period: "2 years"                            },
               ].map((row, i) => (
                 <tr key={i} className="hover:bg-gray-50 transition-colors">
-                  <td className="py-3 px-4 font-semibold text-[#0f172a]">{row.type}</td>
+                  <td className="py-3 px-4 font-semibold text-gray-900">{row.type}</td>
                   <td className="py-3 px-4 text-gray-500">{row.period}</td>
                 </tr>
               ))}
@@ -419,7 +401,7 @@ const SECTIONS: PolicySection[] = [
             "Updating the 'Last Updated' date at the top of this policy",
           ].map((item, i) => (
             <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0 mt-1.5" />
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0 mt-1.5" />
               {item}
             </li>
           ))}
@@ -451,20 +433,20 @@ const SECTIONS: PolicySection[] = [
               key={label}
               href={href}
               className="flex flex-col gap-2 bg-gray-50 border border-gray-200 rounded-2xl p-4
-                hover:border-blue-300 hover:bg-blue-50 transition-all group"
+                hover:border-red-300 hover:bg-red-50 transition-all group"
             >
               <div className="w-8 h-8 rounded-xl bg-white border border-gray-200 flex items-center justify-center
-                group-hover:border-blue-300 transition-colors">
-                <Icon className="w-4 h-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                group-hover:border-red-300 transition-colors">
+                <Icon className="w-4 h-4 text-gray-400 group-hover:text-red-600 transition-colors" />
               </div>
               <p className="text-[10px] font-black tracking-widest uppercase text-gray-400">{label}</p>
-              <p className="text-sm font-semibold text-[#0f172a] leading-snug">{value}</p>
+              <p className="text-sm font-semibold text-gray-900 leading-snug">{value}</p>
             </a>
           ))}
         </div>
         <p className="text-sm text-gray-500">
           Our Data Protection Officer can be reached at{" "}
-          <a href={`mailto:dpo@luxe.com`} className="text-blue-600 font-semibold underline">dpo@luxe.com</a>.
+          <a href={`mailto:dpo@luxe.com`} className="text-red-600 font-semibold underline">dpo@luxe.com</a>.
           You also have the right to lodge a complaint with your local data protection authority.
         </p>
       </div>
@@ -498,14 +480,14 @@ function PolicyBlock({ section, index }: { section: PolicySection; index: number
     >
       {/* Section header */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-100 bg-gray-50/60">
-        <div className="w-9 h-9 rounded-xl bg-[#0f172a] flex items-center justify-center flex-shrink-0">
+        <div className="w-9 h-9 rounded-xl bg-black flex items-center justify-center flex-shrink-0">
           <Icon className="w-4 h-4 text-white" />
         </div>
         <div>
           <span className="text-[10px] font-bold tracking-[0.22em] uppercase text-gray-400">
             Section {String(index + 1).padStart(2, "0")}
           </span>
-          <h2 className="font-bold text-[#0f172a] text-base sm:text-lg leading-tight">{section.title}</h2>
+          <h2 className="font-bold text-gray-900 text-base sm:text-lg leading-tight">{section.title}</h2>
         </div>
       </div>
       {/* Content */}
@@ -523,23 +505,23 @@ function MobileAccordion({ section, index }: { section: PolicySection; index: nu
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between gap-3 px-5 py-4 text-left transition-colors
-          ${open ? "bg-blue-50" : "hover:bg-gray-50"}`}
+          ${open ? "bg-red-50" : "hover:bg-gray-50"}`}
       >
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors
-            ${open ? "bg-blue-600" : "bg-gray-100"}`}>
+            ${open ? "bg-red-600" : "bg-gray-100"}`}>
             <Icon className={`w-4 h-4 ${open ? "text-white" : "text-gray-500"}`} />
           </div>
-          <span className={`font-bold text-sm ${open ? "text-blue-700" : "text-[#0f172a]"}`}>
+          <span className={`font-bold text-sm ${open ? "text-red-700" : "text-gray-900"}`}>
             {section.title}
           </span>
         </div>
         {open
-          ? <ChevronUp   className="w-4 h-4 text-blue-500 flex-shrink-0" />
+          ? <ChevronUp   className="w-4 h-4 text-red-500 flex-shrink-0" />
           : <ChevronDown className="w-4 h-4 text-gray-400 flex-shrink-0" />}
       </button>
       {open && (
-        <div className="px-5 pb-5 pt-2 text-sm text-gray-600 leading-relaxed border-t border-blue-100">
+        <div className="px-5 pb-5 pt-2 text-sm text-gray-600 leading-relaxed border-t border-red-100">
           {section.content}
         </div>
       )}
@@ -585,34 +567,34 @@ export default function PrivacyPolicyPage() {
       {/* Add Navbar here */}
       <Navbar />
 
-      <div className="min-h-screen bg-[#f8f9fb] pt-20"> {/* Add pt-20 to account for fixed navbar height */}
+      <div className="min-h-screen bg-white pt-20"> {/* Changed to white background */}
 
         {/* ── HERO ── */}
-        <section className="relative bg-[#0f172a] overflow-hidden">
-          <div className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        <section className="relative bg-black overflow-hidden">
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
             style={{
               backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
               backgroundSize: "48px 48px",
             }}
           />
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#f8f9fb] to-transparent" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] rounded-full bg-red-600/10 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent" />
 
           <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 text-center">
             <div className="inline-flex items-center gap-2 mb-5 opacity-0" style={{ animation: "fadeUp 0.5s ease 0.1s forwards" }}>
-              <div className="h-px w-6 bg-blue-500" />
-              <span className="text-blue-400 text-[10px] font-bold tracking-[0.3em] uppercase">Legal</span>
-              <div className="h-px w-6 bg-blue-500" />
+              <div className="h-px w-6 bg-red-500" />
+              <span className="text-red-400 text-[10px] font-bold tracking-[0.3em] uppercase">Legal</span>
+              <div className="h-px w-6 bg-red-500" />
             </div>
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600/20 border border-blue-500/30 mb-6 opacity-0"
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-red-600/20 border border-red-500/30 mb-6 opacity-0"
               style={{ animation: "fadeUp 0.5s ease 0.2s forwards" }}>
-              <ShieldCheck className="w-8 h-8 text-blue-400" />
+              <ShieldCheck className="w-8 h-8 text-red-400" />
             </div>
             <h1 className="font-display font-bold text-white text-4xl sm:text-5xl lg:text-6xl leading-tight mb-5 opacity-0"
               style={{ animation: "fadeUp 0.6s ease 0.3s forwards" }}>
               Privacy Policy
             </h1>
-            <p className="text-gray-400 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-7 opacity-0"
+            <p className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-2xl mx-auto mb-7 opacity-0"
               style={{ animation: "fadeUp 0.6s ease 0.4s forwards" }}>
               We believe privacy is a right, not a privilege. This policy explains clearly and honestly
               how we collect, use, and protect your personal information.
@@ -622,7 +604,7 @@ export default function PrivacyPolicyPage() {
               <span className="text-[11px] font-bold text-gray-400 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full">
                 Last updated: {META.lastUpdated}
               </span>
-              <span className="text-[11px] font-bold text-blue-400 bg-blue-600/10 border border-blue-500/20 px-3 py-1.5 rounded-full">
+              <span className="text-[11px] font-bold text-red-400 bg-red-600/10 border border-red-500/20 px-3 py-1.5 rounded-full">
                 Version {META.version}
               </span>
             </div>
@@ -640,8 +622,8 @@ export default function PrivacyPolicyPage() {
                   <div className={`w-9 h-9 rounded-xl bg-white border ${c.border} flex items-center justify-center mb-3`}>
                     <Icon className={`w-4 h-4 ${c.icon}`} />
                   </div>
-                  <p className={`font-black text-sm mb-1 ${c.icon}`}>{title}</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
+                  <p className={`font-black text-sm mb-1 ${color === 'red' ? 'text-red-600' : 'text-white'}`}>{title}</p>
+                  <p className={`text-xs leading-relaxed ${color === 'red' ? 'text-gray-600' : 'text-gray-300'}`}>{desc}</p>
                 </div>
               );
             })}
@@ -666,13 +648,13 @@ export default function PrivacyPolicyPage() {
                       <button
                         onClick={() => scrollTo(s.id)}
                         className={`w-full flex items-center gap-2.5 px-4 py-2.5 text-left transition-all group
-                          ${isActive ? "bg-blue-50 text-blue-700" : "text-gray-500 hover:bg-gray-50 hover:text-[#0f172a]"}`}
+                          ${isActive ? "bg-red-50 text-red-700" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"}`}
                       >
-                        <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${isActive ? "text-blue-600" : "text-gray-300 group-hover:text-gray-500"}`} />
+                        <Icon className={`w-3.5 h-3.5 flex-shrink-0 ${isActive ? "text-red-600" : "text-gray-300 group-hover:text-gray-500"}`} />
                         <span className={`text-xs font-semibold leading-snug ${isActive ? "font-bold" : ""}`}>
                           {s.title}
                         </span>
-                        {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-blue-600 flex-shrink-0" />}
+                        {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-red-600 flex-shrink-0" />}
                       </button>
                     </li>
                   );
@@ -685,8 +667,8 @@ export default function PrivacyPolicyPage() {
               {SECTIONS.map((s, i) => <PolicyBlock key={s.id} section={s} index={i} />)}
 
               {/* Footer note */}
-              <div className="bg-[#0f172a] rounded-2xl p-6 sm:p-8 text-center">
-                <ShieldCheck className="w-8 h-8 text-blue-400 mx-auto mb-3" />
+              <div className="bg-black rounded-2xl p-6 sm:p-8 text-center">
+                <ShieldCheck className="w-8 h-8 text-red-400 mx-auto mb-3" />
                 <p className="font-display italic font-bold text-white text-2xl mb-2">
                   Privacy by Design
                 </p>
@@ -696,7 +678,7 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <a
                   href={`mailto:${META.email}`}
-                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white
+                  className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white
                     font-bold text-sm tracking-wide px-6 py-3 rounded-xl transition-all"
                 >
                   <Mail className="w-4 h-4" /> Contact Privacy Team
@@ -711,15 +693,15 @@ export default function PrivacyPolicyPage() {
             {SECTIONS.map((s, i) => <MobileAccordion key={s.id} section={s} index={i} />)}
 
             {/* Footer */}
-            <div className="bg-[#0f172a] rounded-2xl p-6 text-center">
-              <ShieldCheck className="w-7 h-7 text-blue-400 mx-auto mb-3" />
+            <div className="bg-black rounded-2xl p-6 text-center">
+              <ShieldCheck className="w-7 h-7 text-red-400 mx-auto mb-3" />
               <p className="font-display italic font-bold text-white text-2xl mb-2">Privacy by Design</p>
               <p className="text-gray-400 text-sm mb-5 leading-relaxed">
                 {META.brand} is built with privacy at its core. We welcome your feedback.
               </p>
               <a
                 href={`mailto:${META.email}`}
-                className="inline-flex items-center gap-2 bg-blue-600 text-white font-bold text-sm px-6 py-3 rounded-xl"
+                className="inline-flex items-center gap-2 bg-red-600 text-white font-bold text-sm px-6 py-3 rounded-xl"
               >
                 <Mail className="w-4 h-4" /> Contact Privacy Team
               </a>
@@ -735,7 +717,7 @@ export default function PrivacyPolicyPage() {
       {showTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-2xl bg-[#0f172a] hover:bg-blue-700
+          className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-2xl bg-black hover:bg-red-700
             text-white shadow-xl flex items-center justify-center transition-all hover:scale-110 active:scale-95"
         >
           <ArrowUp className="w-4 h-4" />

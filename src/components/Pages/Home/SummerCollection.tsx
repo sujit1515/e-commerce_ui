@@ -43,7 +43,12 @@ const products = [
   },
 ];
 
-function WishlistButton({ active, onToggle }) {
+interface WishlistButtonProps {
+  active: boolean;
+  onToggle: () => void;
+}
+
+function WishlistButton({ active, onToggle }: WishlistButtonProps) {
   return (
     <button
       onClick={onToggle}
@@ -62,7 +67,17 @@ function WishlistButton({ active, onToggle }) {
   );
 }
 
-function ProductCard({ product }) {
+interface Product {
+  id: number;
+  name: string;
+  category: string;
+  price: number;
+  image: string;
+  emoji: string;
+  bg: string;
+}
+
+function ProductCard({ product }: { product: Product }) {
   const [wished, setWished] = useState(false);
   const [loading, setLoading] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);

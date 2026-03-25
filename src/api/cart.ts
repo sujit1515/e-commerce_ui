@@ -4,17 +4,23 @@ import axiosInstance from "./axiosInstance";
 // ── Types
 export interface CartItem {
   _id: string;
-  product: string | { _id: string; name: string; price: number; images: string[] };
+  productId: string | { _id: string; name: string; price: number; images: string[] };
   quantity: number;
   size?: string;
   color?: string;
 }
 
 export interface AddCartPayload {
-  product: string;
+  productId: string;
   quantity: number;
   size?: string;
   color?: string;
+}
+
+export interface AddCartResponse {
+  success: boolean;
+  message: string;
+  cart: CartItem;
 }
 
 export interface UpdateCartPayload {
@@ -36,19 +42,15 @@ export const getCart = async (): Promise<CartItem[] | null> => {
 
 
 //   Add an item to cart
- 
-// In cart.ts
-export const addToCart = async (data: AddCartPayload): Promise<CartItem | null> => {
+
+export const addToCart = async (
+  data: AddCartPayload
+): Promise<AddCartResponse | null> => {
   try {
-    console.log("Sending to cart API:", data); // Add this debug log
-    
-    const res = await axiosInstance.post("/cart/add", data);
-    console.log("Cart API response:", res.data); // Add this debug log
-    
-    return res.data.cartItem;
+    const res = await axiosInstance.post<AddCartResponse>("/cart/add", data);
+    return res.data;
   } catch (error: any) {
     console.error("Add Cart Error:", error.response?.data || error.message);
-    // Throw the error so component can catch it
     throw error;
   }
 };

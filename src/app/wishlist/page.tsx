@@ -90,19 +90,18 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
   };
 
   const handleRemove = async () => {
-    setIsRemoving(true);
-    setRemoving(true);
-    
-    try {
-      const userId = localStorage.getItem("userId") || "";
-      await removeFromWishlist(item.id, userId);
-      setTimeout(() => onRemove(item.id), 300);
-    } catch (error) {
-      console.error("Failed to remove from wishlist:", error);
-      setIsRemoving(false);
-      setRemoving(false);
-    }
-  };
+  setIsRemoving(true);
+  setRemoving(true);
+
+  try {
+    await removeFromWishlist(item.id); // ✅ only productId
+    setTimeout(() => onRemove(item.id), 300);
+  } catch (error) {
+    console.error("Failed to remove from wishlist:", error);
+    setIsRemoving(false);
+    setRemoving(false);
+  }
+};
 
   return (
     <div
@@ -238,18 +237,17 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
     setTimeout(() => setCart(false), 1800);
   };
 
-  const handleRemove = async () => {
-    setIsRemoving(true);
-    
-    try {
-      const userId = localStorage.getItem("userId") || "";
-      await removeFromWishlist(item.id, userId);
-      onRemove(item.id);
-    } catch (error) {
-      console.error("Failed to remove from wishlist:", error);
-      setIsRemoving(false);
-    }
-  };
+ const handleRemove = async () => {
+  setIsRemoving(true);
+
+  try {
+    await removeFromWishlist(item.id); // ✅ FIXED
+    onRemove(item.id);
+  } catch (error) {
+    console.error("Failed to remove from wishlist:", error);
+    setIsRemoving(false);
+  }
+};
 
   return (
     <div
