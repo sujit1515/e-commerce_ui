@@ -2,10 +2,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
-  // ❌ Remove withCredentials if you're using JWT in localStorage
-  // ✅ Only keep it if your backend uses httpOnly cookies
-  // withCredentials: true,
+  baseURL: "https://e-commerce-backend-b9ku.onrender.com/api/v1"
 });
 
 // ✅ REQUEST INTERCEPTOR — attaches token to every request
@@ -29,10 +26,10 @@ axiosInstance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
-        localStorage.removeItem("token");  // ✅ clear expired token
-        localStorage.removeItem("user");   // ✅ clear user data
+        localStorage.removeItem("token");  
+        localStorage.removeItem("user");   
 
-        window.location.href = "/login";   // ✅ redirect to login (uncommented)
+        window.location.href = "/login";   
       }
     }
     return Promise.reject(error);
