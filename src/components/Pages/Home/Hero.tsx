@@ -28,7 +28,7 @@ export default function HeroBanner() {
     },
     {
       id: 3,
-      image: "/Images/Shop/Banner-3.jpg",
+      image: "/Images/Shop/banner-3.jpg",
       title: "FESTIVAL SPECIAL",
       subtitle: "Celebrate in Style with Traditional Wear",
       discount: "UP TO 60% OFF",
