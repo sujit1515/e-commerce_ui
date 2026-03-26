@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { SlidersHorizontal } from "lucide-react";
-
 import CollectionHeader from "./CollectionHeader";
 import FilterSidebar, { Filters } from "./FilterSidebar";
 import ProductGrid from "./Productgrid";

@@ -1,20 +1,15 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { 
   ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ZoomIn, 
-  Heart, Eye, Star, Ruler, Zap, ShoppingCart, Image as ImageIcon, Minus, Plus
+  Heart, Eye, Star, Ruler, Zap, ShoppingCart, Image as ImageIcon, Minus, Plus, CheckCircle
 } from "lucide-react";
-
 import { getProductById } from "@/api/product";
-import { 
-  getWishlist, 
-  toggleWishlist 
-} from "@/api/wishlist";
+import { getWishlist, toggleWishlist } from "@/api/wishlist"
+import { addToCart, getCart } from "@/api/cart";
 import Navbar from "@/components/Common/Navbar";
-import Footer from "@/components/Common/Footer";
-
 
 // TYPES
 
@@ -28,7 +23,7 @@ interface Product {
   colors?: string[];
   rating?: number;
   reviewCount?: number;
-  stock?: number; // Add stock field
+  stock?: number;
 }
 
 interface GalleryImage {
@@ -78,7 +73,7 @@ function Toast({ message, type, onClose }: { message: string; type: 'success' | 
 }
 
 // ============================================================================
-// COMPONENT: QuantitySelector (New)
+// COMPONENT: QuantitySelector
 // ============================================================================
 
 function QuantitySelector({ 
@@ -161,7 +156,7 @@ function QuantitySelector({
 }
 
 // ============================================================================
-// COMPONENT: ProductImageGallery (Mobile Optimized)
+// COMPONENT: ProductImageGallery
 // ============================================================================
 
 function ProductImageGallery({ images }: { images: GalleryImage[] }) {
@@ -208,7 +203,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
 
   return (
     <div className="flex flex-col gap-2 sm:gap-4">
-      {/* Main image - Mobile optimized with touch swipe */}
+      {/* Main image */}
       <div 
         className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-gray-100 group"
         style={{ aspectRatio: "3/4", minHeight: "280px" }}
@@ -233,7 +228,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
           />
         )}
 
-        {/* Zoom hint - hidden on mobile */}
+        {/* Zoom hint */}
         {!zoomed && !imageErrors[active] && (
           <div className="hidden sm:flex absolute top-3 sm:top-4 right-3 sm:right-4 w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-white/80 backdrop-blur-sm
             flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
@@ -246,7 +241,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
           {images[active]?.alt}
         </div>
 
-        {/* Prev / Next arrows - hidden on mobile, visible on desktop */}
+        {/* Prev / Next arrows */}
         {images.length > 1 && (
           <>
             <button
@@ -268,7 +263,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
           </>
         )}
 
-        {/* Dot indicators — mobile only with touch targets */}
+        {/* Dot indicators */}
         <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-2 sm:hidden">
           {images.map((_, i) => (
             <button
@@ -281,13 +276,13 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
           ))}
         </div>
 
-        {/* Image counter - mobile only */}
+        {/* Image counter */}
         <div className="absolute top-2 right-2 sm:hidden bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-full">
           {active + 1} / {images.length}
         </div>
       </div>
 
-      {/* Thumbnail strip - horizontal scroll on mobile, vertical on desktop */}
+      {/* Thumbnail strip */}
       {images.length > 1 && (
         <div className="flex flex-row gap-2 overflow-x-auto pb-1 sm:pb-0 scrollbar-hide">
           {images.map((img, i) => (
@@ -321,7 +316,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
 }
 
 // ============================================================================
-// COMPONENT: Accordion (Mobile Optimized)
+// COMPONENT: Accordion
 // ============================================================================
 
 function Accordion({ title, children }: { title: string; children: React.ReactNode }) {
@@ -349,53 +344,54 @@ function Accordion({ title, children }: { title: string; children: React.ReactNo
 }
 
 // ============================================================================
-// COMPONENT: ProductInfo (Mobile Optimized with Quantity)
+// COMPONENT: ProductInfo (Fixed with proper wishlist sync and cart status)
 // ============================================================================
 
 function ProductInfo({ 
   product, 
-  onToast 
+  onToast,
+  initialWishlistStatus = false,
+  onWishlistToggle,
+  isInCart = false,
+  onCartStatusChange
 }: { 
   product: ProductData;
   onToast: (message: string, type: 'success' | 'error') => void;
+  initialWishlistStatus?: boolean;
+  onWishlistToggle?: (isWishlisted: boolean) => void;
+  isInCart?: boolean;
+  onCartStatusChange?: (isInCart: boolean) => void;
 }) {
   const router = useRouter();
   const [selectedColor, setColor] = useState(product.colors[0]?.name || "");
   const [selectedSize, setSize] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [wishlisted, setWish] = useState(false);
+  const [wishlisted, setWish] = useState(initialWishlistStatus);
   const [cartFlash, setCart] = useState(false);
+  const [isAddedToCart, setIsAddedToCart] = useState(isInCart);
   const [sizeError, setSizeError] = useState(false);
   const [quantityError, setQuantityError] = useState(false);
   const [isWishlistLoading, setIsWishlistLoading] = useState(false);
   const [maxStock, setMaxStock] = useState(product.stock || 99);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  // Check if product is in wishlist on component mount
+  // Sync with initialWishlistStatus when it changes
   useEffect(() => {
-    const checkWishlistStatus = async () => {
-      try {
-        const wishlistData = await getWishlist();
-        if (wishlistData?.success && wishlistData?.wishlist) {
-          const isInWishlist = wishlistData.wishlist.items?.some(
-            (item: any) => item.productId === product._id
-          );
-          setWish(isInWishlist);
-        }
-      } catch (error) {
-        console.error("Error checking wishlist status:", error);
-      }
-    };
-    
-    checkWishlistStatus();
-  }, [product._id]);
+    console.log('ProductInfo - Wishlist status updated:', initialWishlistStatus);
+    setWish(initialWishlistStatus);
+  }, [initialWishlistStatus]);
 
-  // Update max stock when size changes (if different sizes have different stock)
+  // Sync with isInCart when it changes
+  useEffect(() => {
+    setIsAddedToCart(isInCart);
+  }, [isInCart]);
+
+  // Update max stock when size changes
   useEffect(() => {
     if (selectedSize && product.stock) {
-      // You can implement size-based stock logic here
       setMaxStock(product.stock);
     }
-    setQuantity(1); // Reset quantity when size changes
+    setQuantity(1);
   }, [selectedSize, product.stock]);
 
   const handleToggleWishlist = async () => {
@@ -406,9 +402,11 @@ function ProductInfo({
       const result = await toggleWishlist(product._id);
       
       if (result?.success) {
-        setWish(!wishlisted);
+        const newWishlistStatus = !wishlisted;
+        setWish(newWishlistStatus);
+        onWishlistToggle?.(newWishlistStatus);
         onToast(
-          !wishlisted ? "Added to wishlist" : "Removed from wishlist",
+          newWishlistStatus ? "Added to wishlist" : "Removed from wishlist",
           "success"
         );
       } else {
@@ -450,30 +448,55 @@ function ProductInfo({
     router.push(`/address?${queryParams}`);
   };
 
-  const handleCart = () => {
+  const handleCart = async () => {
     if (!selectedSize) { 
       setSizeError(true); 
       return; 
     }
     setSizeError(false);
-    
+
     if (quantity > maxStock) {
       setQuantityError(true);
       onToast(`Only ${maxStock} items available`, "error");
       return;
     }
     setQuantityError(false);
-    
-    setCart(true);
-    setTimeout(() => setCart(false), 1800);
-    onToast(`${quantity} item${quantity > 1 ? 's' : ''} added to cart`, "success");
+
+    setIsAddingToCart(true);
+    try {
+      const res = await addToCart({
+        productId: product._id,
+        quantity,
+        size: selectedSize,
+        color: selectedColor,
+      });
+
+      if (res?.success) {
+        setCart(true);
+        setIsAddedToCart(true);
+        onCartStatusChange?.(true);
+        setTimeout(() => setCart(false), 1800);
+        onToast(`${quantity} item${quantity > 1 ? 's' : ''} added to cart`, "success");
+      } else {
+        onToast(res?.message || "Failed to add to cart", "error");
+      }
+    } catch (error: any) {
+      console.error("Add to cart error:", error);
+      onToast(error?.response?.data?.message || "Something went wrong", "error");
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleGoToCart = () => {
+    router.push('/cart');
   };
 
   const totalPrice = product.price * quantity;
 
   return (
     <div className="flex flex-col gap-0">
-      {/* Top badges row - stacked on mobile */}
+      {/* Top badges */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 flex-wrap mb-4 sm:mb-5">
         <span className="bg-red-600 text-white text-[8px] sm:text-[9px] font-black tracking-[0.15em] sm:tracking-[0.18em] uppercase px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
           {product.badge}
@@ -491,7 +514,7 @@ function ProductInfo({
         {product.name}
       </h1>
 
-      {/* Price + Stars - stacked on mobile */}
+      {/* Price + Stars */}
       <div className="flex flex-col xs:flex-row xs:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <span className="font-black text-[#0f172a] text-2xl sm:text-3xl">
@@ -588,7 +611,7 @@ function ProductInfo({
         </div>
       )}
 
-      {/* Quantity Selector - New Section */}
+      {/* Quantity Selector */}
       <div className="mb-4 sm:mb-6">
         <p className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#0f172a] mb-2 sm:mb-3">
           Quantity
@@ -606,39 +629,71 @@ function ProductInfo({
         )}
       </div>
 
-      {/* CTAs - stack on mobile, row on tablet/desktop */}
+      {/* CTAs - Show different buttons based on cart status */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4 sm:mb-6">
-        <button
-          onClick={handleBuy}
-          className="w-full sm:flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-black text-xs sm:text-sm
-            tracking-[0.15em] sm:tracking-[0.18em] uppercase py-3 sm:py-4 rounded-xl sm:rounded-2xl transition-all shadow-md
-            hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2"
-        >
-          <Zap className="w-3.5 sm:w-4 h-3.5 sm:h-4" /> Buy It Now
-        </button>
+        {isAddedToCart ? (
+          <>
+            <button
+              onClick={handleGoToCart}
+              className="w-full sm:flex-1 bg-green-600 hover:bg-green-700 text-white font-black text-xs sm:text-sm
+                tracking-[0.15em] sm:tracking-[0.18em] uppercase py-4 sm:py-4 rounded-xl sm:rounded-2xl transition-all shadow-md
+                hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]"
+            >
+              <ShoppingCart className="w-4 sm:w-4 h-4 sm:h-4" /> Go to Cart
+            </button>
+            
+            <button
+              onClick={handleBuy}
+              className="w-full sm:flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-black text-xs sm:text-sm
+                tracking-[0.15em] sm:tracking-[0.18em] uppercase py-4 sm:py-4 rounded-xl sm:rounded-2xl transition-all shadow-md
+                hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]"
+            >
+              <Zap className="w-4 sm:w-4 h-4 sm:h-4" /> Buy It Now
+            </button>
+          </>
+        ) : (
+          <>
+            <button
+              onClick={handleCart}
+              disabled={isAddingToCart}
+              className="w-full sm:flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-black text-xs sm:text-sm
+                tracking-[0.15em] sm:tracking-[0.18em] uppercase py-4 sm:py-4 rounded-xl sm:rounded-2xl transition-all shadow-md
+                hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]
+                disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isAddingToCart ? (
+                <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                </svg> Adding...</>
+              ) : (
+                <><ShoppingCart className="w-4 sm:w-4 h-4 sm:h-4" /> Add to Cart</>
+              )}
+            </button>
 
-        <button
-          onClick={handleCart}
-          className="w-full sm:flex-1 border-2 border-[#0f172a] text-[#0f172a] font-black text-xs sm:text-sm
-            tracking-[0.15em] sm:tracking-[0.18em] uppercase py-3 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all
-            hover:bg-gray-50 active:scale-[0.98] flex items-center justify-center gap-2"
-        >
-          <ShoppingCart className="w-3.5 sm:w-4 h-3.5 sm:h-4" />
-          {cartFlash ? "Added ✓" : "Add to Cart"}
-        </button>
+            <button
+              onClick={handleBuy}
+              className="w-full sm:flex-1 border-2 border-[#0f172a] text-[#0f172a] font-black text-xs sm:text-sm
+                tracking-[0.15em] sm:tracking-[0.18em] uppercase py-4 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all
+                hover:bg-gray-50 active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]"
+            >
+              <Zap className="w-4 sm:w-4 h-4 sm:h-4" /> Buy It Now
+            </button>
+          </>
+        )}
         
         <button
           onClick={handleToggleWishlist}
           disabled={isWishlistLoading}
           className={`w-full sm:w-14 h-12 sm:h-14 rounded-xl sm:rounded-2xl border-2 flex items-center justify-center flex-shrink-0
-            transition-all duration-200 hover:scale-105 active:scale-95
+            transition-all duration-200 hover:scale-105 active:scale-95 min-h-[48px]
             ${isWishlistLoading ? "opacity-50 cursor-wait" : ""}
             ${wishlisted
               ? "border-red-500 bg-red-50 text-red-500"
               : "border-gray-200 text-gray-400 hover:border-gray-400"}`}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >
-          <Heart className={`w-4 sm:w-5 h-4 sm:h-5 ${wishlisted ? "fill-red-500" : ""}`} />
+          <Heart className={`w-5 sm:w-5 h-5 sm:h-5 ${wishlisted ? "fill-red-500" : ""}`} />
         </button>
       </div>
 
@@ -659,129 +714,7 @@ function ProductInfo({
 }
 
 // ============================================================================
-// COMPONENT: RecommendCard (Mobile Optimized)
-// ============================================================================
-
-function RecommendCard({ item, delay }: { item: Recommendation; delay: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [vis, setVis] = useState(false);
-  const [added, setAdded] = useState(false);
-  const [imageError, setImageError] = useState(false);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVis(true); },
-      { threshold: 0.1 }
-    );
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-
-  const handleAdd = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
-  };
-
-  return (
-    <div
-      ref={ref}
-      className={`group flex flex-col transition-all duration-500 cursor-pointer
-        ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-      style={{ transitionDelay: vis ? `${delay}ms` : "0ms" }}
-    >
-      <div
-        className="relative rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden bg-gray-100 mb-2 sm:mb-3 lg:mb-4 hover:-translate-y-1 transition-transform duration-300"
-        style={{ aspectRatio: "3/4" }}
-      >
-        {imageError ? (
-          <div className="w-full h-full flex flex-col items-center justify-center p-2 sm:p-4">
-            <ImageIcon className="w-6 sm:w-8 h-6 sm:h-8 text-gray-400 mb-1 sm:mb-2" />
-            <p className="text-gray-500 text-[8px] sm:text-xs text-center">{item.name}</p>
-          </div>
-        ) : (
-          <img
-            src={item.img}
-            alt={item.name}
-            className="w-full h-full object-cover object-top
-              group-hover:scale-[1.04] transition-transform duration-700 ease-out"
-            onError={() => setImageError(true)}
-          />
-        )}
-        
-        {/* Product name badge - hidden on mobile, show on hover desktop */}
-        <div className="hidden sm:block absolute top-2 left-2 bg-black/50 backdrop-blur-sm text-white text-[8px] lg:text-[10px] px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-          {item.name}
-        </div>
-
-        {/* Quick add button - always visible on mobile with touch target, hover on desktop */}
-        <div className="absolute bottom-0 inset-x-0 p-2 sm:p-3
-          sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300 ease-out">
-          <button
-            onClick={handleAdd}
-            className="w-full bg-[#0f172a] sm:bg-[#0f172a]/90 backdrop-blur-sm text-white text-[9px] sm:text-[10px]
-              font-bold tracking-widest uppercase py-2 sm:py-2.5 rounded-lg sm:rounded-xl
-              flex items-center justify-center gap-1 sm:gap-2 hover:bg-red-600 transition-colors"
-          >
-            <ShoppingCart className="w-2.5 sm:w-3 h-2.5 sm:h-3" />
-            <span className="xs:inline">{added ? "Added ✓" : "Add"}</span>
-          </button>
-        </div>
-      </div>
-      <h3 className="font-bold text-[#0f172a] text-xs sm:text-sm leading-snug mb-1 line-clamp-2">{item.name}</h3>
-      <p className="font-black text-[#0f172a] text-xs sm:text-sm lg:text-base">${item.price.toLocaleString()}.00</p>
-    </div>
-  );
-}
-
-// ============================================================================
-// COMPONENT: StyleRecommendations (Mobile Optimized)
-// ============================================================================
-
-function StyleRecommendations({ recommendations }: { recommendations: Recommendation[] }) {
-  const headRef = useRef<HTMLDivElement>(null);
-  const [headVis, setHeadVis] = useState(false);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setHeadVis(true); },
-      { threshold: 0.15 }
-    );
-    if (headRef.current) obs.observe(headRef.current);
-    return () => obs.disconnect();
-  }, []);
-
-  if (!recommendations.length) return null;
-
-  return (
-    <section className="bg-[#f8f9fb] py-12 sm:py-16 lg:py-20 mt-12 sm:mt-16 lg:mt-20">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          ref={headRef}
-          className={`text-center mb-8 sm:mb-10 lg:mb-12 transition-all duration-700
-            ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-        >
-          <h2 className="font-display font-bold text-[#0f172a] text-2xl sm:text-3xl lg:text-4xl mb-2">
-            Style Recommendations
-          </h2>
-          <p className="text-[10px] sm:text-[11px] font-bold tracking-[0.2em] sm:tracking-[0.25em] uppercase text-gray-400">
-            Complete Your Look
-          </p>
-        </div>
-        
-        {/* Responsive grid - 2 on mobile, 3 on tablet, 4 on desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-          {recommendations.map((item, i) => (
-            <RecommendCard key={i} item={item} delay={i * 60} />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ============================================================================
-// MAIN COMPONENT: ProductDetailPage (Responsive)
+// MAIN COMPONENT: ProductDetailPage
 // ============================================================================
 
 export default function ProductDetailPage() {
@@ -797,56 +730,106 @@ export default function ProductDetailPage() {
   const [selectedColorForMobile, setSelectedColorForMobile] = useState("");
   const [mobileQuantity, setMobileQuantity] = useState(1);
   const [maxMobileStock, setMaxMobileStock] = useState(99);
+  const [wishlistStatus, setWishlistStatus] = useState(false);
+  const [isCheckingWishlist, setIsCheckingWishlist] = useState(true);
+  const [isInCart, setIsInCart] = useState(false);
+  const [isCheckingCart, setIsCheckingCart] = useState(true);
+  const [isMobileAddingToCart, setIsMobileAddingToCart] = useState(false);
+  const [mobileIsInCart, setMobileIsInCart] = useState(false);
 
-  // 🔹 Fetch Product
- useEffect(() => {
-  const fetchProduct = async () => {
-    if (!id) return;
-
+  // Check if product is in cart
+  const checkIfInCart = async (productId: string) => {
     try {
-      const data = await getProductById(id as string);
-      console.log('Fetched product:', data);
-
-      if (!data) return; 
-
-      setProduct(data);
-      setMaxMobileStock(data.stock ?? 99); 
-
+      const cartData = await getCart();
+      if (cartData && Array.isArray(cartData)) {
+        const exists = cartData.some((item: any) => {
+          const itemProductId = item.productId || item._id;
+          return itemProductId === productId;
+        });
+        setIsInCart(exists);
+        setMobileIsInCart(exists);
+      }
     } catch (error) {
-      console.error('Error fetching product:', error);
+      console.error("Error checking cart:", error);
     } finally {
-      setLoading(false);
+      setIsCheckingCart(false);
     }
   };
 
-  fetchProduct();
-}, [id]);
-
-  // Check mobile wishlist status on product load
+  // Fetch Product and check wishlist & cart status
   useEffect(() => {
-    const checkMobileWishlistStatus = async () => {
-      if (!product) return;
-      
+    const fetchProductAndCheckStatus = async () => {
+      if (!id) return;
+
       try {
-        const wishlistData = await getWishlist();
-        if (wishlistData?.success && wishlistData?.wishlist) {
-          const isInWishlist = wishlistData.wishlist.items?.some(
-            (item: any) => item.productId === product._id
-          );
-          setMobileWishlist(isInWishlist);
+        setLoading(true);
+        setIsCheckingWishlist(true);
+        setIsCheckingCart(true);
+        
+        const productData = await getProductById(id as string);
+        console.log('Fetched product:', productData);
+
+        if (!productData) {
+          setLoading(false);
+          setIsCheckingWishlist(false);
+          setIsCheckingCart(false);
+          return;
         }
+
+        setProduct(productData);
+        setMaxMobileStock(productData.stock ?? 99);
+
+        // Check wishlist status
+        try {
+          const wishlistData = await getWishlist();
+          console.log('Wishlist data:', wishlistData);
+          
+          if (wishlistData?.success && wishlistData?.wishlist) {
+            let isInWishlist = false;
+            
+            if (Array.isArray(wishlistData.wishlist)) {
+              isInWishlist = wishlistData.wishlist.some((item: any) => {
+                const productId = item.productId || item.product?._id || item._id;
+                return productId === productData._id;
+              });
+            } else if (wishlistData.wishlist.items && Array.isArray(wishlistData.wishlist.items)) {
+              isInWishlist = wishlistData.wishlist.items.some((item: any) => {
+                const productId = item.productId || item.product?._id || item._id;
+                return productId === productData._id;
+              });
+            }
+            
+            console.log(`Product ${productData._id} is in wishlist:`, isInWishlist);
+            setWishlistStatus(isInWishlist);
+            setMobileWishlist(isInWishlist);
+          } else {
+            setWishlistStatus(false);
+            setMobileWishlist(false);
+          }
+        } catch (wishlistError) {
+          console.error("Error checking wishlist status:", wishlistError);
+          setWishlistStatus(false);
+          setMobileWishlist(false);
+        }
+
+        // Check cart status
+        await checkIfInCart(productData._id);
+
       } catch (error) {
-        console.error("Error checking mobile wishlist status:", error);
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+        setIsCheckingWishlist(false);
       }
     };
-    
-    checkMobileWishlistStatus();
-  }, [product]);
 
-  // 🔹 Sticky bar on scroll (mobile only)
+    fetchProductAndCheckStatus();
+  }, [id]);
+
+  // Sticky bar on scroll (mobile only)
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 600) {
+      if (window.scrollY > 400) {
         setStickyBar(true);
       } else {
         setStickyBar(false);
@@ -860,6 +843,17 @@ export default function ProductDetailPage() {
     setToast({ message, type });
   };
 
+  const handleWishlistToggle = (newStatus: boolean) => {
+    console.log('Wishlist toggled to:', newStatus);
+    setWishlistStatus(newStatus);
+    setMobileWishlist(newStatus);
+  };
+
+  const handleCartStatusChange = (inCart: boolean) => {
+    setIsInCart(inCart);
+    setMobileIsInCart(inCart);
+  };
+
   const handleMobileToggleWishlist = async () => {
     if (isMobileWishlistLoading || !product) return;
     
@@ -867,9 +861,11 @@ export default function ProductDetailPage() {
     try {
       const result = await toggleWishlist(product._id);
       if (result?.success) {
-        setMobileWishlist(!mobileWishlist);
+        const newStatus = !mobileWishlist;
+        setMobileWishlist(newStatus);
+        setWishlistStatus(newStatus);
         handleToast(
-          !mobileWishlist ? "Added to wishlist" : "Removed from wishlist",
+          newStatus ? "Added to wishlist" : "Removed from wishlist",
           "success"
         );
       } else {
@@ -886,16 +882,43 @@ export default function ProductDetailPage() {
     }
   };
 
-  const handleMobileAddToCart = () => {
+  const handleMobileAddToCart = async () => {
     if (!selectedSizeForMobile) {
       handleToast("Please select a size", "error");
       return;
     }
+
     if (mobileQuantity > maxMobileStock) {
       handleToast(`Only ${maxMobileStock} items available`, "error");
       return;
     }
-    handleToast(`${mobileQuantity} item${mobileQuantity > 1 ? 's' : ''} added to cart`, "success");
+
+    setIsMobileAddingToCart(true);
+    try {
+      const res = await addToCart({
+        productId: product!._id,
+        quantity: mobileQuantity,
+        size: selectedSizeForMobile,
+        color: selectedColorForMobile,
+      });
+
+      if (res?.success) {
+        setIsInCart(true);
+        setMobileIsInCart(true);
+        handleToast(`${mobileQuantity} item added to cart`, "success");
+      } else {
+        handleToast(res?.message || "Failed to add", "error");
+      }
+    } catch (error: any) {
+      console.error(error);
+      handleToast(error?.response?.data?.message || "Error adding to cart", "error");
+    } finally {
+      setIsMobileAddingToCart(false);
+    }
+  };
+
+  const handleMobileGoToCart = () => {
+    router.push('/cart');
   };
 
   const handleMobileBuyNow = () => {
@@ -919,7 +942,7 @@ export default function ProductDetailPage() {
     router.push(`/address?${queryParams}`);
   };
 
-  // 🔹 Loading State
+  // Loading State
   if (loading) {
     return (
       <>
@@ -930,12 +953,11 @@ export default function ProductDetailPage() {
             <p className="text-gray-500 text-sm sm:text-lg">Loading product...</p>
           </div>
         </div>
-        <Footer />
       </>
     );
   }
 
-  // 🔹 Product Not Found
+  // Product Not Found
   if (!product) {
     return (
       <>
@@ -943,12 +965,11 @@ export default function ProductDetailPage() {
         <div className="min-h-screen flex items-center justify-center">
           <p className="text-red-500 text-sm sm:text-lg">Product not found</p>
         </div>
-        <Footer />
       </>
     );
   }
 
-  // 🔹 Fallback images
+  // Fallback images
   const FALLBACK_IMAGES = [
     "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=800&q=85",
     "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=800&q=85",
@@ -956,7 +977,7 @@ export default function ProductDetailPage() {
     "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=85",
   ];
 
-  // 🔹 Convert images for gallery
+  // Convert images for gallery
   const galleryImages: GalleryImage[] = product.images?.length 
     ? product.images.map((img) => ({
         src: img,
@@ -967,7 +988,7 @@ export default function ProductDetailPage() {
         alt: product.name,
       }));
 
-  // 🔹 Format data for ProductInfo component
+  // Format data for ProductInfo component
   const productInfo: ProductData = {
     _id: product._id,
     badge: "New Collection",
@@ -988,14 +1009,6 @@ export default function ProductDetailPage() {
     stock: product.stock || 99,
   };
 
-  // 🔹 Mock recommendations
-  const recommendations: Recommendation[] = [
-    { name: "Cashmere Turtleneck", price: 295, img: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&q=85" },
-    { name: "Raw Edge Denim", price: 185, img: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&q=85" },
-    { name: "Chelsea Leather Boots", price: 450, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=85" },
-    { name: "Heritage Gold Watch", price: 1250, img: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&q=85" },
-  ];
-
   return (
     <>
       <style>{`
@@ -1010,8 +1023,8 @@ export default function ProductDetailPage() {
 
       <Navbar />
       
-      <div className="min-h-screen bg-white">
-        {/* Breadcrumb - hidden on mobile */}
+      <div className="min-h-screen bg-white pb-20 sm:pb-0">
+        {/* Breadcrumb */}
         <div className="hidden sm:block max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <nav className="flex items-center gap-1.5 flex-wrap">
             <span className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-gray-400">Home</span>
@@ -1024,7 +1037,7 @@ export default function ProductDetailPage() {
           </nav>
         </div>
 
-        {/* Product Layout - Stack on mobile, 2 columns on desktop */}
+        {/* Product Layout */}
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-12">
           <div className="flex flex-col lg:grid lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] gap-6 lg:gap-10 xl:gap-16">
             {/* Product Images */}
@@ -1034,23 +1047,33 @@ export default function ProductDetailPage() {
 
             {/* Product Info */}
             <div className="w-full lg:sticky lg:top-6 lg:self-start">
-              <ProductInfo product={productInfo} onToast={handleToast} />
+              {isCheckingWishlist || isCheckingCart ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+                </div>
+              ) : (
+                <ProductInfo 
+                  product={productInfo} 
+                  onToast={handleToast}
+                  initialWishlistStatus={wishlistStatus}
+                  onWishlistToggle={handleWishlistToggle}
+                  isInCart={isInCart}
+                  onCartStatusChange={handleCartStatusChange}
+                />
+              )}
             </div>
           </div>
         </div>
 
-        {/* Style Recommendations */}
-        <StyleRecommendations recommendations={recommendations} />
-
-        {/* Mobile Sticky Bar with Quantity Selector */}
-        {stickyBar && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 sm:hidden z-50 animate-in">
+        {/* Mobile Sticky Bar */}
+        {stickyBar && !isCheckingWishlist && !isCheckingCart && (
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-3 sm:hidden z-50 shadow-lg animate-in">
             <div className="space-y-2">
               <div className="flex gap-2">
                 <select
                   value={selectedSizeForMobile}
                   onChange={(e) => setSelectedSizeForMobile(e.target.value)}
-                  className="flex-1 p-2 border border-gray-200 rounded-lg text-sm"
+                  className="flex-1 p-2 border border-gray-200 rounded-lg text-sm bg-white"
                 >
                   <option value="">Select Size</option>
                   {product.sizes?.map((size) => (
@@ -1058,17 +1081,17 @@ export default function ProductDetailPage() {
                   ))}
                 </select>
                 
-                <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-2">
+                <div className="flex items-center gap-1 bg-gray-50 rounded-lg px-2 border border-gray-200">
                   <button
                     onClick={() => mobileQuantity > 1 && setMobileQuantity(mobileQuantity - 1)}
-                    className="w-7 h-7 flex items-center justify-center text-gray-600"
+                    className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-lg"
                   >
                     <Minus className="w-3 h-3" />
                   </button>
-                  <span className="w-8 text-center text-sm font-medium">{mobileQuantity}</span>
+                  <span className="w-10 text-center text-sm font-medium">{mobileQuantity}</span>
                   <button
                     onClick={() => mobileQuantity < maxMobileStock && setMobileQuantity(mobileQuantity + 1)}
-                    className="w-7 h-7 flex items-center justify-center text-gray-600"
+                    className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-lg"
                   >
                     <Plus className="w-3 h-3" />
                   </button>
@@ -1079,28 +1102,59 @@ export default function ProductDetailPage() {
                 <button
                   onClick={handleMobileToggleWishlist}
                   disabled={isMobileWishlistLoading}
-                  className={`w-12 h-12 rounded-xl border-2 flex items-center justify-center flex-shrink-0
-                    ${isMobileWishlistLoading ? "opacity-50 cursor-wait" : ""}
+                  className={`w-12 h-12 rounded-xl border-2 flex items-center justify-center flex-shrink-0 transition-all
+                    ${isMobileWishlistLoading ? "opacity-50 cursor-wait" : "active:scale-95"}
                     ${mobileWishlist
                       ? "border-red-500 bg-red-50 text-red-500"
-                      : "border-gray-200 text-gray-400"}`}
+                      : "border-gray-200 text-gray-400 hover:border-gray-400"}`}
                 >
                   <Heart className={`w-5 h-5 ${mobileWishlist ? "fill-red-500" : ""}`} />
                 </button>
-                <button
-                  onClick={handleMobileAddToCart}
-                  className="flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-black text-xs
-                    tracking-widest uppercase rounded-xl transition-all"
-                >
-                  Add to Cart ({mobileQuantity})
-                </button>
-                <button
-                  onClick={handleMobileBuyNow}
-                  className="flex-1 border-2 border-[#0f172a] text-[#0f172a] font-black text-xs
-                    tracking-widest uppercase rounded-xl transition-all"
-                >
-                  Buy Now
-                </button>
+                
+                {mobileIsInCart ? (
+                  <>
+                    <button
+                      onClick={handleMobileGoToCart}
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold text-xs
+                        tracking-wider uppercase rounded-xl transition-all py-3 active:scale-95"
+                    >
+                      <ShoppingCart className="w-4 h-4 inline mr-1" /> Go to Cart
+                    </button>
+                    <button
+                      onClick={handleMobileBuyNow}
+                      className="flex-1 border-2 border-[#0f172a] text-[#0f172a] font-bold text-xs
+                        tracking-wider uppercase rounded-xl transition-all py-3 active:scale-95 bg-white"
+                    >
+                      Buy Now
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={handleMobileAddToCart}
+                      disabled={isMobileAddingToCart}
+                      className="flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-bold text-xs
+                        tracking-wider uppercase rounded-xl transition-all py-3 active:scale-95
+                        disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isMobileAddingToCart ? (
+                        <><svg className="animate-spin w-4 h-4 inline mr-1" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                        </svg> Adding...</>
+                      ) : (
+                        <>Add to Cart ({mobileQuantity})</>
+                      )}
+                    </button>
+                    <button
+                      onClick={handleMobileBuyNow}
+                      className="flex-1 border-2 border-[#0f172a] text-[#0f172a] font-bold text-xs
+                        tracking-wider uppercase rounded-xl transition-all py-3 active:scale-95 bg-white"
+                    >
+                      Buy Now
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -1115,8 +1169,6 @@ export default function ProductDetailPage() {
           />
         )}
       </div>
-
-      <Footer />
     </>
   );
 }

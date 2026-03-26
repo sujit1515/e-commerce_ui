@@ -3,11 +3,11 @@ import { useState, useEffect, useRef } from "react";
 import {
   ShoppingBag, Trash2, Heart, Plus, Minus, Tag, X,
   ChevronRight, ShieldCheck, Truck, RefreshCcw, Star,
-  ArrowRight, Lock, Check, Gift, Package,
+  ArrowRight, Lock, Check, Gift, Package, AlertCircle
 } from "lucide-react";
 import Navbar from "@/components/Common/Navbar";
 import Footer from "@/components/Common/Footer";
-import { getCart ,updateCartQuantity, removeCartItem} from "@/api/cart";
+import { getCart, updateCartQuantity, removeCartItem, clearCart } from "@/api/cart";
 import AuthManager from "@/components/Auth/AuthManager/AuthManager";
 
 // Define Product type
@@ -66,6 +66,63 @@ const getAuthToken = (): string | null => {
 const isAuthenticated = (): boolean => {
   return !!getAuthToken();
 };
+
+// ── Clear Cart Confirmation Modal ────────────────────────────────────────────────
+interface ClearCartModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  itemCount: number;
+}
+
+function ClearCartModal({ isOpen, onClose, onConfirm, itemCount }: ClearCartModalProps) {
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+        >
+          <X className="w-4 h-4 text-gray-600" />
+        </button>
+
+        <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
+          <AlertCircle className="w-8 h-8 text-red-500" />
+        </div>
+
+        <h3 className="font-bold text-[#0f172a] text-2xl text-center mb-2">
+          Clear Cart?
+        </h3>
+        <p className="text-gray-600 text-sm text-center mb-6">
+          Are you sure you want to remove all {itemCount} item{itemCount !== 1 ? 's' : ''} from your cart? This action cannot be undone.
+        </p>
+
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={onConfirm}
+            className="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 transition-colors"
+          >
+            Yes, Clear Cart
+          </button>
+          <button
+            onClick={onClose}
+            className="w-full border border-gray-200 text-[#0f172a] font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ── Login Prompt Modal ────────────────────────────────────────────────────────
 interface LoginPromptModalProps {
@@ -373,8 +430,8 @@ function SuggestedCard({ item, onAdd }: { item: SuggestedItem; onAdd: (item: Sug
   );
 }
 
-// ── Empty state ───────────────────────────────────────────────────────────────
-function EmptyCart() {
+// ── Empty state with clear cart option (though empty) ───────────────────────────────────────────────
+function EmptyCart({ onClearCart }: { onClearCart?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="relative mb-6">
@@ -414,6 +471,7 @@ export default function CartPage() {
   const [checkoutDone, setDone] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showClearCartModal, setShowClearCartModal] = useState(false);
   const [authView, setAuthView] = useState<"login" | "signup" | "forgot-password" | "reset-password" | null>("login");
 
   // Check authentication first
@@ -464,6 +522,24 @@ export default function CartPage() {
     }
   };
 
+  // Clear cart function
+ const handleClearCart = async () => {
+  try {
+    await clearCart(); // ✅ directly call API
+
+    setItems([]); // clear UI
+    setShowClearCartModal(false);
+
+    setToast({ msg: "Cart cleared successfully", item: null as any });
+    setTimeout(() => setToast(null), 3000);
+  } catch (error) {
+    console.error("Error clearing cart:", error);
+
+    setToast({ msg: "Failed to clear cart", item: null as any });
+    setTimeout(() => setToast(null), 3000);
+  }
+};
+
   // Calculate total number of items in cart
   const totalCartItems = items.reduce((sum, item) => sum + item.qty, 0);
 
@@ -492,7 +568,7 @@ export default function CartPage() {
   };
 
   const handleUndo = () => {
-    if (!toast) return;
+    if (!toast?.item) return;
     setItems(prev => [...prev, toast.item]);
     setToast(null);
   };
@@ -616,8 +692,8 @@ export default function CartPage() {
       <div className="min-h-screen bg-[#f8f9fb]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
 
-          {/* Header */}
-          <div className="flex items-end justify-between mb-10 gap-4">
+          {/* Header with Clear Cart button */}
+          <div className="flex items-end justify-between mb-10 gap-4 flex-wrap">
             <div>
               <div className="flex items-center gap-2 mb-2">
                 <div className="h-px w-6 bg-red-600" />
@@ -634,11 +710,24 @@ export default function CartPage() {
                 </p>
               )}
             </div>
-            <a href="/mens-collection"
-              className="hidden sm:flex items-center gap-1.5 text-[11px] font-bold tracking-wider
-                uppercase text-gray-400 hover:text-red-600 transition-colors">
-              Continue Shopping <ChevronRight className="w-3.5 h-3.5" />
-            </a>
+            <div className="flex items-center gap-3">
+              {items.length > 0 && (
+                <button
+                  onClick={() => setShowClearCartModal(true)}
+                  className="flex items-center gap-1.5 px-4 py-2 bg-white border border-red-200 
+                    text-red-600 text-[11px] font-bold tracking-wider uppercase rounded-xl
+                    hover:bg-red-50 hover:border-red-300 transition-all"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  Clear Cart
+                </button>
+              )}
+              <a href="/mens-collection"
+                className="hidden sm:flex items-center gap-1.5 text-[11px] font-bold tracking-wider
+                  uppercase text-gray-400 hover:text-red-600 transition-colors">
+                Continue Shopping <ChevronRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
 
           {items.length === 0 ? (
@@ -813,6 +902,14 @@ export default function CartPage() {
 
       <Footer />
 
+      {/* Clear Cart Confirmation Modal */}
+      <ClearCartModal
+        isOpen={showClearCartModal}
+        onClose={() => setShowClearCartModal(false)}
+        onConfirm={handleClearCart}
+        itemCount={totalCartItems}
+      />
+
       {/* Login Prompt Modal */}
       <LoginPromptModal
         isOpen={showLoginPrompt}
@@ -835,9 +932,11 @@ export default function CartPage() {
           bg-[#0f172a] text-white text-sm font-semibold px-5 py-3.5 rounded-2xl shadow-2xl
           border-l-4 border-red-500 animate-toastIn whitespace-nowrap">
           <span>{toast.msg}</span>
-          <button onClick={handleUndo} className="text-red-400 hover:text-red-300 font-bold underline text-xs">
-            Undo
-          </button>
+          {toast.item && (
+            <button onClick={handleUndo} className="text-red-400 hover:text-red-300 font-bold underline text-xs">
+              Undo
+            </button>
+          )}
           <button onClick={() => setToast(null)} className="text-gray-400 hover:text-white ml-1">
             <X className="w-3.5 h-3.5" />
           </button>

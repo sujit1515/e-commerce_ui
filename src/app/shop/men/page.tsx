@@ -7,7 +7,7 @@ export default function MensCollectionpage() {
   return (
     <div>
       <Navbar/>
-      <MensCollectionPage/>
+      <MensCollectionPage/> 
       <Footer/>
     </div>
   )
