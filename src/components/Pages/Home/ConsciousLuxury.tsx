@@ -10,15 +10,15 @@ interface FeaturePillProps {
 
 const FeaturePill: React.FC<FeaturePillProps> = ({ icon, title, description }) => {
   return (
-    <div className="w-full">
+    <div className="w-full group">
       <div
-        className="w-8 sm:w-9 h-8 sm:h-9 rounded-full flex items-center justify-center mb-2 sm:mb-3"
-        style={{ backgroundColor: "#ef4444" }}
+        className="w-8 sm:w-9 h-8 sm:h-9 rounded-full flex items-center justify-center mb-2 sm:mb-3 transition-all duration-300 group-hover:scale-110"
+        style={{ backgroundColor: "#800000" }}
       >
         {icon}
       </div>
       <h4
-        className="font-semibold text-sm sm:text-base mb-1"
+        className="font-semibold text-sm sm:text-base mb-1 transition-colors duration-300 group-hover:text-maroon"
         style={{ 
           color: "#111827", 
           fontFamily: "'Cormorant Garamond', Georgia, serif",
@@ -54,7 +54,7 @@ const ConsciousLuxury: React.FC = () => {
     setImageError(true);
   };
 
-  // Icons as JSX elements
+  // Icons as JSX elements with maroon background
   const leafIcon = (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" className="w-4 sm:w-5 h-4 sm:h-5">
       <path d="M15.75 8.25c0 3.314-2.686 6-6 6a6 6 0 01-5.985-5.57C3.682 8.55 3.6 8.427 3.6 8.25c0-4.97 4.03-9 9-9 .174 0 .347.005.519.014A9.027 9.027 0 0115.75 8.25z" />
@@ -83,6 +83,35 @@ const ConsciousLuxury: React.FC = () => {
         
         svg, [class*="lucide-"] {
           font-family: inherit !important;
+        }
+        
+        /* Maroon Color Variables */
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .hover\\:text-maroon:hover {
+          color: var(--maroon);
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        /* Decorative elements */
+        .maroon-gradient-bg {
+          background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
         }
 
         /* Responsive text adjustments */
@@ -118,19 +147,23 @@ const ConsciousLuxury: React.FC = () => {
             {/* ── LEFT: Text Content ── */}
             <div className="flex-1 w-full lg:max-w-[52%] order-2 lg:order-1">
 
-              {/* Tag */}
-              <p
-                className="text-[10px] sm:text-xs font-medium tracking-[0.15em] sm:tracking-[0.2em] uppercase mb-3 sm:mb-4 text-center lg:text-left"
-                style={{ 
-                  color: "#ef4444", 
-                  fontFamily: "'Cormorant Garamond', Georgia, serif",
-                  fontWeight: 500,
-                }}
-              >
-                Our Commitment
-              </p>
+              {/* Tag with maroon color */}
+              <div className="flex items-center justify-center lg:justify-start gap-2 mb-3 sm:mb-4">
+                <div className="w-6 h-px bg-maroon/40"></div>
+                <p
+                  className="text-[10px] sm:text-xs font-medium tracking-[0.15em] sm:tracking-[0.2em] uppercase"
+                  style={{ 
+                    color: "#800000", 
+                    fontFamily: "'Cormorant Garamond', Georgia, serif",
+                    fontWeight: 500,
+                  }}
+                >
+                  Our Commitment
+                </p>
+                <div className="w-6 h-px bg-maroon/40"></div>
+              </div>
 
-              {/* Headline */}
+              {/* Headline with maroon accent */}
               <h2
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-bold leading-[1.05] mb-4 sm:mb-5 lg:mb-6 text-center lg:text-left px-2 sm:px-0"
                 style={{
@@ -139,10 +172,11 @@ const ConsciousLuxury: React.FC = () => {
                   fontWeight: 700,
                 }}
               >
-                Conscious Luxury for the Modern Individual.
+                Conscious Luxury for the{" "}
+                <span style={{ color: "#800000" }}>Modern Individual</span>.
               </h2>
 
-              {/* Body */}
+              {/* Body with maroon italic accent */}
               <p
                 className="text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8 lg:mb-10 text-center lg:text-left px-4 sm:px-6 lg:px-0"
                 style={{ 
@@ -175,16 +209,16 @@ const ConsciousLuxury: React.FC = () => {
                 />
               </div>
 
-              {/* CTA Button - Centered on mobile, left on desktop */}
+              {/* CTA Button - Maroon theme */}
               <div className="flex justify-center lg:justify-start px-4 sm:px-6 lg:px-0">
                 <button
                   className="px-6 sm:px-8 py-3 sm:py-4 text-xs sm:text-sm font-medium tracking-widest uppercase border-2 
-                    transition-all duration-300 hover:bg-red-600 hover:text-white active:scale-95 btn-transparent
-                    w-full xs:w-auto"
+                    transition-all duration-300 hover:bg-maroon hover:text-white active:scale-95 btn-transparent
+                    w-full xs:w-auto relative overflow-hidden group"
                   style={{
-                    borderColor: isHovered ? "#ef4444" : "#111827",
+                    borderColor: isHovered ? "#800000" : "#111827",
                     color: isHovered ? "#ffffff" : "#111827",
-                    backgroundColor: isHovered ? "#ef4444" : "transparent",
+                    backgroundColor: isHovered ? "#800000" : "transparent",
                     fontFamily: "'Cormorant Garamond', Georgia, serif",
                     letterSpacing: "0.1em",
                     fontWeight: 500,
@@ -192,43 +226,47 @@ const ConsciousLuxury: React.FC = () => {
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
                 >
-                  Read Our Journal
+                  <span className="relative z-10">Read Our Journal</span>
+                  <div 
+                    className="absolute inset-0 bg-maroon transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"
+                    style={{ backgroundColor: "#800000" }}
+                  ></div>
                 </button>
               </div>
             </div>
 
-            {/* ── RIGHT: Image with decorative border ── */}
+            {/* ── RIGHT: Image with decorative maroon border ── */}
             <div className="flex-1 w-full lg:max-w-[45%] flex items-center justify-center lg:justify-end order-1 lg:order-2 mb-6 lg:mb-0">
               <div className="relative w-full max-w-[380px] sm:max-w-[420px] md:max-w-[460px] lg:max-w-[480px] mx-auto lg:mx-0">
 
-                {/* Decorative red border offset behind image */}
+                {/* Decorative maroon border offset behind image */}
                 <div
-                  className="absolute rounded-xl sm:rounded-2xl"
+                  className="absolute rounded-xl sm:rounded-2xl transition-all duration-300 group-hover:translate-x-1 group-hover:translate-y-1"
                   style={{
-                    border: "2px solid #ef4444",
-                    top: "-12px sm:-14px lg:-16px",
-                    right: "-12px sm:-14px lg:-16px",
-                    bottom: "12px sm:14px lg:16px",
-                    left: "12px sm:14px lg:16px",
+                    border: "2px solid #800000",
+                    top: "-12px",
+                    right: "-12px",
+                    bottom: "12px",
+                    left: "12px",
                     zIndex: 0,
                     borderRadius: "1rem",
-                    boxShadow: "0 10px 30px rgba(239,68,68,0.1)",
+                    boxShadow: "0 10px 30px rgba(128, 0, 0, 0.15)",
                   }}
                 />
 
                 {/* Image container */}
                 <div
-                  className="relative z-10 w-full overflow-hidden rounded-xl sm:rounded-2xl shadow-lg"
+                  className="relative z-10 w-full overflow-hidden rounded-xl sm:rounded-2xl shadow-lg group"
                   style={{ 
                     backgroundColor: "#f8f8f8",
                     aspectRatio: "4/5",
-                    boxShadow: "0 20px 40px -10px rgba(0,0,0,0.1)"
+                    boxShadow: "0 20px 40px -10px rgba(128, 0, 0, 0.1)"
                   }}
                 >
                   {imageError ? (
                     <div className="w-full h-full flex items-center justify-center flex-col gap-2 sm:gap-3 p-4">
                       <span className="text-6xl sm:text-7xl md:text-8xl select-none">🧥</span>
-                      <p className="text-[10px] sm:text-xs tracking-widest uppercase text-center" style={{ color: "#9ca3af" }}>
+                      <p className="text-[10px] sm:text-xs tracking-widest uppercase text-center" style={{ color: "#800000" }}>
                         Add your image here
                       </p>
                     </div>
@@ -236,7 +274,7 @@ const ConsciousLuxury: React.FC = () => {
                     <img 
                       src="/Images/Shop/luxery-1.jpg" 
                       alt="Conscious Luxury - Sustainable fashion" 
-                      className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"
                       onError={handleImageError}
                     />

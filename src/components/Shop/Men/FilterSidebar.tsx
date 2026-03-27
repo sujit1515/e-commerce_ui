@@ -34,17 +34,17 @@ const MAX_PRICE = 1500;
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="border-b border-gray-100 pb-6 mb-6">
+    <div className="border-b border-maroon/10 pb-6 mb-6">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between mb-4 group"
       >
-        <span className="text-[11px] font-black tracking-[0.2em] uppercase text-[#0f172a]">
+        <span className="text-[11px] font-black tracking-[0.2em] uppercase text-maroon">
           {title}
         </span>
         {open
-          ? <ChevronUp   className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-700 transition-colors" />
-          : <ChevronDown className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-700 transition-colors" />
+          ? <ChevronUp   className="w-3.5 h-3.5 text-maroon/60 group-hover:text-maroon transition-colors" />
+          : <ChevronDown className="w-3.5 h-3.5 text-maroon/60 group-hover:text-maroon transition-colors" />
         }
       </button>
       {open && <div>{children}</div>}
@@ -78,23 +78,23 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
   return (
     <aside className="w-full">
       {/* Sidebar header */}
-      <div className="flex items-center justify-between mb-7 pb-4 border-b border-gray-100">
+      <div className="flex items-center justify-between mb-7 pb-4 border-b border-maroon/10">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal className="w-4 h-4 text-[#0f172a]" />
-          <span className="text-[11px] font-black tracking-[0.22em] uppercase text-[#0f172a]">
+          <SlidersHorizontal className="w-4 h-4 text-maroon" />
+          <span className="text-[11px] font-black tracking-[0.22em] uppercase text-maroon">
             Filter By
           </span>
           {activeCount > 0 && (
-            <span className="w-5 h-5 rounded-full bg-blue-600 text-white text-[10px] font-bold flex items-center justify-center">
+            <span className="w-5 h-5 rounded-full bg-maroon text-white text-[10px] font-bold flex items-center justify-center">
               {activeCount}
             </span>
           )}
         </div>
         <button
           onClick={onMobileClose}
-          className="lg:hidden p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+          className="lg:hidden p-1.5 hover:bg-maroon/5 rounded-lg transition-colors"
         >
-          <X className="w-4 h-4 text-gray-500" />
+          <X className="w-4 h-4 text-maroon/60 hover:text-maroon" />
         </button>
       </div>
 
@@ -113,12 +113,12 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
                 <span
                   className={`w-8 h-8 rounded-full border-2 block transition-all duration-200
                     ${active
-                      ? "border-blue-600 scale-110 shadow-md shadow-blue-200"
-                      : "border-gray-200 hover:border-gray-400 hover:scale-105"}
+                      ? "border-maroon scale-110 shadow-md"
+                      : "border-gray-200 hover:border-maroon/50 hover:scale-105"}
                     ${c.name === "White" ? "shadow-sm" : ""}`}
                   style={{ backgroundColor: c.hex }}
                 />
-                <span className={`text-[9px] font-semibold leading-none ${active ? "text-blue-600" : "text-gray-400"}`}>
+                <span className={`text-[9px] font-semibold leading-none ${active ? "text-maroon" : "text-gray-400"}`}>
                   {c.name}
                 </span>
               </button>
@@ -138,8 +138,8 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
                 onClick={() => toggleSize(s)}
                 className={`py-2 text-xs font-bold rounded-xl border transition-all duration-200
                   ${active
-                    ? "bg-[#0f172a] text-white border-[#0f172a] shadow-md"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-gray-800 hover:text-[#0f172a]"
+                    ? "bg-maroon text-white border-maroon shadow-md"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-maroon hover:text-maroon"
                   }`}
               >
                 {s}
@@ -161,18 +161,18 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
             onChange={e => onChange({ ...filters, priceMax: Number(e.target.value) })}
             className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
             style={{
-              background: `linear-gradient(to right,#2563eb 0%,#2563eb ${
+              background: `linear-gradient(to right,#800000 0%,#800000 ${
                 (filters.priceMax / MAX_PRICE) * 100
               }%,#e5e7eb ${(filters.priceMax / MAX_PRICE) * 100}%,#e5e7eb 100%)`,
-              accentColor: "#2563eb",
+              accentColor: "#800000",
             }}
           />
           <div className="flex items-center justify-between">
             <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
               <span className="text-[11px] font-bold text-gray-500">$0</span>
             </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-1.5">
-              <span className="text-[11px] font-bold text-blue-700">
+            <div className="bg-maroon/10 border border-maroon/20 rounded-lg px-3 py-1.5">
+              <span className="text-[11px] font-bold text-maroon">
                 ${filters.priceMax.toLocaleString()}
                 {filters.priceMax >= MAX_PRICE ? "+" : ""}
               </span>
@@ -185,7 +185,7 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
       <div className="space-y-2 pt-1">
         <button
           onClick={onApply}
-          className="w-full bg-[#0f172a] hover:bg-blue-700 text-white font-black text-[11px]
+          className="w-full bg-maroon hover:bg-maroon-dark text-white font-black text-[11px]
             tracking-[0.22em] uppercase py-3.5 rounded-xl transition-all shadow-md hover:shadow-lg
             active:scale-[0.98]"
         >
@@ -194,7 +194,7 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
         {activeCount > 0 && (
           <button
             onClick={() => onChange({ colors: [], sizes: [], priceMax: MAX_PRICE })}
-            className="w-full text-gray-400 hover:text-gray-700 text-[11px] font-semibold
+            className="w-full text-maroon/60 hover:text-maroon text-[11px] font-semibold
               tracking-wider uppercase py-2 transition-colors"
           >
             Clear All
@@ -203,16 +203,50 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
       </div>
 
       <style>{`
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .bg-maroon-dark {
+          background-color: var(--maroon-dark);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
         input[type=range]::-webkit-slider-thumb{
           -webkit-appearance:none;appearance:none;
           width:18px;height:18px;border-radius:50%;
-          background:#2563eb;border:3px solid #fff;
-          box-shadow:0 1px 8px rgba(37,99,235,.35);cursor:pointer;
+          background:#800000;border:3px solid #fff;
+          box-shadow:0 1px 8px rgba(128,0,0,.35);cursor:pointer;
         }
         input[type=range]::-moz-range-thumb{
           width:18px;height:18px;border-radius:50%;
-          background:#2563eb;border:3px solid #fff;
-          box-shadow:0 1px 8px rgba(37,99,235,.35);cursor:pointer;
+          background:#800000;border:3px solid #fff;
+          box-shadow:0 1px 8px rgba(128,0,0,.35);cursor:pointer;
+        }
+        
+        input[type=range]::-webkit-slider-runnable-track {
+          background: #e5e7eb;
+        }
+        
+        input[type=range]::-moz-range-track {
+          background: #e5e7eb;
         }
       `}</style>
     </aside>

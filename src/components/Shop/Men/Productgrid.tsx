@@ -31,52 +31,95 @@ export default function ProductGrid({
   if (products.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mb-4">
-          <ShoppingCart className="w-7 h-7 text-red-300" />
+        <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/10 flex items-center justify-center mb-4">
+          <ShoppingCart className="w-7 h-7 text-maroon/40" />
         </div>
-        <p className="font-bold text-[#0f172a] text-lg mb-1">No products found</p>
-        <p className="text-gray-400 text-sm">Try adjusting your filters</p>
+        <p className="font-bold text-maroon text-lg mb-1">No products found</p>
+        <p className="text-maroon/50 text-sm">Try adjusting your filters</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <p className="text-xs text-gray-400 font-medium mb-4 sm:mb-6">
-        Showing <span className="font-bold text-[#0f172a]">{visibleCount}</span> of <span className="font-bold text-[#0f172a]">{totalCount}</span> products
-      </p>
+    <>
+      <style>{`
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon:hover {
+          background-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
+        .hover\\:border-maroon:hover {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:text-maroon:hover {
+          color: var(--maroon);
+        }
+        
+        .fill-maroon {
+          fill: var(--maroon);
+        }
+      `}</style>
 
-      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
-        {products.map(product => (
-          <ProductCard
-            key={product._id}
-            product={product}
-            initialWishlisted={wishlistedIds.has(product._id)}
-            onWishlistToggle={onWishlistToggle}
-          />
-        ))}
-      </div>
+      <div>
+        <p className="text-xs text-maroon/50 font-medium mb-4 sm:mb-6">
+          Showing <span className="font-bold text-maroon">{visibleCount}</span> of <span className="font-bold text-maroon">{totalCount}</span> products
+        </p>
 
-      {hasMore && products.length > 0 && (
-        <div className="mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-gray-100 flex flex-col items-center gap-5">
-          <div className="w-full max-w-xs text-center">
-            <p className="text-xs text-gray-400 mb-2.5">
-              Showing {visibleCount} of {totalCount} products
-            </p>
-            <div className="h-[3px] w-full bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full bg-red-600 rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
-            </div>
-          </div>
-          <button
-            onClick={onLoadMore}
-            disabled={loading}
-            className="border border-gray-300 text-[#0f172a] text-[11px] font-black tracking-[0.2em] uppercase px-8 sm:px-10 py-3 sm:py-3.5 rounded-xl hover:bg-red-600 hover:text-white hover:border-red-600 transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {loading ? "Loading..." : "Load More"}
-          </button>
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+          {products.map(product => (
+            <ProductCard
+              key={product._id}
+              product={product}
+              initialWishlisted={wishlistedIds.has(product._id)}
+              onWishlistToggle={onWishlistToggle}
+            />
+          ))}
         </div>
-      )}
-    </div>
+
+        {hasMore && products.length > 0 && (
+          <div className="mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-maroon/10 flex flex-col items-center gap-5">
+            <div className="w-full max-w-xs text-center">
+              <p className="text-xs text-maroon/50 mb-2.5">
+                Showing {visibleCount} of {totalCount} products
+              </p>
+              <div className="h-[3px] w-full bg-maroon/10 rounded-full overflow-hidden">
+                <div className="h-full bg-maroon rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+            <button
+              onClick={onLoadMore}
+              disabled={loading}
+              className="border border-maroon/30 text-maroon text-[11px] font-black tracking-[0.2em] uppercase px-8 sm:px-10 py-3 sm:py-3.5 rounded-xl hover:bg-maroon hover:text-white hover:border-maroon transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Loading..." : "Load More"}
+            </button>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -190,7 +233,7 @@ function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: {
           className="w-full h-full object-cover object-top group-hover:scale-[1.04] transition-transform duration-700 ease-out"
         />
         {product.badge && (
-          <span className={`absolute top-2 left-2 sm:top-3 sm:left-3 text-[8px] sm:text-[9px] font-black tracking-[0.15em] uppercase px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-red-600 text-white`}>
+          <span className={`absolute top-2 left-2 sm:top-3 sm:left-3 text-[8px] sm:text-[9px] font-black tracking-[0.15em] uppercase px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-maroon text-white`}>
             {product.badge}
           </span>
         )}
@@ -204,8 +247,8 @@ function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: {
           <Heart
             className={`w-3 h-3 sm:w-4 sm:h-4 transition-colors duration-200 ${
               wishlisted
-                ? "fill-red-500 text-red-500"
-                : "fill-none text-[#0f172a]"
+                ? "fill-maroon text-maroon"
+                : "fill-none text-maroon/60"
             }`}
           />
         </button>
@@ -214,7 +257,7 @@ function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: {
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart}
-            className="w-full bg-[#0f172a]/90 backdrop-blur-sm text-white text-[11px] font-bold tracking-widest uppercase py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-maroon/90 backdrop-blur-sm text-white text-[11px] font-bold tracking-widest uppercase py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-maroon-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ShoppingCart className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             {isAddingToCart ? "Adding..." : cartFlash ? "Added ✓" : "Quick Add"}
@@ -228,17 +271,17 @@ function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: {
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${i < Math.floor(product.rating || 0) ? "fill-red-500 text-red-500" : "fill-gray-200 text-gray-200"}`}
+                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${i < Math.floor(product.rating || 0) ? "fill-maroon text-maroon" : "fill-gray-200 text-gray-200"}`}
               />
             ))}
           </div>
-          <span className="text-[9px] sm:text-[10px] text-gray-400 font-medium">({product.reviews || 0})</span>
+          <span className="text-[9px] sm:text-[10px] text-maroon/40 font-medium">({product.reviews || 0})</span>
         </div>
 
-        <h3 className="font-bold text-[#0f172a] text-xs sm:text-sm md:text-base leading-snug mb-1 line-clamp-2">
+        <h3 className="font-bold text-maroon text-xs sm:text-sm md:text-base leading-snug mb-1 line-clamp-2">
           {product.name}
         </h3>
-        <p className="text-[#0f172a] font-black text-sm sm:text-base md:text-lg mb-3 sm:mb-4">
+        <p className="text-maroon font-black text-sm sm:text-base md:text-lg mb-3 sm:mb-4">
           ${product.price.toLocaleString()}.00
         </p>
 
@@ -246,7 +289,7 @@ function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: {
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart}
-            className="w-full xs:flex-1 border border-gray-200 text-[#0f172a] text-[10px] sm:text-[11px] font-bold tracking-wider uppercase py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:border-red-600 hover:bg-red-50 hover:text-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 sm:gap-1.5"
+            className="w-full xs:flex-1 border border-maroon/20 text-maroon text-[10px] sm:text-[11px] font-bold tracking-wider uppercase py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:border-maroon hover:bg-maroon/5 hover:text-maroon transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 sm:gap-1.5"
           >
             <ShoppingCart className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             <span className="hidden xs:inline">{isAddingToCart ? "Adding..." : "Add to Cart"}</span>
@@ -255,7 +298,7 @@ function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: {
           <button
             onClick={handleBuyNow}
             disabled={isAddingToCart}
-            className="w-full xs:flex-1 bg-[#0f172a] text-white text-[10px] sm:text-[11px] font-bold tracking-wider uppercase py-2 sm:py-2.5 rounded-lg sm:rounded-xl shadow-sm hover:bg-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 sm:gap-1.5"
+            className="w-full xs:flex-1 bg-maroon text-white text-[10px] sm:text-[11px] font-bold tracking-wider uppercase py-2 sm:py-2.5 rounded-lg sm:rounded-xl shadow-sm hover:bg-maroon-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1 sm:gap-1.5"
           >
             <Zap className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
             <span className="hidden xs:inline">Buy Now</span>

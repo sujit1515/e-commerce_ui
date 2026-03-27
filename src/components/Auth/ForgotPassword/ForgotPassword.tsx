@@ -45,7 +45,7 @@ export default function ForgotPasswordPopup({
 
       if (res.success) {
         toast.success(res.message || "OTP sent to your email!");
-        onOtpSent(email); // go to OTP screen
+        onOtpSent(email);
       }
 
     } catch (error: any) {
@@ -64,101 +64,124 @@ export default function ForgotPasswordPopup({
   };
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={handleClose}>
-        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" />
-        </Transition.Child>
+    <>
+      <style>{`
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .bg-maroon-dark {
+          background-color: var(--maroon-dark);
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
+        .focus\\:ring-maroon\\/20:focus {
+          --tw-ring-color: rgba(128, 0, 0, 0.2);
+        }
+      `}</style>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-              <Dialog.Panel className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl bg-white">
-                {/* Red gradient bar at top */}
-                <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-red-600" />
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={handleClose}>
+          <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" />
+          </Transition.Child>
 
-                <div className="bg-white px-8 pt-8 pb-10">
-                  <button 
-                    onClick={handleClose} 
-                    disabled={isLoading} 
-                    className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 transition-all"
-                  >
-                    <X size={16} />
-                  </button>
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
+                <Dialog.Panel className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl bg-white">
+                  {/* Maroon gradient bar at top */}
+                  <div className="h-1 w-full bg-gradient-to-r from-maroon via-maroon-light to-maroon" />
 
-                  {/* Logo with black */}
-                  <div className="flex justify-center mb-7">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-0.5">
-                        {[1, 0.6, 0.3].map((op, i) => (
-                          <div key={i} className="w-2.5 h-2.5 rounded-full bg-black" style={{ opacity: op }} />
-                        ))}
-                      </div>
-                      <span className="text-black font-black tracking-[0.2em] text-lg">LUXE</span>
-                    </div>
-                  </div>
+                  <div className="bg-white px-8 pt-8 pb-10">
+                    <button 
+                      onClick={handleClose} 
+                      disabled={isLoading} 
+                      className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-maroon/5 hover:bg-maroon/10 text-maroon/40 hover:text-maroon transition-all"
+                    >
+                      <X size={16} />
+                    </button>
 
-                  {/* Icon with red */}
-                  <div className="flex justify-center mb-5">
-                    <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center">
-                      <Mail className="text-red-600" size={28} />
-                    </div>
-                  </div>
-
-                  <div className="text-center mb-7">
-                    <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-black tracking-tight mb-1.5">
-                      Forgot Password?
-                    </Dialog.Title>
-                    <p className="text-gray-600 text-sm">Enter your email to receive OTP</p>
-                  </div>
-
-                  {error && (
-                    <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl">
-                      <p className="text-red-600 text-sm text-center">{error}</p>
-                    </div>
-                  )}
-
-                  <form onSubmit={handleSendOtp} className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">Email Address</label>
-                      <div className="relative">
-                        <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                        <input
-                          type="email" 
-                          value={email} 
-                          onChange={(e) => { 
-                            setEmail(e.target.value); 
-                            if (error) setError(""); 
-                          }}
-                          placeholder="you@example.com" 
-                          disabled={isLoading}
-                          className={`w-full pl-10 pr-4 py-3 bg-gray-50 border ${error ? "border-red-500" : "border-gray-300"} rounded-xl text-black placeholder-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition text-sm`}
-                        />
+                    {/* Icon with maroon */}
+                    <div className="flex justify-center mb-5">
+                      <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/20 flex items-center justify-center">
+                        <Mail className="text-maroon" size={28} />
                       </div>
                     </div>
+
+                    <div className="text-center mb-7">
+                      <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-1.5">
+                        Forgot Password?
+                      </Dialog.Title>
+                      <p className="text-maroon/60 text-sm">Enter your email to receive OTP</p>
+                    </div>
+
+                    {error && (
+                      <div className="mb-5 px-4 py-3 bg-maroon/5 border border-maroon/20 rounded-xl">
+                        <p className="text-maroon text-sm text-center">{error}</p>
+                      </div>
+                    )}
+
+                    <form onSubmit={handleSendOtp} className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Email Address</label>
+                        <div className="relative">
+                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
+                          <input
+                            type="email" 
+                            value={email} 
+                            onChange={(e) => { 
+                              setEmail(e.target.value); 
+                              if (error) setError(""); 
+                            }}
+                            placeholder="you@example.com" 
+                            disabled={isLoading}
+                            className={`w-full pl-10 pr-4 py-3 bg-maroon/5 border ${error ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
+                          />
+                        </div>
+                      </div>
+
+                      <button 
+                        type="submit" 
+                        disabled={isLoading}
+                        className="w-full bg-maroon hover:bg-maroon-dark disabled:bg-maroon/50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-maroon/30 flex items-center justify-center gap-2 text-sm"
+                      >
+                        {isLoading ? <><Loader2 className="animate-spin" size={17} /> Sending OTP...</> : "Send OTP"}
+                      </button>
+                    </form>
 
                     <button 
-                      type="submit" 
+                      onClick={onSwitchToLogin} 
                       disabled={isLoading}
-                      className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 text-sm"
+                      className="flex items-center justify-center gap-2 text-maroon/60 hover:text-maroon transition mt-6 text-sm w-full font-medium"
                     >
-                      {isLoading ? <><Loader2 className="animate-spin" size={17} /> Sending OTP...</> : "Send OTP"}
+                      <ArrowLeft size={15} /> Back to Sign In
                     </button>
-                  </form>
-
-                  <button 
-                    onClick={onSwitchToLogin} 
-                    disabled={isLoading}
-                    className="flex items-center justify-center gap-2 text-gray-600 hover:text-red-600 transition mt-6 text-sm w-full font-medium"
-                  >
-                    <ArrowLeft size={15} /> Back to Sign In
-                  </button>
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
           </div>
-        </div>
-      </Dialog>
-    </Transition>
+        </Dialog>
+      </Transition>
+    </>
   );
 }

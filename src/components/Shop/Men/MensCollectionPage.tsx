@@ -182,70 +182,114 @@ export default function MensCollectionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-[1400px] mx-auto px-4 py-10">
-        <CollectionHeader
-          sortValue={sortValue}
-          onSortChange={setSortValue}
-        />
+    <>
+      <style>{`
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
+        .hover\\:border-maroon:hover {
+          border-color: var(--maroon);
+        }
+        
+        .focus\\:border-maroon:focus {
+          border-color: var(--maroon);
+        }
+        
+        .focus\\:ring-maroon:focus {
+          --tw-ring-color: rgba(128, 0, 0, 0.2);
+        }
+        
+        /* Loading spinner maroon */
+        .spinner-maroon {
+          border-bottom-color: var(--maroon) !important;
+        }
+      `}</style>
 
-        <div className="flex lg:hidden mb-6">
-          <button
-            onClick={() => setMobile(true)}
-            className="flex items-center gap-2 border px-4 py-2 rounded"
-          >
-            <SlidersHorizontal className="w-4 h-4" />
-            Filter
-          </button>
-        </div>
+      <div className="min-h-screen bg-white">
+        <div className="max-w-[1400px] mx-auto px-4 py-10">
+          <CollectionHeader
+            sortValue={sortValue}
+            onSortChange={setSortValue}
+          />
 
-        <div className="flex gap-10">
-          <div className="w-[260px] hidden lg:block">
-            <FilterSidebar
-              filters={filters}
-              onChange={setFilters}
-              onApply={handleApply}
-              mobileOpen={mobileFilterOpen}
-              onMobileClose={() => setMobile(false)}
-            />
+          <div className="flex lg:hidden mb-6">
+            <button
+              onClick={() => setMobile(true)}
+              className="flex items-center gap-2 border border-maroon/20 px-4 py-2 rounded-xl text-maroon hover:bg-maroon/5 hover:border-maroon transition-all duration-200"
+            >
+              <SlidersHorizontal className="w-4 h-4" />
+              <span className="text-sm font-medium">Filter</span>
+            </button>
           </div>
 
-          {mobileFilterOpen && (
-            <div className="fixed inset-0 z-50 lg:hidden">
-              <div className="absolute inset-0 bg-black/50" onClick={() => setMobile(false)} />
-              <div className="absolute right-0 top-0 h-full w-[300px] bg-white">
-                <FilterSidebar
-                  filters={filters}
-                  onChange={setFilters}
-                  onApply={handleApply}
-                  mobileOpen={mobileFilterOpen}
-                  onMobileClose={() => setMobile(false)}
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="flex-1">
-            {/* Show loading state for wishlist if needed */}
-            {loading && page === 1 && products.length === 0 ? (
-              <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
-              </div>
-            ) : (
-              <ProductGrid
-                products={products}
-                totalCount={totalCount}
-                visibleCount={products.length}
-                onLoadMore={handleLoadMore}
-                loading={loading}
-                hasMore={hasMore}
-                wishlistedIds={wishlistedIds}
-                onWishlistToggle={handleWishlistToggle}
+          <div className="flex gap-10">
+            <div className="w-[260px] hidden lg:block">
+              <FilterSidebar
+                filters={filters}
+                onChange={setFilters}
+                onApply={handleApply}
+                mobileOpen={mobileFilterOpen}
+                onMobileClose={() => setMobile(false)}
               />
+            </div>
+
+            {mobileFilterOpen && (
+              <div className="fixed inset-0 z-50 lg:hidden">
+                <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setMobile(false)} />
+                <div className="absolute right-0 top-0 h-full w-[300px] bg-white shadow-2xl">
+                  <FilterSidebar
+                    filters={filters}
+                    onChange={setFilters}
+                    onApply={handleApply}
+                    mobileOpen={mobileFilterOpen}
+                    onMobileClose={() => setMobile(false)}
+                  />
+                </div>
+              </div>
             )}
+
+            <div className="flex-1">
+              {/* Show loading state for wishlist if needed */}
+              {loading && page === 1 && products.length === 0 ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-maroon"></div>
+                </div>
+              ) : (
+                <ProductGrid
+                  products={products}
+                  totalCount={totalCount}
+                  visibleCount={products.length}
+                  onLoadMore={handleLoadMore}
+                  loading={loading}
+                  hasMore={hasMore}
+                  wishlistedIds={wishlistedIds}
+                  onWishlistToggle={handleWishlistToggle}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

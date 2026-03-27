@@ -58,7 +58,7 @@ function WishlistButton({ active, onToggle }: WishlistButtonProps) {
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        fill={active ? "#ef4444" : "#000000"}
+        fill={active ? "#800000" : "#000000"}
         className="w-4 h-4 transition-all duration-300 group-hover:scale-110"
       >
         <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
@@ -119,7 +119,7 @@ function ProductCard({ product }: { product: Product }) {
         className="relative rounded-xl overflow-hidden mb-4 aspect-[3/4] bg-white border border-gray-100 transition-all duration-300 group-hover:shadow-xl"
         style={{ 
           backgroundColor: product.bg,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+          boxShadow: "0 4px 20px rgba(128, 0, 0, 0.1)", // Maroon tinted shadow
         }}
       >
         <WishlistButton active={wished} onToggle={handleWishlistToggle} />
@@ -136,7 +136,7 @@ function ProductCard({ product }: { product: Product }) {
           <div className="w-full h-full flex items-center justify-center">
             <span
               className="text-[5rem] sm:text-[6rem] md:text-[7rem] select-none transition-transform duration-500 group-hover:scale-110"
-              style={{ filter: "drop-shadow(0 8px 24px rgba(0,0,0,0.08))" }}
+              style={{ filter: "drop-shadow(0 8px 24px rgba(128, 0, 0, 0.08))" }}
             >
               {product.emoji}
             </span>
@@ -148,7 +148,7 @@ function ProductCard({ product }: { product: Product }) {
       <div className="px-1">
         {/* Product Name */}
         <h3
-          className="font-semibold text-base sm:text-lg leading-tight mb-1 transition-colors duration-300 group-hover:text-red-600"
+          className="font-semibold text-base sm:text-lg leading-tight mb-1 transition-colors duration-300 group-hover:text-maroon"
           style={{ 
             color: "#000000", 
             fontFamily: "'Cormorant Garamond', Georgia, serif",
@@ -162,7 +162,7 @@ function ProductCard({ product }: { product: Product }) {
         <p 
           className="text-sm mb-2" 
           style={{ 
-            color: "#333333",
+            color: "#800000", // Maroon color
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontWeight: 400,
           }}
@@ -173,7 +173,7 @@ function ProductCard({ product }: { product: Product }) {
         {/* Price and Actions row */}
         <div className="flex items-center justify-between">
           <p 
-            className="font-semibold text-base transition-colors duration-300 group-hover:text-red-600" 
+            className="font-semibold text-base transition-colors duration-300 group-hover:text-maroon" 
             style={{ 
               color: "#000000",
               fontFamily: "'Cormorant Garamond', Georgia, serif",
@@ -183,29 +183,29 @@ function ProductCard({ product }: { product: Product }) {
             ${product.price.toFixed(2)}
           </p>
           
-          {/* Buy Now and Cart Icons */}
+          {/* Buy Now and Cart Icons - Updated to Maroon */}
           <div className="flex items-center gap-2">
-            {/* Buy Now Button */}
+            {/* Buy Now Button - Maroon */}
             <button
               onClick={handleBuyNow}
               className="text-xs font-medium px-3 py-1.5 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-md relative overflow-hidden group/buy"
               style={{
-                backgroundColor: "#000000",
+                backgroundColor: "#800000",
                 color: "#fff",
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 letterSpacing: "0.05em",
               }}
             >
-              <span className="relative z-10  cursor-pointer">Buy Now</span>
-              <div className="absolute inset-0 bg-red-600 transform scale-x-0 group-hover/buy:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <span className="relative z-10 cursor-pointer">Buy Now</span>
+              <div className="absolute inset-0 bg-black transform scale-x-0 group-hover/buy:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
             </button>
             
-            {/* Cart Icon Button */}
+            {/* Cart Icon Button - Maroon */}
             <button
               onClick={handleAddToCart}
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-lg relative overflow-hidden group/cart"
               style={{
-                backgroundColor: addedToCart ? "#10b981" : "#000000",
+                backgroundColor: addedToCart ? "#10b981" : "#800000",
                 color: "#fff",
               }}
               aria-label="Add to cart"
@@ -213,7 +213,7 @@ function ProductCard({ product }: { product: Product }) {
               <span className="relative z-10">
                 <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover/cart:rotate-12" />
               </span>
-              <div className="absolute inset-0 bg-red-600 transform scale-x-0 group-hover/cart:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <div className="absolute inset-0 bg-black transform scale-x-0 group-hover/cart:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
             </button>
           </div>
         </div>
@@ -221,7 +221,7 @@ function ProductCard({ product }: { product: Product }) {
 
       {/* Success message animation */}
       {addedToCart && (
-        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg animate-bounce z-50">
+        <div className="fixed bottom-4 right-4 bg-maroon text-white px-4 py-2 rounded-lg shadow-lg animate-bounce z-50" style={{ backgroundColor: "#800000" }}>
           Added to cart!
         </div>
       )}
@@ -235,6 +235,15 @@ export default function CuratedSelection() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
         
+        /* Brand Colors */
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --black: #000000;
+          --white: #ffffff;
+        }
+        
         /* Apply Cormorant Garamond as the primary font */
         * {
           font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
@@ -243,6 +252,11 @@ export default function CuratedSelection() {
         /* Keep icons with their original styling */
         svg, [class*="lucide-"] {
           font-family: inherit !important;
+        }
+        
+        /* Maroon hover effect class */
+        .hover-maroon:hover {
+          color: var(--maroon) !important;
         }
         
         /* Custom animations */
@@ -269,6 +283,25 @@ export default function CuratedSelection() {
         .animate-bounce {
           animation: bounce 0.5s ease-in-out;
         }
+        
+        /* Maroon text utility */
+        .text-maroon {
+          color: #800000 !important;
+        }
+        
+        .hover\\:text-maroon:hover {
+          color: #800000 !important;
+        }
+        
+        /* Button hover animations */
+        .btn-maroon {
+          transition: all 0.3s ease;
+        }
+        
+        .btn-maroon:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(128, 0, 0, 0.2);
+        }
       `}</style>
 
       <section
@@ -279,12 +312,19 @@ export default function CuratedSelection() {
         }}
       >
         <div className="max-w-6xl mx-auto">
-          {/* ── Header with Signature Style styling ── */}
+          {/* ── Header with Signature Style styling and maroon accents ── */}
           <div className="text-center mb-12 sm:mb-16" style={{ marginBottom: "3rem" }}>
+            {/* Decorative Maroon Line */}
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="h-px w-16 bg-maroon opacity-30" style={{ backgroundColor: "#800000" }}></div>
+              <div className="w-2 h-2 bg-maroon transform rotate-45 opacity-50" style={{ backgroundColor: "#800000" }}></div>
+              <div className="h-px w-16 bg-maroon opacity-30" style={{ backgroundColor: "#800000" }}></div>
+            </div>
+            
             <h2
               className="text-4xl sm:text-5xl md:text-6xl font-semibold mb-4 transition-all duration-300 hover:tracking-wider"
               style={{
-                color: "#000000",
+                color: "#800000", // Maroon color
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontWeight: 600,
                 letterSpacing: "0.25em",
@@ -295,9 +335,9 @@ export default function CuratedSelection() {
               SUMMER MINIMAL
             </h2>
             <p
-              className="text-base sm:text-lg max-w-md mx-auto italic transition-all duration-300 hover:text-red-600"
+              className="text-base sm:text-lg max-w-md mx-auto italic transition-all duration-300 hover:text-maroon"
               style={{ 
-                color: "#333333", 
+                color: "#800000", // Maroon color
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontWeight: 500,
                 fontStyle: "italic",
@@ -320,12 +360,12 @@ export default function CuratedSelection() {
             ))}
           </div>
 
-          {/* ── View All CTA ── */}
+          {/* ── View All CTA - Maroon Button with Black Hover ── */}
           <div className="mt-12 sm:mt-16 text-center" style={{ marginTop: "2rem" }}>
             <button
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:bg-red-600 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 group relative overflow-hidden"
+              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 group relative overflow-hidden btn-maroon"
               style={{
-                backgroundColor: "#000000",
+                backgroundColor: "#800000",
                 color: "#fff",
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 letterSpacing: "0.12em",
@@ -349,7 +389,7 @@ export default function CuratedSelection() {
                   />
                 </svg>
               </span>
-              <div className="absolute inset-0 bg-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <div className="absolute inset-0 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
             </button>
           </div>
         </div>

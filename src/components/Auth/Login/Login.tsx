@@ -4,8 +4,6 @@ import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { X, Mail, Lock, Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
-// Remove useRouter import
-// import { useRouter } from "next/navigation";
 import { loginApi } from "@/api/auth";
 
 interface LoginProps {
@@ -13,7 +11,7 @@ interface LoginProps {
   onClose: () => void;
   onSwitchToSignup: () => void;
   onSwitchToForgotPassword: () => void;
-  onSuccess?: () => void; // Add this prop
+  onSuccess?: () => void;
 }
 
 export default function Login({
@@ -21,10 +19,8 @@ export default function Login({
   onClose,
   onSwitchToSignup,
   onSwitchToForgotPassword,
-  onSuccess, // Add this
+  onSuccess,
 }: LoginProps) {
-  // Remove router
-  // const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "", rememberMe: false });
   const [isLoading, setIsLoading] = useState(false);
@@ -58,32 +54,29 @@ export default function Login({
       setIsLoading(true);
 
       const response = await loginApi({
-  email: formData.email,
-  password: formData.password,
-});
+        email: formData.email,
+        password: formData.password,
+      });
 
-if (response.success) {
-  const token = response.token;
-  const user = response.user;
+      if (response.success) {
+        const token = response.token;
+        const user = response.user;
 
-  localStorage.setItem("token", token || "");
-  localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token || "");
+        localStorage.setItem("user", JSON.stringify(user));
 
-  console.log("Login Token:", token);
-  console.log("Stored Token:", localStorage.getItem("token"));
+        // success popup
+        setSuccessMessage(`Welcome back, ${user?.name || formData.email.split("@")[0]}!`);
+        setShowSuccessPopup(true);
 
-  // success popup
-  setSuccessMessage(`Welcome back, ${user?.name || formData.email.split("@")[0]}!`);
-  setShowSuccessPopup(true);
+        onClose();
+        onSuccess?.();
 
-  onClose();
-  onSuccess?.();
-
-  toast.success("Login successful 🎉");
-} else {
-  toast.error(response.message || "Login failed");
-  setErrors({ general: response.message });
-}
+        toast.success("Login successful 🎉");
+      } else {
+        toast.error(response.message || "Login failed");
+        setErrors({ general: response.message });
+      }
     } catch (error: any) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     } finally {
@@ -101,9 +94,53 @@ if (response.success) {
     }
   }, [showSuccessPopup]);
 
-  // Rest of your JSX remains exactly the same, with the addition of success popup
   return (
     <>
+      <style>{`
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .bg-maroon-dark {
+          background-color: var(--maroon-dark);
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
+        .focus\\:ring-maroon\\/20:focus {
+          --tw-ring-color: rgba(128, 0, 0, 0.2);
+        }
+        
+        @keyframes shrinkWidth {
+          from {
+            width: 100%;
+          }
+          to {
+            width: 0%;
+          }
+        }
+        .animate-shrink-width {
+          animation: shrinkWidth 3s linear forwards;
+        }
+      `}</style>
+
       {/* Success Popup */}
       <Transition appear show={showSuccessPopup} as={Fragment}>
         <Dialog as="div" className="relative z-[60]" onClose={() => setShowSuccessPopup(false)}>
@@ -134,25 +171,25 @@ if (response.success) {
                   <div className="p-6">
                     <div className="flex flex-col items-center text-center">
                       {/* Success Icon */}
-                      <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-4">
-                        <CheckCircle className="w-8 h-8 text-green-600" />
+                      <div className="w-16 h-16 rounded-full bg-maroon/10 flex items-center justify-center mb-4">
+                        <CheckCircle className="w-8 h-8 text-maroon" />
                       </div>
                       
                       {/* Success Message */}
-                      <Dialog.Title className="text-xl font-bold text-gray-900 mb-2">
+                      <Dialog.Title className="text-xl font-bold text-maroon mb-2">
                         Login Successful!
                       </Dialog.Title>
-                      <p className="text-gray-600 mb-4">
+                      <p className="text-maroon/60 mb-4">
                         {successMessage}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-maroon/40">
                         You have been successfully logged in.
                       </p>
                       
                       {/* Progress bar for auto-close */}
-                      <div className="w-full h-1 bg-gray-100 rounded-full mt-6 overflow-hidden">
+                      <div className="w-full h-1 bg-maroon/10 rounded-full mt-6 overflow-hidden">
                         <div 
-                          className="h-full bg-green-600 rounded-full animate-shrink-width"
+                          className="h-full bg-maroon rounded-full animate-shrink-width"
                           style={{ 
                             animation: 'shrinkWidth 3s linear forwards',
                             transformOrigin: 'left'
@@ -178,43 +215,31 @@ if (response.success) {
             <div className="flex min-h-full items-center justify-center p-4">
               <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
                 <Dialog.Panel className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl bg-white">
-                  {/* Decorative top bar - changed to red gradient */}
-                  <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-red-600" />
+                  {/* Decorative top bar - maroon gradient */}
+                  <div className="h-1 w-full bg-gradient-to-r from-maroon via-maroon-light to-maroon" />
 
                   <div className="bg-white px-8 pt-8 pb-10">
                     {/* Close */}
                     <button 
                       onClick={onClose} 
                       disabled={isLoading} 
-                      className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 transition-all"
+                      className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-maroon/5 hover:bg-maroon/10 text-maroon/40 hover:text-maroon transition-all"
                     >
                       <X size={16} />
                     </button>
 
-                    {/* Logo mark - changed to black */}
-                    {/* <div className="flex justify-center mb-7">
-                      <div className="flex items-center gap-2">
-                        <div className="flex gap-0.5">
-                          {[1, 0.6, 0.3].map((op, i) => (
-                            <div key={i} className="w-2.5 h-2.5 rounded-full bg-black" style={{ opacity: op }} />
-                          ))}
-                        </div>
-                        <span className="text-black font-black tracking-[0.2em] text-lg">LUXE</span>
-                      </div>
-                    </div> */}
-
                     {/* Heading */}
                     <div className="text-center mb-7">
-                      <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-black tracking-tight mb-1.5">
+                      <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-1.5">
                         Welcome Back
                       </Dialog.Title>
-                      <p className="text-gray-600 text-sm">Sign in to your account to continue</p>
+                      <p className="text-maroon/60 text-sm">Sign in to your account to continue</p>
                     </div>
 
                     {/* General error */}
                     {errors.general && (
-                      <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl">
-                        <p className="text-red-600 text-sm text-center">{errors.general}</p>
+                      <div className="mb-5 px-4 py-3 bg-maroon/5 border border-maroon/20 rounded-xl">
+                        <p className="text-maroon text-sm text-center">{errors.general}</p>
                       </div>
                     )}
 
@@ -222,65 +247,65 @@ if (response.success) {
                     <form onSubmit={handleSubmit} className="space-y-4">
                       {/* Email */}
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">Email Address</label>
+                        <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Email Address</label>
                         <div className="relative">
-                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
                           <input
                             type="email" name="email" value={formData.email} onChange={handleChange}
                             placeholder="you@example.com" disabled={isLoading}
-                            className={`w-full pl-10 pr-4 py-3 bg-gray-50 border ${errors.email ? "border-red-500" : "border-gray-300"} rounded-xl text-black placeholder-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition text-sm`}
+                            className={`w-full pl-10 pr-4 py-3 bg-maroon/5 border ${errors.email ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                         </div>
-                        {errors.email && <p className="mt-1.5 text-red-500 text-xs">{errors.email}</p>}
+                        {errors.email && <p className="mt-1.5 text-maroon text-xs">{errors.email}</p>}
                       </div>
 
                       {/* Password */}
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <label className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Password</label>
+                          <label className="text-xs font-semibold text-maroon/70 uppercase tracking-wider">Password</label>
                           <button 
                             type="button" 
                             onClick={onSwitchToForgotPassword} 
                             disabled={isLoading} 
-                            className="text-xs text-red-600 hover:text-red-700 transition font-medium"
+                            className="text-xs text-maroon hover:text-maroon-dark transition font-medium"
                           >
                             Forgot password?
                           </button>
                         </div>
                         <div className="relative">
-                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
                           <input
                             type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange}
                             placeholder="Enter your password" disabled={isLoading}
-                            className={`w-full pl-10 pr-11 py-3 bg-gray-50 border ${errors.password ? "border-red-500" : "border-gray-300"} rounded-xl text-black placeholder-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition text-sm`}
+                            className={`w-full pl-10 pr-11 py-3 bg-maroon/5 border ${errors.password ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                           <button 
                             type="button" 
                             onClick={() => setShowPassword(!showPassword)} 
                             disabled={isLoading} 
-                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-600 transition"
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-maroon/40 hover:text-maroon transition"
                           >
                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                           </button>
                         </div>
-                        {errors.password && <p className="mt-1.5 text-red-500 text-xs">{errors.password}</p>}
+                        {errors.password && <p className="mt-1.5 text-maroon text-xs">{errors.password}</p>}
                       </div>
 
                       {/* Remember me */}
                       <label className="flex items-center gap-2.5 cursor-pointer group">
                         <div className="relative">
                           <input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} disabled={isLoading} className="sr-only" />
-                          <div className={`w-4 h-4 rounded border transition-all ${formData.rememberMe ? "bg-red-600 border-red-600" : "border-gray-300 bg-white"} flex items-center justify-center`}>
+                          <div className={`w-4 h-4 rounded border transition-all ${formData.rememberMe ? "bg-maroon border-maroon" : "border-maroon/20 bg-white"} flex items-center justify-center`}>
                             {formData.rememberMe && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 10"><path d="M1 5l3 4L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                           </div>
                         </div>
-                        <span className="text-sm text-gray-600 group-hover:text-black transition">Remember me for 30 days</span>
+                        <span className="text-sm text-maroon/60 group-hover:text-maroon transition">Remember me for 30 days</span>
                       </label>
 
                       {/* Submit */}
                       <button
                         type="submit" disabled={isLoading}
-                        className="w-full mt-1 bg-red-600 hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 text-sm"
+                        className="w-full mt-1 bg-maroon hover:bg-maroon-dark disabled:bg-maroon/50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-maroon/30 flex items-center justify-center gap-2 text-sm"
                       >
                         {isLoading ? <><Loader2 className="animate-spin" size={17} /> Signing in...</> : "Sign In"}
                       </button>
@@ -289,10 +314,10 @@ if (response.success) {
                     {/* Divider */}
                     <div className="relative my-6">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200" />
+                        <div className="w-full border-t border-maroon/10" />
                       </div>
                       <div className="relative flex justify-center">
-                        <span className="px-3 bg-white text-gray-500 text-xs">Or continue with</span>
+                        <span className="px-3 bg-white text-maroon/40 text-xs">Or continue with</span>
                       </div>
                     </div>
 
@@ -305,19 +330,19 @@ if (response.success) {
                         <button 
                           key={label} 
                           disabled={isLoading} 
-                          className="flex items-center justify-center gap-2.5 bg-gray-50 hover:bg-red-50 border border-gray-200 text-gray-700 hover:text-red-600 py-2.5 rounded-xl transition-all text-sm font-medium"
+                          className="flex items-center justify-center gap-2.5 bg-maroon/5 hover:bg-maroon/10 border border-maroon/20 text-maroon/70 hover:text-maroon py-2.5 rounded-xl transition-all text-sm font-medium"
                         >
                           {icon} {label}
                         </button>
                       ))}
                     </div>
 
-                    <p className="text-center text-gray-600 text-sm mt-6">
+                    <p className="text-center text-maroon/60 text-sm mt-6">
                       Don't have an account?{" "}
                       <button 
                         onClick={onSwitchToSignup} 
                         disabled={isLoading} 
-                        className="text-red-600 hover:text-red-700 font-semibold transition"
+                        className="text-maroon hover:text-maroon-dark font-semibold transition"
                       >
                         Create account
                       </button>
@@ -329,21 +354,6 @@ if (response.success) {
           </div>
         </Dialog>
       </Transition>
-
-      {/* Add the animation CSS */}
-      <style jsx>{`
-        @keyframes shrinkWidth {
-          from {
-            width: 100%;
-          }
-          to {
-            width: 0%;
-          }
-        }
-        .animate-shrink-width {
-          animation: shrinkWidth 3s linear forwards;
-        }
-      `}</style>
     </>
   );
 }

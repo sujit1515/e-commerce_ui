@@ -32,10 +32,10 @@ type SortKey = "recent" | "price-asc" | "price-desc" | "name";
 type ViewMode = "grid" | "list";
 
 const BADGE_STYLE: Record<string, string> = {
-  Bestseller: "bg-red-600 text-white",
-  New: "bg-[#0f172a] text-white",
-  Limited: "bg-red-700 text-white",
-  Sale: "bg-red-500 text-white",
+  Bestseller: "bg-maroon text-white",
+  New: "bg-maroon-dark text-white",
+  Limited: "bg-maroon-light text-white",
+  Sale: "bg-maroon text-white",
 };
 
 // ── Scroll fade-in hook ───────────────────────────────────────────────────────
@@ -61,13 +61,13 @@ function Toast({ message, onUndo, onClose }: { message: string; onUndo: () => vo
   }, [onClose]);
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3
-      bg-[#0f172a] text-white text-sm font-semibold px-5 py-3.5 rounded-2xl shadow-2xl
-      border-l-4 border-red-500 animate-toastIn">
+      bg-maroon-dark text-white text-sm font-semibold px-5 py-3.5 rounded-2xl shadow-2xl
+      border-l-4 border-maroon-light animate-toastIn">
       <span>{message}</span>
-      <button onClick={onUndo} className="text-red-400 hover:text-red-300 font-bold underline text-xs transition-colors">
+      <button onClick={onUndo} className="text-maroon-light hover:text-maroon-soft font-bold underline text-xs transition-colors">
         Undo
       </button>
-      <button onClick={onClose} className="ml-1 text-gray-400 hover:text-white transition-colors">
+      <button onClick={onClose} className="ml-1 text-white/60 hover:text-white transition-colors">
         <X className="w-3.5 h-3.5" />
       </button>
     </div>
@@ -94,7 +94,7 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
   setRemoving(true);
 
   try {
-    await removeFromWishlist(item.id); // ✅ only productId
+    await removeFromWishlist(item.id);
     setTimeout(() => onRemove(item.id), 300);
   } catch (error) {
     console.error("Failed to remove from wishlist:", error);
@@ -106,14 +106,14 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
   return (
     <div
       ref={ref}
-      className={`group flex flex-col bg-white rounded-2xl overflow-hidden border border-gray-100
+      className={`group flex flex-col bg-white rounded-2xl overflow-hidden border border-maroon/10
         shadow-sm hover:shadow-xl transition-all duration-500 hover:-translate-y-1
         ${removing ? "opacity-0 scale-95" : ""}
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
       style={{ transitionDelay: vis ? `${index * 70}ms` : "0ms" }}
     >
       {/* Image */}
-      <div className="relative overflow-hidden bg-[#f0f0ee]" style={{ aspectRatio: "3/4" }}>
+      <div className="relative overflow-hidden bg-maroon/5" style={{ aspectRatio: "3/4" }}>
         <img src={item.img} alt={item.name} className="w-full h-full object-cover object-top group-hover:scale-[1.05] transition-transform duration-700 ease-out"/>
         {item.badge && (
           <span className={`absolute top-3 left-3 text-[9px] font-black tracking-[0.15em] uppercase px-2.5 py-1 rounded-full ${BADGE_STYLE[item.badge]}`}>
@@ -122,7 +122,7 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
         )}
         {!item.inStock && (
           <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] flex items-center justify-center">
-            <span className="bg-white text-[#0f172a] text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full shadow-md border border-gray-200">
+            <span className="bg-white text-maroon text-xs font-black tracking-widest uppercase px-4 py-2 rounded-full shadow-md border border-maroon/20">
               Out of Stock
             </span>
           </div>
@@ -130,7 +130,7 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
         <button
           onClick={handleRemove}
           disabled={isRemoving}
-          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center text-maroon/60 hover:text-maroon hover:bg-maroon/10 hover:scale-110 transition-all duration-200 opacity-0 group-hover:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isRemoving ? (
             <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
@@ -142,7 +142,7 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
           )}
         </button>
         <div className="absolute bottom-0 inset-x-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
-          <button className="w-full bg-white/90 backdrop-blur-sm text-[#0f172a] text-[10px] font-bold tracking-widest uppercase py-2 rounded-xl flex items-center justify-center gap-1.5 hover:bg-white transition-colors">
+          <button className="w-full bg-white/90 backdrop-blur-sm text-maroon text-[10px] font-bold tracking-widest uppercase py-2 rounded-xl flex items-center justify-center gap-1.5 hover:bg-white transition-colors">
             <Eye className="w-3 h-3" /> Quick View
           </button>
         </div>
@@ -156,24 +156,24 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
               key={i} 
               className={`w-2.5 h-2.5 ${
                 i < Math.floor(item.rating) 
-                  ? "fill-red-500 text-red-500" 
-                  : "fill-gray-200 text-gray-200"
+                  ? "fill-maroon text-maroon" 
+                  : "fill-maroon/20 text-maroon/20"
               }`} 
             />
           ))}
-          <span className="text-[10px] text-gray-400 ml-0.5">({item.reviews})</span>
+          <span className="text-[10px] text-maroon/40 ml-0.5">({item.reviews})</span>
         </div>
 
-        <p className="text-[10px] text-gray-400 font-semibold tracking-wider uppercase mb-0.5">{item.category}</p>
-        <h3 className="font-bold text-[#0f172a] text-sm leading-snug mb-2">{item.name}</h3>
+        <p className="text-[10px] text-maroon/50 font-semibold tracking-wider uppercase mb-0.5">{item.category}</p>
+        <h3 className="font-bold text-maroon text-sm leading-snug mb-2">{item.name}</h3>
 
         <div className="flex items-center gap-2 mb-3">
-          <span className="font-black text-[#0f172a] text-base">${item.price.toLocaleString()}</span>
+          <span className="font-black text-maroon text-base">${item.price.toLocaleString()}</span>
           {item.originalPrice && (
-            <span className="text-gray-300 text-xs line-through font-medium">${item.originalPrice.toLocaleString()}</span>
+            <span className="text-maroon/30 text-xs line-through font-medium">${item.originalPrice.toLocaleString()}</span>
           )}
           {item.originalPrice && (
-            <span className="text-[9px] font-black text-red-600 bg-red-50 px-1.5 py-0.5 rounded-full">
+            <span className="text-[9px] font-black text-maroon bg-maroon/10 px-1.5 py-0.5 rounded-full">
               -{Math.round((1 - item.price / item.originalPrice) * 100)}%
             </span>
           )}
@@ -187,8 +187,8 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
                 onClick={() => setSize(s)}
                 className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition-all ${
                   selectedSize === s 
-                    ? "border-[#0f172a] bg-[#0f172a] text-white" 
-                    : "border-gray-200 text-gray-500 hover:border-red-400 hover:text-red-500"
+                    ? "border-maroon bg-maroon text-white" 
+                    : "border-maroon/20 text-maroon/60 hover:border-maroon hover:text-maroon"
                 }`}
               >
                 {s}
@@ -202,18 +202,18 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
           disabled={!item.inStock || isRemoving}
           className={`mt-auto w-full py-2.5 rounded-xl text-[11px] font-black tracking-wider uppercase flex items-center justify-center gap-1.5 transition-all duration-200
             ${!item.inStock 
-              ? "bg-gray-100 text-gray-300 cursor-not-allowed" 
+              ? "bg-maroon/10 text-maroon/40 cursor-not-allowed" 
               : !selectedSize 
-                ? "bg-gray-100 text-gray-400 hover:bg-[#0f172a] hover:text-white border border-dashed border-gray-300" 
+                ? "bg-maroon/10 text-maroon/60 hover:bg-maroon hover:text-white border border-dashed border-maroon/30" 
                 : cartFlash 
-                  ? "bg-[#0f172a] text-white shadow-md border-l-4 border-red-500" 
-                  : "bg-[#0f172a] text-white hover:bg-red-600 shadow-md hover:shadow-lg"
+                  ? "bg-maroon text-white shadow-md border-l-4 border-maroon-light" 
+                  : "bg-maroon text-white hover:bg-maroon-dark shadow-md hover:shadow-lg"
             }`}
         >
           {!item.inStock 
             ? "Notify Me" 
             : cartFlash 
-              ? <><Check className="w-3.5 h-3.5 text-red-500" /> Added!</> 
+              ? <><Check className="w-3.5 h-3.5 text-maroon-light" /> Added!</> 
               : !selectedSize 
                 ? "Select Size" 
                 : <><ShoppingCart className="w-3.5 h-3.5" /> Add to Cart</>}
@@ -241,7 +241,7 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
   setIsRemoving(true);
 
   try {
-    await removeFromWishlist(item.id); // ✅ FIXED
+    await removeFromWishlist(item.id);
     onRemove(item.id);
   } catch (error) {
     console.error("Failed to remove from wishlist:", error);
@@ -252,27 +252,27 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
   return (
     <div
       ref={ref}
-      className={`group flex gap-4 sm:gap-6 bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg p-4 sm:p-5 transition-all duration-500 ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
+      className={`group flex gap-4 sm:gap-6 bg-white rounded-2xl border border-maroon/10 shadow-sm hover:shadow-lg p-4 sm:p-5 transition-all duration-500 ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
       style={{ transitionDelay: vis ? `${index * 60}ms` : "0ms" }}
     >
       {/* Image */}
-      <div className="relative rounded-xl overflow-hidden bg-[#f0f0ee] flex-shrink-0 w-24 h-28 sm:w-32 sm:h-36">
+      <div className="relative rounded-xl overflow-hidden bg-maroon/5 flex-shrink-0 w-24 h-28 sm:w-32 sm:h-36">
         <img src={item.img} alt={item.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"/>
         {item.badge && <span className={`absolute top-2 left-2 text-[8px] font-black tracking-wider uppercase px-1.5 py-0.5 rounded-full ${BADGE_STYLE[item.badge]}`}>{item.badge}</span>}
-        {!item.inStock && <div className="absolute inset-0 bg-white/70 flex items-center justify-center"><span className="text-[9px] font-black text-gray-500 tracking-wider uppercase">Out of Stock</span></div>}
+        {!item.inStock && <div className="absolute inset-0 bg-white/70 flex items-center justify-center"><span className="text-[9px] font-black text-maroon/50 tracking-wider uppercase">Out of Stock</span></div>}
       </div>
 
       {/* Content */}
       <div className="flex-1 min-w-0 flex flex-col">
         <div className="flex items-start justify-between gap-2 mb-1">
           <div className="min-w-0">
-            <p className="text-[10px] text-gray-400 font-bold tracking-wider uppercase mb-0.5">{item.category}</p>
-            <h3 className="font-bold text-[#0f172a] text-sm sm:text-base leading-snug truncate">{item.name}</h3>
+            <p className="text-[10px] text-maroon/50 font-bold tracking-wider uppercase mb-0.5">{item.category}</p>
+            <h3 className="font-bold text-maroon text-sm sm:text-base leading-snug truncate">{item.name}</h3>
           </div>
           <button 
             onClick={handleRemove} 
             disabled={isRemoving}
-            className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-red-50 flex items-center justify-center text-gray-300 hover:text-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-maroon/10 flex items-center justify-center text-maroon/40 hover:text-maroon transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isRemoving ? (
               <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
@@ -292,15 +292,15 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
                 key={i} 
                 className={`w-3 h-3 ${
                   i < Math.floor(item.rating) 
-                    ? "fill-red-500 text-red-500" 
-                    : "fill-gray-200 text-gray-200"
+                    ? "fill-maroon text-maroon" 
+                    : "fill-maroon/20 text-maroon/20"
                 }`} 
               />
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-black text-[#0f172a] text-sm sm:text-base">${item.price.toLocaleString()}</span>
-            {item.originalPrice && <span className="text-gray-300 text-xs line-through">${item.originalPrice.toLocaleString()}</span>}
+            <span className="font-black text-maroon text-sm sm:text-base">${item.price.toLocaleString()}</span>
+            {item.originalPrice && <span className="text-maroon/30 text-xs line-through">${item.originalPrice.toLocaleString()}</span>}
           </div>
         </div>
 
@@ -312,8 +312,8 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
                 onClick={() => setSize(s)} 
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-all ${
                   selectedSize === s 
-                    ? "border-[#0f172a] bg-[#0f172a] text-white" 
-                    : "border-gray-200 text-gray-400 hover:border-red-400 hover:text-red-500"
+                    ? "border-maroon bg-maroon text-white" 
+                    : "border-maroon/20 text-maroon/50 hover:border-maroon hover:text-maroon"
                 }`}
               >
                 {s}
@@ -327,14 +327,14 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
           disabled={!item.inStock || isRemoving} 
           className={`self-start flex items-center gap-1.5 text-[11px] font-black tracking-wider uppercase px-4 py-2 rounded-xl transition-all 
             ${!item.inStock 
-              ? "bg-gray-100 text-gray-300 cursor-not-allowed" 
+              ? "bg-maroon/10 text-maroon/40 cursor-not-allowed" 
               : cartFlash 
-                ? "bg-[#0f172a] text-white border-l-4 border-red-500" 
-                : "bg-[#0f172a] text-white hover:bg-red-600 shadow-sm"
+                ? "bg-maroon text-white border-l-4 border-maroon-light" 
+                : "bg-maroon text-white hover:bg-maroon-dark shadow-sm"
             }`}
         >
           {cartFlash 
-            ? <><Check className="w-3 h-3 text-red-500" /> Added</> 
+            ? <><Check className="w-3 h-3 text-maroon-light" /> Added</> 
             : <><ShoppingCart className="w-3 h-3" /> {selectedSize ? "Add to Cart" : "Select Size"}</>}
         </button>
       </div>
@@ -347,18 +347,18 @@ function EmptyState() {
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="relative mb-6">
-        <div className="w-24 h-24 rounded-3xl bg-red-50 border-2 border-red-100 flex items-center justify-center shadow-lg">
-          <Heart className="w-10 h-10 text-red-300" />
+        <div className="w-24 h-24 rounded-3xl bg-maroon/5 border-2 border-maroon/10 flex items-center justify-center shadow-lg">
+          <Heart className="w-10 h-10 text-maroon/40" />
         </div>
-        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-[#0f172a] flex items-center justify-center shadow-md">
+        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-maroon flex items-center justify-center shadow-md">
           <Sparkles className="w-4 h-4 text-white" />
         </div>
       </div>
-      <h2 className="font-display font-bold text-[#0f172a] text-3xl mb-2">Your wishlist is empty</h2>
-      <p className="text-gray-400 text-sm max-w-xs mb-8 leading-relaxed">
+      <h2 className="font-display font-bold text-maroon text-3xl mb-2">Your wishlist is empty</h2>
+      <p className="text-maroon/50 text-sm max-w-xs mb-8 leading-relaxed">
         Discover pieces worth keeping. Add your favourites and they'll appear right here.
       </p>
-      <a href="/mens-collection" className="flex items-center gap-2 bg-[#0f172a] hover:bg-red-600 text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-[0.98]">
+      <a href="/mens-collection" className="flex items-center gap-2 bg-maroon hover:bg-maroon-dark text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-[0.98]">
         <ShoppingBag className="w-4 h-4" /> Explore Collection
       </a>
     </div>
@@ -445,13 +445,13 @@ export default function WishlistPage() {
     return (
       <>
         <Navbar wishlistCount={0} />
-        <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center">
+        <div className="min-h-screen bg-white flex items-center justify-center">
           <div className="text-center">
-            <svg className="animate-spin w-10 h-10 mx-auto mb-4 text-[#0f172a]" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin w-10 h-10 mx-auto mb-4 text-maroon" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
             </svg>
-            <p className="text-gray-500">Loading your wishlist...</p>
+            <p className="text-maroon/60">Loading your wishlist...</p>
           </div>
         </div>
         <Footer />
@@ -461,16 +461,68 @@ export default function WishlistPage() {
 
   return (
     <>
+      <style>{`
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .bg-maroon-dark {
+          background-color: var(--maroon-dark);
+        }
+        
+        .bg-maroon-light {
+          background-color: var(--maroon-light);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
+        .focus\\:ring-maroon:focus {
+          --tw-ring-color: rgba(128, 0, 0, 0.2);
+        }
+        
+        @keyframes snackIn {
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-snackIn {
+          animation: snackIn 0.3s ease;
+        }
+        @keyframes toastIn {
+          from { opacity: 0; transform: translate(-50%, 16px); }
+          to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .animate-toastIn {
+          animation: toastIn 0.3s ease;
+        }
+      `}</style>
+
       <Navbar wishlistCount={items.length} />
-      <div className="min-h-screen bg-[#f8f9fb] p-4 sm:p-6 lg:p-8">
+      <div className="min-h-screen bg-white p-4 sm:p-6 lg:p-8">
         {items.length === 0 ? (
           <EmptyState />
         ) : (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
-                <h1 className="text-2xl font-display italic font-bold text-[#0f172a]">My Wishlist</h1>
-                <p className="text-gray-400 text-sm mt-1">
+                <h1 className="text-2xl font-display italic font-bold text-maroon">My Wishlist</h1>
+                <p className="text-maroon/50 text-sm mt-1">
                   {items.length} item{items.length !== 1 ? "s" : ""} · ${totalValue.toLocaleString()} total value
                 </p>
               </div>
@@ -479,8 +531,8 @@ export default function WishlistPage() {
                   onClick={() => setView("grid")} 
                   className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     view === "grid" 
-                      ? "bg-[#0f172a] text-white" 
-                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                      ? "bg-maroon text-white" 
+                      : "bg-maroon/5 text-maroon/60 hover:bg-maroon/10"
                   }`}
                 >
                   Grid
@@ -489,8 +541,8 @@ export default function WishlistPage() {
                   onClick={() => setView("list")} 
                   className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     view === "list" 
-                      ? "bg-[#0f172a] text-white" 
-                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                      ? "bg-maroon text-white" 
+                      : "bg-maroon/5 text-maroon/60 hover:bg-maroon/10"
                   }`}
                 >
                   List
@@ -499,8 +551,8 @@ export default function WishlistPage() {
                   onClick={handleShare}
                   className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     shared 
-                      ? "bg-red-500 text-white" 
-                      : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                      ? "bg-maroon text-white" 
+                      : "bg-maroon/5 text-maroon/60 hover:bg-maroon/10"
                   }`}
                 >
                   <Share2 className="w-4 h-4" />
@@ -514,7 +566,7 @@ export default function WishlistPage() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortKey)}
-                className="bg-white border border-gray-200 text-[#0f172a] text-sm font-bold px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                className="bg-white border border-maroon/20 text-maroon text-sm font-bold px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent"
               >
                 <option value="recent">Recently Added</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -542,29 +594,12 @@ export default function WishlistPage() {
       
       {cartSnack && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5
-          bg-[#0f172a] text-white text-sm font-bold px-5 py-3.5 rounded-2xl shadow-2xl
-          border-l-4 border-red-500 animate-snackIn">
-          <Check className="w-4 h-4 text-red-500" />
+          bg-maroon-dark text-white text-sm font-bold px-5 py-3.5 rounded-2xl shadow-2xl
+          border-l-4 border-maroon-light animate-snackIn">
+          <Check className="w-4 h-4 text-maroon-light" />
           Added to cart!
         </div>
       )}
-
-      <style>{`
-        @keyframes snackIn {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-snackIn {
-          animation: snackIn 0.3s ease;
-        }
-        @keyframes toastIn {
-          from { opacity: 0; transform: translate(-50%, 16px); }
-          to { opacity: 1; transform: translate(-50%, 0); }
-        }
-        .animate-toastIn {
-          animation: toastIn 0.3s ease;
-        }
-      `}</style>
     </>
   );
 }

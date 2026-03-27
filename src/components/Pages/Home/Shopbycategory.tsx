@@ -30,7 +30,7 @@ const categories: Category[] = [
     href: "/shop/kid",
   },
    {
-    id: 2,
+    id: 3,
     name: "Womens Collection",
     image: "/Images/Shop/women.jpg",
     description: "Contemporary comfort meets cultural grace",
@@ -44,7 +44,7 @@ const styles: Record<string, React.CSSProperties> = {
     width: "100%",
     backgroundColor: "#ffffff",
     padding: "4rem 1rem",
-    fontFamily: "'Georgia', 'Times New Roman', serif",
+    fontFamily: "'Cormorant Garamond', Georgia, serif",
   },
   container: {
     maxWidth: "1200px",
@@ -64,27 +64,27 @@ const styles: Record<string, React.CSSProperties> = {
   lineBar: {
     height: "1px",
     width: "80px",
-    backgroundColor: "#000000",
-    opacity: 0.2,
+    backgroundColor: "#800000", // Maroon color
+    opacity: 0.3,
   },
   diamond: {
     width: "8px",
     height: "8px",
-    backgroundColor: "#000000",
+    backgroundColor: "#800000", // Maroon color
     transform: "rotate(45deg)",
-    opacity: 0.3,
+    opacity: 0.5,
   },
   title: {
     fontSize: "clamp(1.5rem, 4vw, 2.4rem)",
     letterSpacing: "0.25em",
-    color: "#000000",
+    color: "#800000", // Maroon color
     fontWeight: "600",
     margin: "0 0 0.5rem 0",
-    fontFamily: "'Georgia', serif",
+    fontFamily: "'Cormorant Garamond', Georgia, serif",
   },
   subtitle: {
     fontSize: "clamp(0.85rem, 2vw, 1rem)",
-    color: "#333333",
+    color: "#800000", // Maroon color
     fontStyle: "italic",
     margin: 0,
     letterSpacing: "0.05em",
@@ -109,7 +109,7 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: "1.25rem",
     position: "relative",
     borderRadius: "12px",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.05)",
+    boxShadow: "0 4px 20px rgba(128, 0, 0, 0.1)", // Maroon tinted shadow
   },
   image: {
     width: "100%",
@@ -121,7 +121,7 @@ const styles: Record<string, React.CSSProperties> = {
   overlay: {
     position: "absolute",
     inset: 0,
-    background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 70%)",
+    background: "linear-gradient(to top, rgba(128, 0, 0, 0.9) 0%, rgba(128, 0, 0, 0.3) 70%, transparent 100%)", // Maroon gradient
     opacity: 0,
     transition: "opacity 0.4s ease",
     display: "flex",
@@ -130,7 +130,7 @@ const styles: Record<string, React.CSSProperties> = {
     paddingBottom: "1.5rem",
   },
   overlayText: {
-    color: "#fff",
+    color: "#ffffff",
     fontSize: "0.85rem",
     letterSpacing: "0.1em",
     fontStyle: "italic",
@@ -142,21 +142,21 @@ const styles: Record<string, React.CSSProperties> = {
   categoryName: {
     fontSize: "clamp(0.75rem, 1.5vw, 1rem)",
     letterSpacing: "0.3em",
-    color: "#000000",
+    color: "#800000", // Maroon color
     fontWeight: "600",
     margin: "0.5rem 0 0.25rem 0",
-    fontFamily: "'Georgia', serif",
+    fontFamily: "'Cormorant Garamond', Georgia, serif",
   },
   shopNowBtn: {
     marginTop: "0.5rem",
     fontSize: "0.7rem",
     letterSpacing: "0.2em",
-    color: "#333333",
+    color: "#800000", // Maroon color
     border: "none",
     background: "none",
     cursor: "pointer",
     padding: "0.25rem 0",
-    borderBottom: "1px solid #333333",
+    borderBottom: "1px solid #800000", // Maroon border
     transition: "color 0.2s, border-color 0.2s",
     fontWeight: "500",
   },
@@ -203,8 +203,8 @@ export default function SignatureStyleSection(): React.ReactElement {
           transform: translateY(-6px);
         }
         .sig-shop-btn:hover {
-          color: #000000 !important;
-          border-color: #000000 !important;
+          color: #9d2a2a !important;
+          border-color: #9d2a2a !important;
         }
 
         /* Tablet */
@@ -275,13 +275,20 @@ export default function SignatureStyleSection(): React.ReactElement {
       <section style={styles.section} className="sig-section">
         <div style={styles.container}>
 
-          {/* ── Header ── */}
+          {/* ── Header with Maroon Accents ── */}
           <div style={styles.header} className="sig-header">
+            {/* Decorative Line */}
+            <div style={styles.decorLine}>
+              <div style={styles.lineBar} className="sig-line-bar"></div>
+              <div style={styles.diamond}></div>
+              <div style={styles.lineBar} className="sig-line-bar"></div>
+            </div>
+            
             <h2 style={styles.title} className="sig-title">
               CELEBRATE YOUR SIGNATURE STYLE
             </h2>
             <p style={styles.subtitle}>
-              Explore Pareenita&apos;s Most-Loved Categories
+              Explore Pareenita's Most-Loved Categories
             </p>
           </div>
 
@@ -310,7 +317,7 @@ export default function SignatureStyleSection(): React.ReactElement {
                     loading="lazy"
                   />
 
-                  {/* Hover overlay */}
+                  {/* Hover overlay with maroon gradient */}
                   <div
                     style={{
                       ...styles.overlay,
@@ -324,10 +331,22 @@ export default function SignatureStyleSection(): React.ReactElement {
                   </div>
                 </div>
 
-                {/* Label */}
+                {/* Category Name in Maroon */}
                 <p style={styles.categoryName} className="sig-title sig-category-name">
                   {cat.name}
                 </p>
+                
+                {/* Shop Now Button - Optional but adds interactivity */}
+                <button 
+                  style={styles.shopNowBtn}
+                  className="sig-shop-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleNavigate(cat.href);
+                  }}
+                >
+                  SHOP NOW →
+                </button>
               </div>
             ))}
           </div>

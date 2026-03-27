@@ -171,37 +171,26 @@ export default function Navbar({
 
  const handleLogout = async () => {
   try {
-    // Call backend logout API
     await logoutApi();
-
-    // Remove tokens from storage
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("user");
-
-    // Reset state
     setLoggedIn(false);
     setCurrentUser(null);
     setUserMenuOpen(false);
-    setMenuOpen(false); // Close mobile menu on logout
-
-    // Redirect to home
+    setMenuOpen(false);
     router.push("/");
   } catch (error) {
     console.error("Logout error:", error);
-
-    // Even if API fails, clear local session
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
     sessionStorage.removeItem("authToken");
     sessionStorage.removeItem("user");
-
     setLoggedIn(false);
     setCurrentUser(null);
     setUserMenuOpen(false);
-    setMenuOpen(false); // Close mobile menu on logout
-
+    setMenuOpen(false);
     router.push("/");
   }
 };
@@ -225,37 +214,35 @@ export default function Navbar({
 
   const totalCartItems = cartCount;
 
-  // Animation variants for user menu
   const userMenuVariants: Variants = {
-  hidden: { 
-    opacity: 0, 
-    scale: 0.95,
-    y: -10,
-    transition: {
-      duration: 0.2
+    hidden: { 
+      opacity: 0, 
+      scale: 0.95,
+      y: -10,
+      transition: {
+        duration: 0.2
+      }
+    },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 25
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.95,
+      y: -10,
+      transition: {
+        duration: 0.2
+      }
     }
-  },
-  visible: { 
-    opacity: 1, 
-    scale: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 300,
-      damping: 25
-    }
-  },
-  exit: { 
-    opacity: 0, 
-    scale: 0.95,
-    y: -10,
-    transition: {
-      duration: 0.2
-    }
-  }
-};
+  };
 
-  // Animation variants for menu items
   const menuItemVariants = {
     hidden: { opacity: 0, x: -10 },
     visible: (i: number) => ({
@@ -270,7 +257,6 @@ export default function Navbar({
 
   return (
     <>
-      {/* Google Fonts Import */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
         
@@ -278,9 +264,19 @@ export default function Navbar({
           font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
         }
         
-        /* Keep icons with their original font family */
-        .lucide, [class*="lucide-"] {
-          font-family: inherit !important;
+        /* Brand Colors */
+        :root {
+          --black: #000000;
+          --maroon: #800000;
+          --maroon-light: #9d2a2a;
+          --white: #ffffff;
+          --gray-light: #f5f5f5;
+        }
+        
+        /* Placeholder text */
+        input::placeholder {
+          color: #9ca3af !important;
+          opacity: 1;
         }
         
         @keyframes fadeIn {
@@ -288,20 +284,59 @@ export default function Navbar({
           to { opacity: 1; transform: translateY(0); }
         }
         .animate-fadeIn { animation: fadeIn 0.18s ease-out forwards; }
+        
+        /* Hover styles for all interactive elements */
+        .nav-link {
+          transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+          color: #800000 !important;
+        }
+        
+        /* Icon button hover effect */
+        .icon-btn {
+          transition: all 0.2s ease;
+        }
+        .icon-btn:hover {
+          color: #800000 !important;
+        }
+        .icon-btn:hover svg {
+          color: #800000 !important;
+        }
+        
+        /* Dropdown item hover */
+        .dropdown-item {
+          transition: all 0.2s ease;
+        }
+        .dropdown-item:hover {
+          color: #800000 !important;
+          background-color: #fff0f0 !important;
+        }
+        
+        /* Mobile menu item hover */
+        .mobile-nav-item:hover {
+          color: #800000 !important;
+        }
+        
+        /* Cart icon specific hover */
+        .cart-btn:hover svg {
+          color: #800000 !important;
+          transform: scale(1.1);
+        }
       `}</style>
 
       {/* Main Navbar */}
       <nav
         className={`sticky top-0 z-50 w-full transition-all duration-300 ${
           scrolled
-            ? "bg-white/95 backdrop-blur-md shadow-[0_2px_20px_rgba(0,0,0,0.08)]"
-            : "bg-white border-b border-gray-100"
+            ? "bg-white/98 backdrop-blur-lg shadow-lg"
+            : "bg-white border-b border-gray-200"
         }`}
       >
         <div className="w-full px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-18">
 
-            {/* ── LOGO ── */}
+            {/* LOGO */}
             <button 
               onClick={() => handleNavigation("/")}
               className="flex items-center gap-2 group flex-shrink-0"
@@ -309,7 +344,7 @@ export default function Navbar({
               <div className="relative h-12 w-auto md:h-20">
                 <Image
                   src="/logo/quick-kart.png" 
-                  alt="Company Logo"
+                  alt="Quick Kart"
                   width={120}
                   height={40}
                   className="object-contain h-full w-auto"
@@ -318,7 +353,7 @@ export default function Navbar({
               </div>
             </button>
 
-            {/* ── DESKTOP NAV LINKS ── */}
+            {/* DESKTOP NAV LINKS */}
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => (
                 <div
@@ -329,12 +364,10 @@ export default function Navbar({
                 >
                   <button
                     onClick={() => !link.dropdown && handleNavigation(link.path)}
-                    className={`flex items-center gap-1 px-4 py-2 text-base font-medium tracking-wide rounded-lg transition-all duration-200 cursor-pointer ${
-                      activeDropdown === link.label
-                        ? "text-red-600"
-                        : "text-black hover:text-red-600"
+                    className={`nav-link flex items-center gap-1 px-4 py-2 text-base font-medium tracking-wide rounded-lg transition-all duration-200 cursor-pointer ${
+                      activeDropdown === link.label ? "text-maroon" : "text-black"
                     }`}
-                    style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                    style={{ color: activeDropdown === link.label ? "#800000" : "#000000" }}
                   >
                     {link.label}
                     {link.dropdown && (
@@ -342,19 +375,19 @@ export default function Navbar({
                         className={`w-3.5 h-3.5 transition-transform duration-200 ${
                           activeDropdown === link.label ? "rotate-180" : ""
                         }`}
+                        style={{ color: activeDropdown === link.label ? "#800000" : "#000000" }}
                       />
                     )}
                   </button>
 
                   {/* Dropdown */}
                   {link.dropdown && activeDropdown === link.label && (
-                    <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-fadeIn">
+                    <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-lg shadow-xl border border-gray-200 py-2 animate-fadeIn">
                       {link.dropdown.map((item) => (
                         <button
                           key={item}
                           onClick={() => handleDropdownItemClick(link.label, item)}
-                          className="w-full text-left px-4 py-2.5 text-base text-black hover:text-red-600 transition-colors"
-                          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                          className="dropdown-item w-full text-left px-4 py-2.5 text-base text-black transition-all duration-200"
                         >
                           {item}
                         </button>
@@ -368,16 +401,16 @@ export default function Navbar({
               {isAdmin && (
                 <button
                   onClick={() => handleNavigation("/admin")}
-                  className="flex items-center gap-1 px-4 py-2 text-base font-medium tracking-wide rounded-lg transition-all duration-200 cursor-pointer text-purple-600 hover:text-purple-700 bg-purple-50 hover:bg-purple-100 ml-2"
-                  style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                  className="flex items-center gap-1 px-4 py-2 text-base font-medium tracking-wide rounded-lg transition-all duration-200 cursor-pointer bg-maroon/10 hover:bg-maroon/20 ml-2"
+                  style={{ color: "#800000" }}
                 >
-                  <LayoutDashboard className="w-4 h-4" />
-                  Admin
+                  <LayoutDashboard className="w-4 h-4" style={{ color: "#800000" }} />
+                  <span>Admin</span>
                 </button>
               )}
             </div>
 
-            {/* ── RIGHT ICONS ── */}
+            {/* RIGHT ICONS */}
             <div className="flex items-center justify-end gap-1 md:gap-2">
               {/* Desktop Search */}
               <div className="hidden md:flex items-center">
@@ -390,18 +423,17 @@ export default function Navbar({
                     onSubmit={handleSearch} 
                     className="flex items-center gap-2 bg-gray-100 rounded-full px-4 py-2 w-60"
                   >
-                    <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                    <Search className="w-4 h-4 text-gray-600 flex-shrink-0" />
                     <input
                       autoFocus
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Search products..."
-                      className="bg-transparent text-base text-black outline-none w-full placeholder-gray-400"
-                      style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                      className="bg-transparent text-base text-black outline-none w-full"
                     />
                     <button type="button" onClick={() => { setSearchOpen(false); setSearchQuery(""); }}>
-                      <X className="w-4 h-4 text-gray-400 hover:text-black" />
+                      <X className="w-4 h-4 text-gray-600 hover:text-maroon transition-colors" />
                     </button>
                   </motion.form>
                 ) : (
@@ -409,29 +441,30 @@ export default function Navbar({
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSearchOpen(true)}
-                    className="p-2 text-black hover:text-red-600 transition-all duration-200"
+                    className="icon-btn p-2 transition-all duration-200"
                     aria-label="Search"
                   >
-                    <Search className="w-5 h-5" />
+                    <Search className="w-5 h-5 text-black transition-colors duration-200" />
                   </motion.button>
                 )}
               </div>
 
-              {/* Wishlist — desktop only - with count badge */}
+              {/* Wishlist */}
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleNavigation("/wishlist")}
-                className="hidden md:flex relative p-2 text-black hover:text-red-600 transition-all duration-200 cursor-pointer"
+                className="icon-btn hidden md:flex relative p-2 transition-all duration-200 cursor-pointer"
                 aria-label="Wishlist"
               >
-                <Heart className="w-5 h-5" />
+                <Heart className="w-5 h-5 text-black transition-colors duration-200" />
                 {wishlistCount > 0 && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                    className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm"
+                    className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-maroon text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm"
+                    style={{ backgroundColor: "#800000" }}
                   >
                     {wishlistCount}
                   </motion.span>
@@ -444,13 +477,12 @@ export default function Navbar({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleUserClick}
-                  className="p-2 text-black hover:text-red-600 transition-all duration-200 cursor-pointer relative flex items-center justify-center"
+                  className="icon-btn p-2 transition-all duration-200 cursor-pointer relative flex items-center justify-center"
                   aria-label="Account"
                 >
-                  <User className="w-5 h-5" />
+                  <User className="w-5 h-5 text-black transition-colors duration-200" />
                 </motion.button>
 
-                {/* User Dropdown Menu with Framer Motion */}
                 <AnimatePresence>
                   {userMenuOpen && (
                     <motion.div
@@ -458,27 +490,24 @@ export default function Navbar({
                       initial="hidden"
                       animate="visible"
                       exit="exit"
-                      className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 overflow-hidden z-50"
+                      className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl border border-gray-200 py-2 overflow-hidden z-50"
                     >
                       {loggedIn ? (
-                        /* Logged In State */
                         <>
-                          {/* User Info Header */}
-                          <div className="px-4 py-3 border-b border-gray-100">
-                            <p className="text-base font-medium text-black" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                          <div className="px-4 py-3 border-b border-gray-200">
+                            <p className="text-base font-medium text-black">
                               {currentUser?.name || "User"}
                             </p>
-                            <p className="text-sm text-gray-500" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                            <p className="text-sm text-gray-600 mt-0.5">
                               {currentUser?.email || ""}
                             </p>
                             {isAdmin && (
-                              <span className="inline-block mt-1 px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
+                              <span className="inline-block mt-1 px-2 py-0.5 bg-maroon/10 text-maroon text-xs font-semibold rounded-full" style={{ color: "#800000" }}>
                                 Admin
                               </span>
                             )}
                           </div>
 
-                          {/* Admin Dashboard Link - in dropdown for admin users */}
                           {isAdmin && (
                             <motion.button
                               custom={0}
@@ -486,96 +515,84 @@ export default function Navbar({
                               initial="hidden"
                               animate="visible"
                               onClick={() => handleNavigation("/admin")}
-                              className="w-full flex items-center gap-3 px-4 py-2.5 text-base text-purple-600 hover:text-purple-700 hover:bg-purple-50 transition-colors"
-                              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                              className="dropdown-item w-full flex items-center gap-3 px-4 py-2.5 text-base transition-colors"
+                              style={{ color: "#800000" }}
                             >
-                              <LayoutDashboard className="w-4 h-4" />
+                              <LayoutDashboard className="w-4 h-4" style={{ color: "#800000" }} />
                               <span>Admin Dashboard</span>
                             </motion.button>
                           )}
 
-                          {/* Profile Link */}
                           <motion.button
                             custom={isAdmin ? 1 : 0}
                             variants={menuItemVariants}
                             initial="hidden"
                             animate="visible"
                             onClick={() => handleNavigation("/profile")}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-base text-black hover:text-red-600 transition-colors"
-                            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                            className="dropdown-item w-full flex items-center gap-3 px-4 py-2.5 text-base text-black transition-colors"
                           >
                             <UserCircle className="w-4 h-4" />
                             <span>Profile</span>
                           </motion.button>
 
-                          {/* Settings Link */}
                           <motion.button
                             custom={isAdmin ? 2 : 1}
                             variants={menuItemVariants}
                             initial="hidden"
                             animate="visible"
                             onClick={() => handleNavigation("/settings")}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-base text-black hover:text-red-600 transition-colors"
-                            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                            className="dropdown-item w-full flex items-center gap-3 px-4 py-2.5 text-base text-black transition-colors"
                           >
                             <Settings className="w-4 h-4" />
                             <span>Settings</span>
                           </motion.button>
 
-                          {/* Logout Button */}
                           <motion.button
                             custom={isAdmin ? 3 : 2}
                             variants={menuItemVariants}
                             initial="hidden"
                             animate="visible"
                             onClick={handleLogout}
-                            className="w-full flex items-center gap-3 px-4 py-2.5 text-base text-red-600 hover:text-red-700 transition-colors border-t border-gray-100 mt-1"
-                            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                            className="w-full flex items-center gap-3 px-4 py-2.5 text-base transition-colors border-t border-gray-200 mt-1"
+                            style={{ color: "#800000" }}
                           >
-                            <LogOut className="w-4 h-4" />
+                            <LogOut className="w-4 h-4" style={{ color: "#800000" }} />
                             <span>Logout</span>
                           </motion.button>
                         </>
                       ) : (
-                        /* Logged Out State - Login & Signup Buttons */
                         <>
-                          {/* Guest Header */}
-                          <div className="px-4 py-3 border-b border-gray-100">
-                            <p className="text-base font-medium text-black" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Welcome, Guest!</p>
-                            <p className="text-sm text-gray-500" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>Sign in to your account</p>
+                          <div className="px-4 py-3 border-b border-gray-200">
+                            <p className="text-base font-medium text-black">Welcome, Guest!</p>
+                            <p className="text-sm text-gray-600 mt-0.5">Sign in to your account</p>
                           </div>
 
-                          {/* Login Button */}
                           <motion.button
                             custom={0}
                             variants={menuItemVariants}
                             initial="hidden"
                             animate="visible"
                             onClick={handleLoginClick}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-base text-black hover:text-red-600 transition-colors border-b border-gray-100"
-                            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                            className="dropdown-item w-full flex items-center gap-3 px-4 py-3 text-base text-black transition-colors border-b border-gray-200"
                           >
                             <LogIn className="w-4 h-4" />
                             <span>Login</span>
                           </motion.button>
 
-                          {/* Signup Button */}
                           <motion.button
                             custom={1}
                             variants={menuItemVariants}
                             initial="hidden"
                             animate="visible"
                             onClick={handleSignupClick}
-                            className="w-full flex items-center gap-3 px-4 py-3 text-base text-black hover:text-red-600 transition-colors"
-                            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                            className="dropdown-item w-full flex items-center gap-3 px-4 py-3 text-base text-black transition-colors"
                           >
                             <UserPlus className="w-4 h-4" />
                             <span>Create Account</span>
                           </motion.button>
 
-                          {/* Optional: Add a message for guest users */}
                           <div className="px-4 py-2 mt-1 bg-gray-50">
-                            <p className="text-xs text-gray-500 text-center" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                            <p className="text-xs text-gray-500 text-center">
                               Sign in for personalized experience
                             </p>
                           </div>
@@ -591,16 +608,17 @@ export default function Navbar({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleNavigation("/cart")}
-                className="relative p-2 text-black hover:text-red-600 transition-all duration-200 group cursor-pointer flex items-center justify-center"
+                className="cart-btn relative p-2 transition-all duration-200 group cursor-pointer flex items-center justify-center"
                 aria-label="Cart"
               >
-                <ShoppingBag className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <ShoppingBag className="w-5 h-5 text-black transition-all duration-200 group-hover:text-maroon group-hover:scale-110" />
                 {totalCartItems > 0 && (
                   <motion.span
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                    className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm"
+                    className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-maroon text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-sm"
+                    style={{ backgroundColor: "#800000" }}
                   >
                     {totalCartItems}
                   </motion.span>
@@ -610,17 +628,20 @@ export default function Navbar({
               {/* Mobile hamburger */}
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                className="md:hidden p-2 text-black hover:text-red-600 transition-colors flex items-center justify-center"
+                className="md:hidden p-2 transition-all duration-200 flex items-center justify-center icon-btn"
                 onClick={() => setMenuOpen(!menuOpen)}
                 aria-label="Toggle menu"
               >
-                {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                {menuOpen ? 
+                  <X className="w-5 h-5 text-black transition-colors duration-200" /> : 
+                  <Menu className="w-5 h-5 text-black transition-colors duration-200" />
+                }
               </motion.button>
             </div>
           </div>
         </div>
 
-        {/* ── MOBILE MENU ── */}
+        {/* MOBILE MENU */}
         <AnimatePresence>
           {menuOpen && (
             <motion.div
@@ -630,24 +651,22 @@ export default function Navbar({
               transition={{ duration: 0.3 }}
               className="md:hidden overflow-hidden"
             >
-              <div className="border-t border-gray-100 bg-white px-4 pt-4 pb-6 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
+              <div className="border-t border-gray-200 bg-white px-4 pt-4 pb-6 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
                 {/* Mobile Search */}
                 <form 
                   onSubmit={handleSearch}
                   className="flex items-center gap-3 bg-gray-100 rounded-xl px-4 py-3 mb-4"
                 >
-                  <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  <Search className="w-4 h-4 text-gray-600 flex-shrink-0" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Search products..."
-                    className="bg-transparent text-base text-black outline-none w-full placeholder-gray-400"
-                    style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                    className="bg-transparent text-base text-black outline-none w-full"
                   />
                 </form>
 
-                {/* Admin Dashboard Link - Mobile (for admin users) */}
                 {isAdmin && (
                   <motion.div
                     initial={{ opacity: 0, x: -20 }}
@@ -656,16 +675,15 @@ export default function Navbar({
                   >
                     <button
                       onClick={() => handleNavigation("/admin")}
-                      className="flex items-center gap-2 w-full px-3 py-3 text-base font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 rounded-xl transition-all mb-2"
-                      style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                      className="flex items-center gap-2 w-full px-3 py-3 text-base font-medium rounded-xl transition-all mb-2"
+                      style={{ color: "#800000", backgroundColor: "#fff0f0" }}
                     >
-                      <LayoutDashboard className="w-5 h-5" />
+                      <LayoutDashboard className="w-5 h-5" style={{ color: "#800000" }} />
                       Admin Dashboard
                     </button>
                   </motion.div>
                 )}
 
-                {/* Mobile Nav Links */}
                 {navLinks.map((link, i) => (
                   <motion.div
                     key={link.label}
@@ -674,29 +692,20 @@ export default function Navbar({
                     transition={{ delay: i * 0.05 }}
                   >
                     <button
-                      onClick={() => {
-                        if (link.dropdown) {
-                          handleNavigation(link.path);
-                        } else {
-                          handleNavigation(link.path);
-                        }
-                      }}
-                      className="flex items-center justify-between w-full px-3 py-3 text-base font-medium text-black hover:text-red-600 rounded-xl transition-all"
-                      style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                      onClick={() => handleNavigation(link.path)}
+                      className="flex items-center justify-between w-full px-3 py-3 text-base font-medium text-black hover:text-maroon rounded-xl transition-all duration-200"
                     >
                       {link.label}
-                      {link.dropdown && <ChevronDown className="w-4 h-4 text-gray-400" />}
+                      {link.dropdown && <ChevronDown className="w-4 h-4 text-gray-500" />}
                     </button>
                     
-                    {/* For mobile, you could also show dropdown items here if needed */}
                     {link.dropdown && menuOpen && (
                       <div className="ml-4 mt-1 space-y-1">
                         {link.dropdown.map((item) => (
                           <button
                             key={item}
                             onClick={() => handleDropdownItemClick(link.label, item)}
-                            className="block w-full text-left px-4 py-2 text-base text-black hover:text-red-600 rounded-lg"
-                            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                            className="block w-full text-left px-4 py-2 text-base text-black hover:text-maroon rounded-lg transition-all duration-200"
                           >
                             {item}
                           </button>
@@ -706,105 +715,92 @@ export default function Navbar({
                   </motion.div>
                 ))}
 
-                {/* Mobile User Section - Updated to include Logout for logged-in users */}
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="pt-3 mt-3 border-t border-gray-100 space-y-2"
+                  className="pt-3 mt-3 border-t border-gray-200 space-y-2"
                 >
                   {loggedIn ? (
-                    /* Logged In Mobile View */
                     <>
-                      {/* User Info */}
                       <div className="px-3 py-2 bg-gray-50 rounded-xl">
-                        <p className="text-base font-medium text-black" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                        <p className="text-base font-medium text-black">
                           {currentUser?.name || "User"}
                         </p>
-                        <p className="text-sm text-gray-500 truncate" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}>
+                        <p className="text-sm text-gray-600 truncate mt-0.5">
                           {currentUser?.email || ""}
                         </p>
                         {isAdmin && (
-                          <span className="inline-block mt-1 px-2 py-0.5 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full">
+                          <span className="inline-block mt-1 px-2 py-0.5 bg-maroon/10 text-maroon text-xs font-semibold rounded-full" style={{ color: "#800000" }}>
                             Admin
                           </span>
                         )}
                       </div>
 
-                      {/* Mobile Profile Link */}
                       <button 
                         onClick={() => handleNavigation("/profile")}
-                        className="w-full flex items-center gap-3 px-3 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-red-600 transition-colors"
-                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                        className="w-full flex items-center gap-3 px-3 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-maroon hover:bg-red-50 transition-all duration-200"
                       >
-                        <UserCircle className="w-5 h-5" />
+                        <UserCircle className="w-5 h-5 transition-colors duration-200" />
                         Profile
                       </button>
 
-                      {/* Mobile Settings Link */}
                       <button 
                         onClick={() => handleNavigation("/settings")}
-                        className="w-full flex items-center gap-3 px-3 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-red-600 transition-colors"
-                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                        className="w-full flex items-center gap-3 px-3 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-maroon hover:bg-red-50 transition-all duration-200"
                       >
-                        <Settings className="w-5 h-5" />
+                        <Settings className="w-5 h-5 transition-colors duration-200" />
                         Settings
                       </button>
 
-                      {/* Mobile Wishlist */}
                       <button 
                         onClick={() => handleNavigation("/wishlist")}
-                        className="w-full flex items-center gap-3 px-3 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-red-600 transition-colors relative"
-                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                        className="w-full flex items-center justify-between px-3 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-maroon hover:bg-red-50 transition-all duration-200"
                       >
-                        <Heart className="w-5 h-5" />
-                        Wishlist
+                        <div className="flex items-center gap-3">
+                          <Heart className="w-5 h-5 transition-colors duration-200" />
+                          Wishlist
+                        </div>
                         {wishlistCount > 0 && (
-                          <span className="ml-auto px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">
+                          <span className="px-2 py-0.5 bg-maroon text-white text-xs font-bold rounded-full" style={{ backgroundColor: "#800000" }}>
                             {wishlistCount}
                           </span>
                         )}
                       </button>
 
-                      {/* Mobile Logout Button */}
                       <button 
                         onClick={handleLogout}
-                        className="w-full flex items-center gap-3 px-3 py-3 bg-red-50 rounded-xl text-base font-medium text-red-600 hover:text-red-700 hover:bg-red-100 transition-colors"
-                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                        className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-base font-medium transition-all duration-200"
+                        style={{ color: "#800000", backgroundColor: "#fff0f0" }}
                       >
-                        <LogOut className="w-5 h-5" />
+                        <LogOut className="w-5 h-5 transition-colors duration-200" style={{ color: "#800000" }} />
                         Logout
                       </button>
                     </>
                   ) : (
-                    /* Logged Out Mobile View */
                     <div className="flex items-center gap-3">
                       <button 
                         onClick={handleLoginClick}
-                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-red-600 transition-colors"
-                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-maroon hover:bg-red-50 transition-all duration-200"
                       >
-                        <LogIn className="w-4 h-4" /> Login
+                        <LogIn className="w-4 h-4 transition-colors duration-200" /> Login
                       </button>
                       <button 
                         onClick={handleSignupClick}
-                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-red-600 transition-colors"
-                        style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+                        className="flex-1 flex items-center justify-center gap-2 py-3 bg-gray-100 rounded-xl text-base font-medium text-black hover:text-maroon hover:bg-red-50 transition-all duration-200"
                       >
-                        <UserPlus className="w-4 h-4" /> Sign Up
+                        <UserPlus className="w-4 h-4 transition-colors duration-200" /> Sign Up
                       </button>
                     </div>
                   )}
                 </motion.div>
                 
-                {/* Mobile Cart Info - optional */}
                 {totalCartItems > 0 && (
                   <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.35 }}
                     className="pt-2 text-sm text-gray-500 text-center"
-                    style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
                   >
                     {totalCartItems} item{totalCartItems !== 1 ? 's' : ''} in cart
                   </motion.div>
@@ -815,7 +811,6 @@ export default function Navbar({
         </AnimatePresence>
       </nav>
 
-      {/* Auth Modal */}
       <AuthManager 
         isOpen={authModalOpen}
         onClose={handleAuthClose}

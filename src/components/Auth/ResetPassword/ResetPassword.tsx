@@ -29,13 +29,12 @@ export default function ResetPasswordPopup({
   const [error, setError] = useState("");
 
   const handleOtpChange = (index: number, value: string) => {
-    if (value.length > 1) return; // Prevent pasting multiple digits
+    if (value.length > 1) return;
     
     const newOtp = [...otp];
     newOtp[index] = value;
     setOtp(newOtp);
     
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       nextInput?.focus();
@@ -71,7 +70,7 @@ export default function ResetPasswordPopup({
       setError("");
       setIsLoading(true);
 
-      const otpCode = otp.join(""); // convert array to string
+      const otpCode = otp.join("");
 
       const res = await resetPasswordApi({
         email,
@@ -128,29 +127,62 @@ export default function ResetPasswordPopup({
 
   const renderResetStep = () => (
     <>
-      {/* Icon - changed to red */}
+      <style>{`
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .bg-maroon-dark {
+          background-color: var(--maroon-dark);
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
+        .focus\\:ring-maroon\\/20:focus {
+          --tw-ring-color: rgba(128, 0, 0, 0.2);
+        }
+      `}</style>
+
+      {/* Icon - changed to maroon */}
       <div className="flex justify-center mb-5">
-        <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center">
-          <KeyRound className="text-red-600" size={28} />
+        <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/20 flex items-center justify-center">
+          <KeyRound className="text-maroon" size={28} />
         </div>
       </div>
 
       <div className="text-center mb-7">
-        <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-black tracking-tight mb-1.5">
+        <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-1.5">
           Reset Password
         </Dialog.Title>
-        <p className="text-gray-600 text-sm">Enter the 6-digit code sent to {email}</p>
+        <p className="text-maroon/60 text-sm">Enter the 6-digit code sent to {email}</p>
       </div>
 
       {error && (
-        <div className="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl">
-          <p className="text-red-600 text-sm text-center">{error}</p>
+        <div className="mb-5 px-4 py-3 bg-maroon/5 border border-maroon/20 rounded-xl">
+          <p className="text-maroon text-sm text-center">{error}</p>
         </div>
       )}
 
       <form onSubmit={handleResetPassword} className="space-y-6">
         <div>
-          <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3 text-center">
+          <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-3 text-center">
             Verification Code
           </label>
           <div className="flex gap-2 justify-center">
@@ -166,7 +198,7 @@ export default function ResetPasswordPopup({
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
                 disabled={isLoading}
-                className="w-12 h-12 text-center text-lg font-semibold bg-gray-50 border border-gray-300 rounded-xl text-black focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition"
+                className="w-12 h-12 text-center text-lg font-semibold bg-maroon/5 border border-maroon/20 rounded-xl text-maroon focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition"
               />
             ))}
           </div>
@@ -174,31 +206,31 @@ export default function ResetPasswordPopup({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">New Password</label>
+            <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">New Password</label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={isLoading}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-black placeholder-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition text-sm"
+                className="w-full pl-10 pr-4 py-3 bg-maroon/5 border border-maroon/20 rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">Confirm Password</label>
+            <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Confirm Password</label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={isLoading}
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-black placeholder-gray-400 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition text-sm"
+                className="w-full pl-10 pr-4 py-3 bg-maroon/5 border border-maroon/20 rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm"
               />
             </div>
           </div>
@@ -207,7 +239,7 @@ export default function ResetPasswordPopup({
         <button 
           type="submit" 
           disabled={isLoading}
-          className="w-full bg-red-600 hover:bg-red-700 disabled:bg-red-300 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-red-600/30 flex items-center justify-center gap-2 text-sm"
+          className="w-full bg-maroon hover:bg-maroon-dark disabled:bg-maroon/50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-maroon/30 flex items-center justify-center gap-2 text-sm"
         >
           {isLoading ? <><Loader2 className="animate-spin" size={17} /> Resetting password...</> : "Reset Password"}
         </button>
@@ -217,7 +249,7 @@ export default function ResetPasswordPopup({
         <button 
           onClick={handleResendOtp}
           disabled={isLoading}
-          className="text-red-600 hover:text-red-700 text-sm font-medium w-full disabled:text-red-300"
+          className="text-maroon hover:text-maroon-dark text-sm font-medium w-full disabled:text-maroon/30"
         >
           Resend OTP
         </button>
@@ -229,23 +261,23 @@ export default function ResetPasswordPopup({
     <div className="text-center">
       <div className="flex justify-center mb-5">
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-green-50 border border-green-200 flex items-center justify-center">
-            <CheckCircle className="text-green-600" size={28} />
+          <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/20 flex items-center justify-center">
+            <CheckCircle className="text-maroon" size={28} />
           </div>
-          <div className="absolute -inset-2 rounded-3xl bg-green-500/10 animate-ping" style={{ animationDuration: "2s" }} />
+          <div className="absolute -inset-2 rounded-3xl bg-maroon/5 animate-ping" style={{ animationDuration: "2s" }} />
         </div>
       </div>
 
-      <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-black tracking-tight mb-2">
+      <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-2">
         Password Reset!
       </Dialog.Title>
-      <p className="text-gray-600 text-sm mb-6">
+      <p className="text-maroon/60 text-sm mb-6">
         Your password has been successfully reset
       </p>
 
       <button 
         onClick={onSwitchToLogin}
-        className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-red-600/30"
+        className="w-full bg-maroon hover:bg-maroon-dark text-white font-bold py-3 rounded-xl transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-maroon/30"
       >
         <ArrowLeft size={15} /> Sign In with New Password
       </button>
@@ -253,48 +285,73 @@ export default function ResetPasswordPopup({
   );
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={handleClose}>
-        <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" />
-        </Transition.Child>
+    <>
+      <style>{`
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .bg-maroon-dark {
+          background-color: var(--maroon-dark);
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
+        .focus\\:ring-maroon\\/20:focus {
+          --tw-ring-color: rgba(128, 0, 0, 0.2);
+        }
+      `}</style>
 
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
-            <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-              <Dialog.Panel className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl bg-white">
-                {/* Top bar - changed to red gradient */}
-                <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-red-600" />
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={handleClose}>
+          <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0" enterTo="opacity-100" leave="ease-in duration-200" leaveFrom="opacity-100" leaveTo="opacity-0">
+            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" />
+          </Transition.Child>
 
-                <div className="bg-white px-8 pt-8 pb-10">
-                  <button 
-                    onClick={handleClose} 
-                    disabled={isLoading} 
-                    className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-red-50 text-gray-500 hover:text-red-600 transition-all"
-                  >
-                    <X size={16} />
-                  </button>
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4">
+              <Transition.Child as={Fragment} enter="ease-out duration-300" enterFrom="opacity-0 scale-95 translate-y-4" enterTo="opacity-100 scale-100 translate-y-0" leave="ease-in duration-200" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
+                <Dialog.Panel className="relative w-full max-w-md rounded-2xl overflow-hidden shadow-2xl bg-white">
+                  {/* Top bar - maroon gradient */}
+                  <div className="h-1 w-full bg-gradient-to-r from-maroon via-maroon-light to-maroon" />
 
-                  {/* Logo - changed to black */}
-                  <div className="flex justify-center mb-7">
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-0.5">
-                        {[1, 0.6, 0.3].map((op, i) => (
-                          <div key={i} className="w-2.5 h-2.5 rounded-full bg-black" style={{ opacity: op }} />
-                        ))}
-                      </div>
-                      <span className="text-black font-black tracking-[0.2em] text-lg">LUXE</span>
-                    </div>
+                  <div className="bg-white px-8 pt-8 pb-10">
+                    <button 
+                      onClick={handleClose} 
+                      disabled={isLoading} 
+                      className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-maroon/5 hover:bg-maroon/10 text-maroon/40 hover:text-maroon transition-all"
+                    >
+                      <X size={16} />
+                    </button>
+
+                    {/* Logo removed - starting directly with content */}
+
+                    {currentStep === "reset" && renderResetStep()}
+                    {currentStep === "success" && renderSuccessStep()}
                   </div>
-
-                  {currentStep === "reset" && renderResetStep()}
-                  {currentStep === "success" && renderSuccessStep()}
-                </div>
-              </Dialog.Panel>
-            </Transition.Child>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
           </div>
-        </div>
-      </Dialog>
-    </Transition>
+        </Dialog>
+      </Transition>
+    </>
   );
 }

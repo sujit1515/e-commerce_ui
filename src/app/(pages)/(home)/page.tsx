@@ -18,7 +18,7 @@ export default function Homepage() {
       <SummerCollection/>
       <TrustedCompanies/>
       <ConsciousLuxury/>
-      <InstagramFollow/>
+      {/* <InstagramFollow/> */}
       <Footer/>
     </div>
   )

@@ -52,9 +52,9 @@ const VALID_CODES: Record<string, { type: "percent" | "flat"; value: number; lab
 
 const FREE_SHIPPING_THRESHOLD = 500;
 const BADGE_STYLE: Record<string, string> = {
-  Bestseller: "bg-red-600 text-white",
-  New:        "bg-[#0f172a] text-white",
-  Limited:    "bg-red-700 text-white",
+  Bestseller: "bg-maroon text-white",
+  New:        "bg-maroon-dark text-white",
+  Limited:    "bg-maroon-light text-white",
 };
 
 // ── Auth helper ───────────────────────────────────────────────────────────────
@@ -89,32 +89,32 @@ function ClearCartModal({ isOpen, onClose, onConfirm, itemCount }: ClearCartModa
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-maroon/5 flex items-center justify-center hover:bg-maroon/10 transition-colors"
         >
-          <X className="w-4 h-4 text-gray-600" />
+          <X className="w-4 h-4 text-maroon/60" />
         </button>
 
-        <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-          <AlertCircle className="w-8 h-8 text-red-500" />
+        <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/10 flex items-center justify-center mx-auto mb-4">
+          <AlertCircle className="w-8 h-8 text-maroon" />
         </div>
 
-        <h3 className="font-bold text-[#0f172a] text-2xl text-center mb-2">
+        <h3 className="font-bold text-maroon text-2xl text-center mb-2">
           Clear Cart?
         </h3>
-        <p className="text-gray-600 text-sm text-center mb-6">
+        <p className="text-maroon/60 text-sm text-center mb-6">
           Are you sure you want to remove all {itemCount} item{itemCount !== 1 ? 's' : ''} from your cart? This action cannot be undone.
         </p>
 
         <div className="flex flex-col gap-3">
           <button
             onClick={onConfirm}
-            className="w-full bg-red-600 text-white font-bold py-3 rounded-xl hover:bg-red-700 transition-colors"
+            className="w-full bg-maroon text-white font-bold py-3 rounded-xl hover:bg-maroon-dark transition-colors"
           >
             Yes, Clear Cart
           </button>
           <button
             onClick={onClose}
-            className="w-full border border-gray-200 text-[#0f172a] font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors"
+            className="w-full border border-maroon/20 text-maroon font-bold py-3 rounded-xl hover:bg-maroon/5 transition-colors"
           >
             Cancel
           </button>
@@ -146,38 +146,38 @@ function LoginPromptModal({ isOpen, onClose, onLoginClick, onSignupClick }: Logi
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-maroon/5 flex items-center justify-center hover:bg-maroon/10 transition-colors"
         >
-          <X className="w-4 h-4 text-gray-600" />
+          <X className="w-4 h-4 text-maroon/60" />
         </button>
 
-        <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center mx-auto mb-4">
-          <Heart className="w-8 h-8 text-red-500" />
+        <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/10 flex items-center justify-center mx-auto mb-4">
+          <Heart className="w-8 h-8 text-maroon" />
         </div>
 
-        <h3 className="font-bold text-[#0f172a] text-2xl text-center mb-2">
+        <h3 className="font-bold text-maroon text-2xl text-center mb-2">
           Login Required
         </h3>
-        <p className="text-gray-600 text-sm text-center mb-6">
+        <p className="text-maroon/60 text-sm text-center mb-6">
           Please login or create an account to view your cart.
         </p>
 
         <div className="flex flex-col gap-3">
           <button
             onClick={onLoginClick}
-            className="w-full bg-[#0f172a] text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-colors"
+            className="w-full bg-maroon text-white font-bold py-3 rounded-xl hover:bg-maroon-dark transition-colors"
           >
             Login
           </button>
           <button
             onClick={onSignupClick}
-            className="w-full border border-gray-200 text-[#0f172a] font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors"
+            className="w-full border border-maroon/20 text-maroon font-bold py-3 rounded-xl hover:bg-maroon/5 transition-colors"
           >
             Create Account
           </button>
           <button
             onClick={onClose}
-            className="text-sm text-gray-400 hover:text-gray-600 mt-2"
+            className="text-sm text-maroon/40 hover:text-maroon/60 mt-2"
           >
             Continue Browsing
           </button>
@@ -225,14 +225,14 @@ function CartRow({
   return (
     <div
       ref={ref}
-      className={`flex gap-4 sm:gap-5 bg-white rounded-2xl p-4 sm:p-5 border border-gray-100
+      className={`flex gap-4 sm:gap-5 bg-white rounded-2xl p-4 sm:p-5 border border-maroon/10
         shadow-sm transition-all duration-500
         ${removing ? "opacity-0 -translate-x-4 scale-98" : ""}
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
       style={{ transitionDelay: vis ? `${index * 80}ms` : "0ms" }}
     >
       {/* Product image */}
-      <div className="relative rounded-xl overflow-hidden bg-[#f0f0ee] flex-shrink-0
+      <div className="relative rounded-xl overflow-hidden bg-maroon/5 flex-shrink-0
         w-24 h-28 sm:w-28 sm:h-32 lg:w-32 lg:h-36">
         <img
           src={item.img} alt={item.name}
@@ -251,13 +251,13 @@ function CartRow({
         {/* Top row: name + remove */}
         <div className="flex items-start justify-between gap-2 mb-1">
           <div className="min-w-0">
-            <p className="text-[10px] text-gray-400 font-bold tracking-wider uppercase mb-0.5">{item.category}</p>
-            <h3 className="font-bold text-[#0f172a] text-sm sm:text-base leading-snug">{item.name}</h3>
+            <p className="text-[10px] text-maroon/50 font-bold tracking-wider uppercase mb-0.5">{item.category}</p>
+            <h3 className="font-bold text-maroon text-sm sm:text-base leading-snug">{item.name}</h3>
           </div>
           <button
             onClick={handleRemove}
-            className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-red-50 flex items-center
-              justify-center text-gray-300 hover:text-red-500 transition-all"
+            className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-maroon/10 flex items-center
+              justify-center text-maroon/40 hover:text-maroon transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -265,13 +265,13 @@ function CartRow({
 
         {/* Variant pills */}
         <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className="flex items-center gap-1 text-[10px] font-bold text-gray-500
-            bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full">
+          <span className="flex items-center gap-1 text-[10px] font-bold text-maroon/60
+            bg-maroon/5 border border-maroon/10 px-2 py-0.5 rounded-full">
             Size: {item.size}
           </span>
-          <span className="flex items-center gap-1.5 text-[10px] font-bold text-gray-500
-            bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full">
-            <span className="w-2.5 h-2.5 rounded-full border border-gray-300"
+          <span className="flex items-center gap-1.5 text-[10px] font-bold text-maroon/60
+            bg-maroon/5 border border-maroon/10 px-2 py-0.5 rounded-full">
+            <span className="w-2.5 h-2.5 rounded-full border border-maroon/20"
               style={{ backgroundColor: item.colorHex }} />
             {item.color}
           </span>
@@ -281,22 +281,22 @@ function CartRow({
         <div className="flex items-center justify-between gap-3 mt-auto flex-wrap">
           <div className="flex items-center gap-3">
             {/* Qty stepper */}
-            <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-xl p-0.5">
+            <div className="flex items-center gap-1 bg-maroon/5 border border-maroon/10 rounded-xl p-0.5">
               <button
                 onClick={() => onQtyChange(item.id, -1)}
                 disabled={item.qty <= 1}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400
-                  hover:text-[#0f172a] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-maroon/40
+                  hover:text-maroon hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed
                   transition-all"
               >
                 <Minus className="w-3 h-3" />
               </button>
-              <span className="w-7 text-center text-sm font-black text-[#0f172a]">{item.qty}</span>
+              <span className="w-7 text-center text-sm font-black text-maroon">{item.qty}</span>
               <button
                 onClick={() => onQtyChange(item.id, 1)}
                 disabled={item.qty >= item.maxQty}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-400
-                  hover:text-[#0f172a] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-maroon/40
+                  hover:text-maroon hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed
                   transition-all"
               >
                 <Plus className="w-3 h-3" />
@@ -309,13 +309,13 @@ function CartRow({
             <button
               onClick={handleWishlist}
               className={`flex items-center gap-1 text-[10px] font-bold transition-all
-                ${wishlisted ? "text-red-500" : "text-gray-400 hover:text-red-500"}`}
+                ${wishlisted ? "text-maroon" : "text-maroon/40 hover:text-maroon"}`}
             >
-              <Heart className={`w-3.5 h-3.5 ${wishlisted ? "fill-red-500" : ""}`} />
+              <Heart className={`w-3.5 h-3.5 ${wishlisted ? "fill-maroon" : ""}`} />
               <span className="hidden sm:inline">{wishlisted ? "Saved" : "Wishlist"}</span>
             </button>
             {/* Line total */}
-            <span className="font-black text-[#0f172a] text-base sm:text-lg">
+            <span className="font-black text-maroon text-base sm:text-lg">
               ${(item.price * item.qty).toLocaleString()}
             </span>
           </div>
@@ -351,16 +351,16 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
   return (
     <div>
       <div className={`flex gap-2 rounded-xl border-2 overflow-hidden transition-all
-        ${state === "ok"  ? "border-red-500" :
-          state === "err" ? "border-red-500"    : "border-gray-200 focus-within:border-red-500"}`}>
-        <div className="flex items-center pl-3.5 text-gray-300 flex-shrink-0">
+        ${state === "ok"  ? "border-maroon" :
+          state === "err" ? "border-maroon" : "border-maroon/20 focus-within:border-maroon"}`}>
+        <div className="flex items-center pl-3.5 text-maroon/40 flex-shrink-0">
           <Tag className="w-4 h-4" />
         </div>
         <input
           value={code}
           onChange={e => { setCode(e.target.value.toUpperCase()); setState("idle"); }}
           placeholder="Enter promo code"
-          className="flex-1 py-3 px-2 text-sm text-[#0f172a] placeholder-gray-300 outline-none bg-transparent"
+          className="flex-1 py-3 px-2 text-sm text-maroon placeholder-maroon/30 outline-none bg-transparent"
           onKeyDown={e => e.key === "Enter" && handleApply()}
         />
         <button
@@ -368,8 +368,8 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
           disabled={state === "ok"}
           className={`px-5 text-[11px] font-black tracking-wider uppercase flex-shrink-0 transition-all
             ${state === "ok"
-              ? "bg-red-600 text-white"
-              : "bg-[#0f172a] hover:bg-red-600 text-white"}`}
+              ? "bg-maroon text-white"
+              : "bg-maroon hover:bg-maroon-dark text-white"}`}
         >
           {state === "loading" ? (
             <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
@@ -380,7 +380,7 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
         </button>
       </div>
       {message && (
-        <p className={`mt-1.5 text-xs font-semibold ${state === "ok" ? "text-red-600" : "text-red-500"}`}>
+        <p className={`mt-1.5 text-xs font-semibold ${state === "ok" ? "text-maroon" : "text-maroon"}`}>
           {message}
         </p>
       )}
@@ -400,7 +400,7 @@ function SuggestedCard({ item, onAdd }: { item: SuggestedItem; onAdd: (item: Sug
 
   return (
     <div className="group flex-shrink-0 w-36 sm:w-44">
-      <div className="relative rounded-xl overflow-hidden bg-[#f0f0ee] mb-2.5"
+      <div className="relative rounded-xl overflow-hidden bg-maroon/5 mb-2.5"
         style={{ aspectRatio: "3/4" }}>
         <img src={item.img} alt={item.name}
           className="w-full h-full object-cover object-top
@@ -409,20 +409,20 @@ function SuggestedCard({ item, onAdd }: { item: SuggestedItem; onAdd: (item: Sug
           translate-y-full group-hover:translate-y-0 transition-transform duration-300">
           <button
             onClick={handleAdd}
-            className="w-full bg-[#0f172a]/90 backdrop-blur-sm text-white text-[9px]
+            className="w-full bg-maroon/90 backdrop-blur-sm text-white text-[9px]
               font-bold tracking-widest uppercase py-1.5 rounded-lg flex items-center
-              justify-center gap-1 hover:bg-red-600 transition-colors"
+              justify-center gap-1 hover:bg-maroon-dark transition-colors"
           >
             {added ? <><Check className="w-2.5 h-2.5" /> Added</> : <><Plus className="w-2.5 h-2.5" /> Add</>}
           </button>
         </div>
       </div>
-      <p className="font-bold text-[#0f172a] text-xs leading-snug mb-0.5">{item.name}</p>
+      <p className="font-bold text-maroon text-xs leading-snug mb-0.5">{item.name}</p>
       <div className="flex items-center justify-between">
-        <span className="font-black text-[#0f172a] text-sm">${item.price.toLocaleString()}</span>
+        <span className="font-black text-maroon text-sm">${item.price.toLocaleString()}</span>
         <div className="flex gap-0.5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className={`w-2.5 h-2.5 ${i < Math.floor(item.rating) ? "fill-red-500 text-red-500" : "fill-gray-200 text-gray-200"}`} />
+            <Star key={i} className={`w-2.5 h-2.5 ${i < Math.floor(item.rating) ? "fill-maroon text-maroon" : "fill-maroon/20 text-maroon/20"}`} />
           ))}
         </div>
       </div>
@@ -430,27 +430,27 @@ function SuggestedCard({ item, onAdd }: { item: SuggestedItem; onAdd: (item: Sug
   );
 }
 
-// ── Empty state with clear cart option (though empty) ───────────────────────────────────────────────
+// ── Empty state ───────────────────────────────────────────────────────────────
 function EmptyCart({ onClearCart }: { onClearCart?: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="relative mb-6">
-        <div className="w-24 h-24 rounded-3xl bg-red-50 border-2 border-red-100
+        <div className="w-24 h-24 rounded-3xl bg-maroon/5 border-2 border-maroon/10
           flex items-center justify-center shadow-lg">
-          <ShoppingBag className="w-10 h-10 text-red-300" />
+          <ShoppingBag className="w-10 h-10 text-maroon/40" />
         </div>
-        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-[#0f172a]
+        <div className="absolute -top-2 -right-2 w-8 h-8 rounded-xl bg-maroon
           flex items-center justify-center shadow-md text-white font-black text-sm">
           0
         </div>
       </div>
-      <h2 className="font-display italic font-bold text-[#0f172a] text-3xl mb-2">Your cart is empty</h2>
-      <p className="text-gray-400 text-sm max-w-xs mb-8 leading-relaxed">
+      <h2 className="font-display italic font-bold text-maroon text-3xl mb-2">Your cart is empty</h2>
+      <p className="text-maroon/50 text-sm max-w-xs mb-8 leading-relaxed">
         You haven't added anything yet. Explore the collection and find something you love.
       </p>
       <a
         href="/mens-collection"
-        className="flex items-center gap-2 bg-[#0f172a] hover:bg-red-600 text-white
+        className="flex items-center gap-2 bg-maroon hover:bg-maroon-dark text-white
           font-bold text-sm tracking-wider uppercase px-7 py-3.5 rounded-2xl
           transition-all shadow-lg hover:shadow-xl"
       >
@@ -491,7 +491,6 @@ export default function CartPage() {
       const cartData = await getCart();
       
       if (cartData && Array.isArray(cartData)) {
-        // Transform API response to CartItem format
         const cartItems: CartItem[] = cartData.map((item: any, index: number) => ({
           id: item._id || item.id || `temp-${index}`,
           name: item.name || "Product",
@@ -508,7 +507,6 @@ export default function CartPage() {
 
         setItems(cartItems);
         
-        // Create suggested items (you might want to fetch these from a separate API)
         setSuggestedItems([
           { id: "s1", name: "Linen Oxford Shirt", price: 195, rating: 4.6, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80" },
           { id: "s2", name: "Urban Suede Bomber", price: 1100, rating: 4.9, img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80" },
@@ -522,28 +520,21 @@ export default function CartPage() {
     }
   };
 
-  // Clear cart function
- const handleClearCart = async () => {
-  try {
-    await clearCart(); // ✅ directly call API
+  const handleClearCart = async () => {
+    try {
+      await clearCart();
+      setItems([]);
+      setShowClearCartModal(false);
+      setToast({ msg: "Cart cleared successfully", item: null as any });
+      setTimeout(() => setToast(null), 3000);
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      setToast({ msg: "Failed to clear cart", item: null as any });
+      setTimeout(() => setToast(null), 3000);
+    }
+  };
 
-    setItems([]); // clear UI
-    setShowClearCartModal(false);
-
-    setToast({ msg: "Cart cleared successfully", item: null as any });
-    setTimeout(() => setToast(null), 3000);
-  } catch (error) {
-    console.error("Error clearing cart:", error);
-
-    setToast({ msg: "Failed to clear cart", item: null as any });
-    setTimeout(() => setToast(null), 3000);
-  }
-};
-
-  // Calculate total number of items in cart
   const totalCartItems = items.reduce((sum, item) => sum + item.qty, 0);
-
-  // Totals
   const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
   const discountAmt = appliedCode
     ? VALID_CODES[appliedCode]?.type === "flat"
@@ -620,7 +611,7 @@ export default function CartPage() {
 
   const handleAuthSuccess = () => {
     setShowAuthModal(false);
-    fetchCartData(); // Refetch cart after successful login
+    fetchCartData();
   };
 
   const handleAuthClose = () => {
@@ -635,13 +626,13 @@ export default function CartPage() {
     return (
       <>
         <Navbar wishlistCount={0} cartCount={0} />
-        <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center">
+        <div className="min-h-screen bg-white flex items-center justify-center">
           <div className="text-center">
-            <svg className="animate-spin w-10 h-10 mx-auto mb-4 text-red-600" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin w-10 h-10 mx-auto mb-4 text-maroon" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
             </svg>
-            <p className="text-gray-500">Loading your cart...</p>
+            <p className="text-maroon/60">Loading your cart...</p>
           </div>
         </div>
         <Footer />
@@ -653,18 +644,18 @@ export default function CartPage() {
     return (
       <>
         <Navbar wishlistCount={0} cartCount={0} />
-        <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center">
+        <div className="min-h-screen bg-white flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center border border-maroon/10">
             <div className="relative inline-flex mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
-                <Check className="w-8 h-8 text-red-500" />
+              <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/10 flex items-center justify-center">
+                <Check className="w-8 h-8 text-maroon" />
               </div>
-              <div className="absolute -inset-2 rounded-3xl bg-red-500/5 animate-ping" style={{ animationDuration: "2s" }} />
+              <div className="absolute -inset-2 rounded-3xl bg-maroon/5 animate-ping" style={{ animationDuration: "2s" }} />
             </div>
-            <h2 className="font-display italic font-bold text-[#0f172a] text-3xl mb-2">Order Placed!</h2>
-            <p className="text-gray-400 text-sm mb-1">Your order has been confirmed</p>
-            <p className="font-black text-red-600 text-2xl mb-7">${total.toFixed(2)}</p>
-            <a href="/" className="block w-full bg-[#0f172a] text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-red-600 transition-colors">
+            <h2 className="font-display italic font-bold text-maroon text-3xl mb-2">Order Placed!</h2>
+            <p className="text-maroon/60 text-sm mb-1">Your order has been confirmed</p>
+            <p className="font-black text-maroon text-2xl mb-7">${total.toFixed(2)}</p>
+            <a href="/" className="block w-full bg-maroon text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-maroon-dark transition-colors">
               Continue Shopping
             </a>
           </div>
@@ -677,35 +668,71 @@ export default function CartPage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=DM+Sans:wght@300;400;500;600;700;800;900&display=swap');
-        .font-display{font-family:'Cormorant Garamond',serif;}
-        *{font-family:'DM Sans',sans-serif;}
+        :root {
+          --maroon: #800000;
+          --maroon-dark: #5C0000;
+          --maroon-light: #9D2A2A;
+          --maroon-soft: #F5E6E6;
+        }
+        
+        .text-maroon {
+          color: var(--maroon);
+        }
+        
+        .bg-maroon {
+          background-color: var(--maroon);
+        }
+        
+        .bg-maroon-dark {
+          background-color: var(--maroon-dark);
+        }
+        
+        .bg-maroon-light {
+          background-color: var(--maroon-light);
+        }
+        
+        .border-maroon {
+          border-color: var(--maroon);
+        }
+        
+        .hover\\:bg-maroon-dark:hover {
+          background-color: var(--maroon-dark);
+        }
+        
+        .hover\\:bg-maroon\\/10:hover {
+          background-color: rgba(128, 0, 0, 0.1);
+        }
+        
         @keyframes toastIn{from{opacity:0;transform:translate(-50%,16px)}to{opacity:1;transform:translate(-50%,0)}}
         .animate-toastIn{animation:toastIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);}
         .scale-98{transform:scale(0.98);}
         .scrollbar-hide::-webkit-scrollbar{display:none;}
         .scrollbar-hide{-ms-overflow-style:none;scrollbar-width:none;}
+        
+        .font-display {
+          font-family: 'Cormorant Garamond', serif;
+        }
       `}</style>
 
       <Navbar wishlistCount={0} cartCount={totalCartItems} />
 
-      <div className="min-h-screen bg-[#f8f9fb]">
+      <div className="min-h-screen bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
 
           {/* Header with Clear Cart button */}
           <div className="flex items-end justify-between mb-10 gap-4 flex-wrap">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <div className="h-px w-6 bg-red-600" />
-                <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-red-600">
+                <div className="h-px w-6 bg-maroon" />
+                <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-maroon">
                   My Bag
                 </span>
               </div>
-              <h1 className="font-display italic font-bold text-[#0f172a] text-4xl sm:text-5xl leading-none">
+              <h1 className="font-display italic font-bold text-maroon text-4xl sm:text-5xl leading-none">
                 Shopping Cart
               </h1>
               {items.length > 0 && (
-                <p className="text-gray-400 text-sm mt-1.5">
+                <p className="text-maroon/50 text-sm mt-1.5">
                   {totalCartItems} item{totalCartItems !== 1 ? "s" : ""}
                 </p>
               )}
@@ -714,9 +741,9 @@ export default function CartPage() {
               {items.length > 0 && (
                 <button
                   onClick={() => setShowClearCartModal(true)}
-                  className="flex items-center gap-1.5 px-4 py-2 bg-white border border-red-200 
-                    text-red-600 text-[11px] font-bold tracking-wider uppercase rounded-xl
-                    hover:bg-red-50 hover:border-red-300 transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 bg-white border border-maroon/20 
+                    text-maroon text-[11px] font-bold tracking-wider uppercase rounded-xl
+                    hover:bg-maroon/5 hover:border-maroon/30 transition-all"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   Clear Cart
@@ -724,7 +751,7 @@ export default function CartPage() {
               )}
               <a href="/mens-collection"
                 className="hidden sm:flex items-center gap-1.5 text-[11px] font-bold tracking-wider
-                  uppercase text-gray-400 hover:text-red-600 transition-colors">
+                  uppercase text-maroon/40 hover:text-maroon transition-colors">
                 Continue Shopping <ChevronRight className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -739,10 +766,10 @@ export default function CartPage() {
               <div className="space-y-4">
 
                 {/* Free shipping bar */}
-                <div className={`rounded-2xl p-4 sm:p-5 border transition-all bg-red-50 border-red-200`}>
+                <div className={`rounded-2xl p-4 sm:p-5 border transition-all bg-maroon/5 border-maroon/10`}>
                   <div className="flex items-center gap-2.5 mb-3">
-                    <Truck className={`w-4 h-4 flex-shrink-0 text-red-600`} />
-                    <p className={`text-xs font-bold text-red-700`}>
+                    <Truck className={`w-4 h-4 flex-shrink-0 text-maroon`} />
+                    <p className={`text-xs font-bold text-maroon`}>
                       {shipping === 0
                         ? "🎉 You've unlocked FREE shipping!"
                         : `Add $${toFreeShip.toFixed(2)} more for FREE shipping`}
@@ -750,7 +777,7 @@ export default function CartPage() {
                   </div>
                   <div className="h-1.5 bg-white/60 rounded-full overflow-hidden">
                     <div
-                      className={`h-full rounded-full transition-all duration-700 bg-red-600`}
+                      className={`h-full rounded-full transition-all duration-700 bg-maroon`}
                       style={{ width: `${freeProgress}%` }}
                     />
                   </div>
@@ -770,10 +797,10 @@ export default function CartPage() {
 
                 {/* Suggested items */}
                 {suggestedItems.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 sm:p-6">
+                  <div className="bg-white rounded-2xl border border-maroon/10 shadow-sm p-5 sm:p-6">
                     <div className="flex items-center gap-2 mb-4">
-                      <Gift className="w-4 h-4 text-red-600" />
-                      <h3 className="font-bold text-[#0f172a] text-sm">You Might Also Like</h3>
+                      <Gift className="w-4 h-4 text-maroon" />
+                      <h3 className="font-bold text-maroon text-sm">You Might Also Like</h3>
                     </div>
                     <div className="flex gap-4 overflow-x-auto pb-1 scrollbar-hide snap-x snap-mandatory">
                       {suggestedItems.map(s => (
@@ -790,22 +817,22 @@ export default function CartPage() {
 
               {/* RIGHT: order summary */}
               <div className="lg:sticky lg:top-6">
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <div className="bg-white rounded-2xl border border-maroon/10 shadow-sm overflow-hidden">
                   {/* Top accent */}
-                  <div className="h-1 bg-gradient-to-r from-red-600 via-red-400 to-red-600" />
+                  <div className="h-1 bg-gradient-to-r from-maroon via-maroon-light to-maroon" />
 
                   <div className="p-5 sm:p-6 space-y-5">
-                    <h2 className="font-bold text-[#0f172a] text-lg">Order Summary</h2>
+                    <h2 className="font-bold text-maroon text-lg">Order Summary</h2>
 
                     {/* Line items */}
-                    <div className="space-y-3 pb-4 border-b border-gray-100">
+                    <div className="space-y-3 pb-4 border-b border-maroon/10">
                       {items.map(item => (
                         <div key={item.id} className="flex justify-between gap-3 text-sm">
-                          <span className="text-gray-500 leading-snug">
+                          <span className="text-maroon/60 leading-snug">
                             {item.name}
-                            <span className="text-gray-300 ml-1 text-xs">×{item.qty}</span>
+                            <span className="text-maroon/30 ml-1 text-xs">×{item.qty}</span>
                           </span>
-                          <span className="font-bold text-[#0f172a] flex-shrink-0">
+                          <span className="font-bold text-maroon flex-shrink-0">
                             ${(item.price * item.qty).toLocaleString()}
                           </span>
                         </div>
@@ -813,35 +840,35 @@ export default function CartPage() {
                     </div>
 
                     {/* Breakdown */}
-                    <div className="space-y-2.5 pb-4 border-b border-gray-100">
+                    <div className="space-y-2.5 pb-4 border-b border-maroon/10">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Subtotal</span>
-                        <span className="font-semibold text-[#0f172a]">${subtotal.toLocaleString()}</span>
+                        <span className="text-maroon/60">Subtotal</span>
+                        <span className="font-semibold text-maroon">${subtotal.toLocaleString()}</span>
                       </div>
                       {discountAmt > 0 && (
                         <div className="flex justify-between text-sm items-center">
-                          <span className="text-red-600 flex items-center gap-1">
+                          <span className="text-maroon flex items-center gap-1">
                             <Tag className="w-3 h-3" /> {appliedCode}
                           </span>
-                          <span className="font-bold text-red-600">−${discountAmt}</span>
+                          <span className="font-bold text-maroon">−${discountAmt}</span>
                         </div>
                       )}
                       <div className="flex justify-between text-sm items-center">
-                        <span className="text-gray-500">Shipping</span>
+                        <span className="text-maroon/60">Shipping</span>
                         {shipping === 0
-                          ? <span className="text-[10px] font-black text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">FREE</span>
-                          : <span className="font-semibold text-[#0f172a]">${shipping}</span>}
+                          ? <span className="text-[10px] font-black text-maroon bg-maroon/5 border border-maroon/10 px-2 py-0.5 rounded-full">FREE</span>
+                          : <span className="font-semibold text-maroon">${shipping}</span>}
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-500">Tax (8%)</span>
-                        <span className="font-semibold text-[#0f172a]">${tax.toFixed(2)}</span>
+                        <span className="text-maroon/60">Tax (8%)</span>
+                        <span className="font-semibold text-maroon">${tax.toFixed(2)}</span>
                       </div>
                     </div>
 
                     {/* Total */}
-                    <div className="flex justify-between items-center pb-5 border-b border-gray-100">
-                      <span className="font-black text-[#0f172a] text-base">Total</span>
-                      <span className="font-black text-red-600 text-2xl">${total.toFixed(2)}</span>
+                    <div className="flex justify-between items-center pb-5 border-b border-maroon/10">
+                      <span className="font-black text-maroon text-base">Total</span>
+                      <span className="font-black text-maroon text-2xl">${total.toFixed(2)}</span>
                     </div>
 
                     {/* Promo code */}
@@ -851,7 +878,7 @@ export default function CartPage() {
                     <button
                       onClick={handleCheckout}
                       disabled={checkoutLoading}
-                      className="w-full bg-[#0f172a] hover:bg-red-600 disabled:bg-gray-300 text-white
+                      className="w-full bg-maroon hover:bg-maroon-dark disabled:bg-maroon/30 text-white
                         font-black text-sm tracking-wide uppercase py-4 rounded-xl transition-all
                         shadow-md hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2"
                     >
@@ -873,11 +900,11 @@ export default function CartPage() {
                         { icon: Package,     label: "Fast Delivery" },
                       ].map(({ icon: Icon, label }) => (
                         <div key={label} className="flex flex-col items-center gap-1 text-center">
-                          <div className="w-8 h-8 rounded-xl bg-red-50 border border-red-100
+                          <div className="w-8 h-8 rounded-xl bg-maroon/5 border border-maroon/10
                             flex items-center justify-center">
-                            <Icon className="w-3.5 h-3.5 text-red-500" />
+                            <Icon className="w-3.5 h-3.5 text-maroon" />
                           </div>
-                          <span className="text-[9px] font-bold text-gray-400 leading-tight">{label}</span>
+                          <span className="text-[9px] font-bold text-maroon/40 leading-tight">{label}</span>
                         </div>
                       ))}
                     </div>
@@ -888,8 +915,8 @@ export default function CartPage() {
                 <div className="mt-4 flex items-center justify-center gap-3 flex-wrap">
                   {["Visa", "Mastercard", "Amex", "PayPal", "Apple Pay"].map(p => (
                     <span key={p} className="text-[9px] font-black tracking-wider uppercase
-                      text-gray-300 bg-white border border-gray-100 px-2.5 py-1 rounded-lg shadow-sm
-                      hover:text-red-600 hover:border-red-200 transition-colors">
+                      text-maroon/30 bg-white border border-maroon/10 px-2.5 py-1 rounded-lg shadow-sm
+                      hover:text-maroon hover:border-maroon/20 transition-colors">
                       {p}
                     </span>
                   ))}
@@ -929,15 +956,15 @@ export default function CartPage() {
       {/* Remove toast */}
       {toast && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3
-          bg-[#0f172a] text-white text-sm font-semibold px-5 py-3.5 rounded-2xl shadow-2xl
-          border-l-4 border-red-500 animate-toastIn whitespace-nowrap">
+          bg-maroon-dark text-white text-sm font-semibold px-5 py-3.5 rounded-2xl shadow-2xl
+          border-l-4 border-maroon-light animate-toastIn whitespace-nowrap">
           <span>{toast.msg}</span>
           {toast.item && (
-            <button onClick={handleUndo} className="text-red-400 hover:text-red-300 font-bold underline text-xs">
+            <button onClick={handleUndo} className="text-maroon-light hover:text-maroon-soft font-bold underline text-xs">
               Undo
             </button>
           )}
-          <button onClick={() => setToast(null)} className="text-gray-400 hover:text-white ml-1">
+          <button onClick={() => setToast(null)} className="text-white/60 hover:text-white ml-1">
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
