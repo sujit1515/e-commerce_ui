@@ -85,7 +85,7 @@ const CompanyCard: React.FC<CompanyCardProps> = ({ company, cardWidth }) => {
     <motion.div
       whileHover={{ y: -4, boxShadow: "0 12px 32px rgba(128, 0, 0, 0.12)" }}
       transition={{ type: "spring", stiffness: 300, damping: 22 }}
-      className="flex flex-shrink-0 flex-col items-center justify-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-maroon/10 bg-white px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-3 sm:py-4 md:py-5 cursor-default transition-all duration-300 hover:border-maroon/30"
+      className="flex flex-shrink-0 flex-col items-center justify-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border border-maroon/10 bg-white/80 backdrop-blur-sm px-2 xs:px-3 sm:px-4 md:px-6 py-2 xs:py-3 sm:py-4 md:py-5 cursor-default transition-all duration-300 hover:border-maroon/30"
       style={{
         width: cardWidth,
         boxShadow: "0 2px 12px rgba(128, 0, 0, 0.05)",
@@ -134,7 +134,7 @@ const InfiniteMarquee: React.FC = () => {
   const setWidth = (cardWidth + gap) * COMPANIES.length;
 
   return (
-    <section className="w-full overflow-hidden bg-white border-t border-b border-maroon/10 py-8 sm:py-12 md:py-16">
+    <section className="w-full overflow-hidden bg-[#F8F4F0] border-t border-b border-maroon/10 py-8 sm:py-12 md:py-16">
       {/* Section heading */}
       <div className="mb-6 sm:mb-8 md:mb-10 text-center px-4">
         <p
@@ -175,16 +175,16 @@ const InfiniteMarquee: React.FC = () => {
         </p>
       </div>
 
-      {/* Marquee with fade masks */}
+      {/* Marquee with fade masks - Updated to match cream background */}
       <div className="relative">
-        {/* Left fade - using maroon tint */}
+        {/* Left fade - using cream gradient */}
         <div 
-          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 xs:w-16 sm:w-20 md:w-40 bg-gradient-to-r from-white via-white/80 to-transparent" 
+          className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 xs:w-16 sm:w-20 md:w-40 bg-gradient-to-r from-[#F8F4F0] via-[#F8F4F0]/80 to-transparent" 
         />
         
-        {/* Right fade */}
+        {/* Right fade - using cream gradient */}
         <div 
-          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 xs:w-16 sm:w-20 md:w-40 bg-gradient-to-l from-white via-white/80 to-transparent" 
+          className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 xs:w-16 sm:w-20 md:w-40 bg-gradient-to-l from-[#F8F4F0] via-[#F8F4F0]/80 to-transparent" 
         />
 
         {/* Infinite scroll track */}
@@ -238,6 +238,7 @@ const PartnerCompanies: React.FC = () => {
           --maroon-dark: #5C0000;
           --maroon-light: #9D2A2A;
           --maroon-soft: #F5E6E6;
+          --cream: #F8F4F0;
         }
         
         /* Apply maroon to text */
@@ -289,6 +290,11 @@ const PartnerCompanies: React.FC = () => {
         .company-card:hover {
           border-color: rgba(128, 0, 0, 0.2);
           box-shadow: 0 8px 24px rgba(128, 0, 0, 0.08);
+        }
+        
+        /* Cream background utility */
+        .bg-cream {
+          background-color: var(--cream);
         }
       `}</style>
 

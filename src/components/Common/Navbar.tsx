@@ -80,6 +80,11 @@ export default function Navbar({
   const [authView, setAuthView] = useState<"login" | "signup">("login");
   const [currentUser, setCurrentUser] = useState<UserData | null>(null);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [logoError, setLogoError] = useState<boolean>(false);
+  
+  // Scroll hide/show state
+  const [lastScrollY, setLastScrollY] = useState<number>(0);
+  const [navbarVisible, setNavbarVisible] = useState<boolean>(true);
 
   // Check login when Navbar loads
   useEffect(() => {
@@ -100,11 +105,31 @@ export default function Navbar({
   // Check if user is admin
   const isAdmin = currentUser?.role === "admin";
 
+  // Handle scroll to hide/show navbar
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Show navbar when scrolling up or at the top
+      if (currentScrollY < lastScrollY || currentScrollY < 50) {
+        setNavbarVisible(true);
+      } 
+      // Hide navbar when scrolling down and not at the top
+      else if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setNavbarVisible(false);
+        // Close mobile menu when navbar hides
+        setMenuOpen(false);
+        setUserMenuOpen(false);
+      }
+      
+      // Update scrolled state for background opacity
+      setScrolled(currentScrollY > 20);
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   // Close user menu when clicking outside
   useEffect(() => {
@@ -269,6 +294,7 @@ export default function Navbar({
           --black: #000000;
           --maroon: #800000;
           --maroon-light: #9d2a2a;
+          --cream: #F8F4F0;
           --white: #ffffff;
           --gray-light: #f5f5f5;
         }
@@ -325,12 +351,20 @@ export default function Navbar({
         }
       `}</style>
 
-      {/* Main Navbar */}
-      <nav
+      {/* Main Navbar with hide/show animation */}
+      <motion.nav
+        initial={{ y: 0 }}
+        animate={{ 
+          y: navbarVisible ? 0 : -100,
+        }}
+        transition={{ 
+          duration: 0.3,
+          ease: "easeInOut"
+        }}
         className={`sticky top-0 z-50 w-full transition-all duration-300 ${
           scrolled
-            ? "bg-white/98 backdrop-blur-lg shadow-lg"
-            : "bg-white border-b border-gray-200"
+            ? "bg-[#F8F4F0]/98 backdrop-blur-lg shadow-lg"
+            : "bg-[#F8F4F0] border-b border-gray-200"
         }`}
       >
         <div className="w-full px-4 sm:px-6 lg:px-8">
@@ -341,16 +375,31 @@ export default function Navbar({
               onClick={() => handleNavigation("/")}
               className="flex items-center gap-2 group flex-shrink-0"
             >
-              <div className="relative h-12 w-auto md:h-20">
-                <Image
-                  src="/logo/quick-kart.png" 
-                  alt="Quick Kart"
-                  width={120}
-                  height={40}
-                  className="object-contain h-full w-auto"
-                  priority
-                />
-              </div>
+              {!logoError ? (
+                <div className="relative h-12 w-auto md:h-20">
+                  <Image
+                    src="/Images/logo/logo.png"
+                    alt="Company Logo"
+                    width={120}
+                    height={40}
+                    className="object-contain h-full w-auto"
+                    priority
+                    onError={() => setLogoError(true)}
+                  />
+                </div>
+              ) : (
+                /* Fallback if logo fails to load */
+                <div className="flex items-center gap-2">
+                  <div className="flex gap-0.5">
+                    <div className="w-2.5 h-2.5 bg-maroon rounded-full" />
+                    <div className="w-2.5 h-2.5 bg-maroon/60 rounded-full" />
+                    <div className="w-2.5 h-2.5 bg-maroon/30 rounded-full" />
+                  </div>
+                  <span className="font-semibold tracking-widest text-black" style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontWeight: 600 }}>
+                    LUXE
+                  </span>
+                </div>
+              )}
             </button>
 
             {/* DESKTOP NAV LINKS */}
@@ -651,7 +700,7 @@ export default function Navbar({
               transition={{ duration: 0.3 }}
               className="md:hidden overflow-hidden"
             >
-              <div className="border-t border-gray-200 bg-white px-4 pt-4 pb-6 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
+              <div className="border-t border-gray-200 bg-[#F8F4F0] px-4 pt-4 pb-6 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
                 {/* Mobile Search */}
                 <form 
                   onSubmit={handleSearch}
@@ -809,7 +858,7 @@ export default function Navbar({
             </motion.div>
           )}
         </AnimatePresence>
-      </nav>
+      </motion.nav>
 
       <AuthManager 
         isOpen={authModalOpen}

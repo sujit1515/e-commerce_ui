@@ -91,6 +91,7 @@ const ConsciousLuxury: React.FC = () => {
           --maroon-dark: #5C0000;
           --maroon-light: #9D2A2A;
           --maroon-soft: #F5E6E6;
+          --cream: #F8F4F0;
         }
         
         .text-maroon {
@@ -112,6 +113,11 @@ const ConsciousLuxury: React.FC = () => {
         /* Decorative elements */
         .maroon-gradient-bg {
           background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
+        }
+
+        /* Cream background utility */
+        .bg-cream {
+          background-color: var(--cream);
         }
 
         /* Responsive text adjustments */
@@ -139,7 +145,7 @@ const ConsciousLuxury: React.FC = () => {
 
       <section
         className="w-full py-12 sm:py-16 lg:py-20 xl:py-24 px-4 sm:px-6 lg:px-8 xl:px-16"
-        style={{ backgroundColor: "#ffffff" }}
+        style={{ backgroundColor: "#F8F4F0" }} // Updated to cream color
       >
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col lg:flex-row items-center gap-8 sm:gap-10 lg:gap-12 xl:gap-16">
@@ -272,7 +278,7 @@ const ConsciousLuxury: React.FC = () => {
                     </div>
                   ) : (
                     <img 
-                      src="/Images/Shop/luxery-1.jpg" 
+                      src="/Images/Shop/luxury-1.png" 
                       alt="Conscious Luxury - Sustainable fashion" 
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                       loading="lazy"

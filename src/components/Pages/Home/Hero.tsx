@@ -10,30 +10,30 @@ export default function HeroBanner() {
   const banners = [
     {
       id: 1,
-      image: "/Images/Shop/banner-1.jpg",
+      image: "/Images/Shop/banner-men.png",
       title: "EVERYDAY ELEGANCE",
       subtitle: "Comfort Meets Craftsmanship In Every Thread",
       discount: "UP TO 50% OFF",
       buttonText: "SHOP NOW ›",
-      buttonAction: () => router.push('/saree/saree-section'),
+      buttonAction: () => router.push('/shop/men'),
     },
     {
       id: 2,
-      image: "/Images/Shop/banner-2.jpg",
+      image: "/Images/Shop/banner-women.png",
       title: "NEW COLLECTION",
       subtitle: "Discover Our Latest Designs",
       discount: "UP TO 40% OFF",
       buttonText: "EXPLORE ›",
-      buttonAction: () => router.push('/kurtis'),
+      buttonAction: () => router.push('/shop/women'),
     },
     {
       id: 3,
-      image: "/Images/Shop/banner-3.jpg",
+      image: "/Images/Shop/banner-kid.png",
       title: "FESTIVAL SPECIAL",
       subtitle: "Celebrate in Style with Traditional Wear",
       discount: "UP TO 60% OFF",
       buttonText: "SHOP FESTIVAL ›",
-      buttonAction: () => router.push('/lehenga'),
+      buttonAction: () => router.push('/shop/kid'),
     }
   ];
 

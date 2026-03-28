@@ -42,7 +42,7 @@ const categories: Category[] = [
 const styles: Record<string, React.CSSProperties> = {
   section: {
     width: "100%",
-    backgroundColor: "#ffffff",
+    backgroundColor: "#F8F4F0", // Updated background color
     padding: "4rem 1rem",
     fontFamily: "'Cormorant Garamond', Georgia, serif",
   },
@@ -183,6 +183,7 @@ export default function SignatureStyleSection(): React.ReactElement {
 
         .sig-section {
           font-family: 'Cormorant Garamond', Georgia, serif !important;
+          background-color: #F8F4F0 !important; /* Updated background color */
         }
         .sig-title {
           font-family: 'Cormorant Garamond', Georgia, serif !important;

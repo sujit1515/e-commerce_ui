@@ -46,19 +46,23 @@ const products = [
 interface WishlistButtonProps {
   active: boolean;
   onToggle: () => void;
+  loading?: boolean;
 }
 
-function WishlistButton({ active, onToggle }: WishlistButtonProps) {
+function WishlistButton({ active, onToggle, loading }: WishlistButtonProps) {
   return (
     <button
       onClick={onToggle}
+      disabled={loading}
       aria-label="Add to wishlist"
-      className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg active:scale-95 group"
+      className="absolute top-3 right-3 z-10 w-9 h-9 rounded-full bg-white shadow-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-lg active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        fill={active ? "#800000" : "#000000"}
+        fill={active ? "#800000" : "none"}
+        stroke={active ? "#800000" : "#000000"}
+        strokeWidth={active ? "0" : "1.5"}
         className="w-4 h-4 transition-all duration-300 group-hover:scale-110"
       >
         <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
@@ -95,22 +99,20 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   const handleWishlistToggle = async () => {
-  try {
-    setLoading(true);
-
-    const res = await toggleWishlist(product.id.toString());
-
-    if (res.success) {
-      setWished(res.isInWishlist); // backend should return this
-    } else {
-      console.log(res.message);
+    try {
+      setLoading(true);
+      const res = await toggleWishlist(product.id.toString());
+      if (res.success) {
+        setWished(res.isInWishlist);
+      } else {
+        console.log(res.message);
+      }
+    } catch (error) {
+      console.log("Wishlist error:", error);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.log("Wishlist error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="group flex flex-col">
@@ -122,7 +124,7 @@ function ProductCard({ product }: { product: Product }) {
           boxShadow: "0 4px 20px rgba(128, 0, 0, 0.1)", // Maroon tinted shadow
         }}
       >
-        <WishlistButton active={wished} onToggle={handleWishlistToggle} />
+        <WishlistButton active={wished} onToggle={handleWishlistToggle} loading={loading} />
 
         {!imageError && product.image ? (
           <img
@@ -185,7 +187,7 @@ function ProductCard({ product }: { product: Product }) {
           
           {/* Buy Now and Cart Icons - Updated to Maroon */}
           <div className="flex items-center gap-2">
-            {/* Buy Now Button - Maroon */}
+            {/* Buy Now Button - Maroon with Dark Maroon Hover */}
             <button
               onClick={handleBuyNow}
               className="text-xs font-medium px-3 py-1.5 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-md relative overflow-hidden group/buy"
@@ -195,12 +197,18 @@ function ProductCard({ product }: { product: Product }) {
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 letterSpacing: "0.05em",
               }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#5C0000";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#800000";
+              }}
             >
               <span className="relative z-10 cursor-pointer">Buy Now</span>
-              <div className="absolute inset-0 bg-black transform scale-x-0 group-hover/buy:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <div className="absolute inset-0 bg-[#5C0000] transform scale-x-0 group-hover/buy:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
             </button>
             
-            {/* Cart Icon Button - Maroon */}
+            {/* Cart Icon Button - Maroon with Dark Maroon Hover */}
             <button
               onClick={handleAddToCart}
               className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-lg relative overflow-hidden group/cart"
@@ -208,12 +216,22 @@ function ProductCard({ product }: { product: Product }) {
                 backgroundColor: addedToCart ? "#10b981" : "#800000",
                 color: "#fff",
               }}
+              onMouseEnter={(e) => {
+                if (!addedToCart) {
+                  e.currentTarget.style.backgroundColor = "#5C0000";
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!addedToCart) {
+                  e.currentTarget.style.backgroundColor = "#800000";
+                }
+              }}
               aria-label="Add to cart"
             >
               <span className="relative z-10">
                 <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover/cart:rotate-12" />
               </span>
-              <div className="absolute inset-0 bg-black transform scale-x-0 group-hover/cart:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <div className="absolute inset-0 bg-[#5C0000] transform scale-x-0 group-hover/cart:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
             </button>
           </div>
         </div>
@@ -240,6 +258,7 @@ export default function CuratedSelection() {
           --maroon: #800000;
           --maroon-dark: #5C0000;
           --maroon-light: #9D2A2A;
+          --cream: #F8F4F0;
           --black: #000000;
           --white: #ffffff;
         }
@@ -302,12 +321,24 @@ export default function CuratedSelection() {
           transform: translateY(-2px);
           box-shadow: 0 8px 20px rgba(128, 0, 0, 0.2);
         }
+        
+        /* Dark maroon hover for View All button */
+        .view-all-btn {
+          background-color: #800000 !important;
+          transition: all 0.3s ease;
+        }
+        
+        .view-all-btn:hover {
+          background-color: #5C0000 !important;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(92, 0, 0, 0.3);
+        }
       `}</style>
 
       <section
         className="w-full py-16 px-4 sm:px-6 lg:px-8"
         style={{ 
-          backgroundColor: "#ffffff",
+          backgroundColor: "#F8F4F0", // Updated to cream color
           padding: "4rem 1rem",
         }}
       >
@@ -360,16 +391,22 @@ export default function CuratedSelection() {
             ))}
           </div>
 
-          {/* ── View All CTA - Maroon Button with Black Hover ── */}
+          {/* ── View All CTA - Maroon Button with Dark Maroon Hover ── */}
           <div className="mt-12 sm:mt-16 text-center" style={{ marginTop: "2rem" }}>
             <button
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 group relative overflow-hidden btn-maroon"
+              className="view-all-btn inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 group relative overflow-hidden"
               style={{
                 backgroundColor: "#800000",
                 color: "#fff",
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 letterSpacing: "0.12em",
                 fontWeight: 500,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#5C0000";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#800000";
               }}
             >
               <span className="relative z-10 flex items-center gap-2 cursor-pointer">
@@ -389,7 +426,7 @@ export default function CuratedSelection() {
                   />
                 </svg>
               </span>
-              <div className="absolute inset-0 bg-black transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <div className="absolute inset-0 bg-[#5C0000] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
             </button>
           </div>
         </div>
