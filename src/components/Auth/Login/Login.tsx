@@ -179,10 +179,10 @@ export default function Login({
                       <Dialog.Title className="text-xl font-bold text-maroon mb-2">
                         Login Successful!
                       </Dialog.Title>
-                      <p className="text-maroon/60 mb-4">
+                      <p className="text-black mb-4">
                         {successMessage}
                       </p>
-                      <p className="text-sm text-maroon/40">
+                      <p className="text-sm text-gray-600">
                         You have been successfully logged in.
                       </p>
                       
@@ -233,7 +233,7 @@ export default function Login({
                       <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-1.5">
                         Welcome Back
                       </Dialog.Title>
-                      <p className="text-maroon/60 text-sm">Sign in to your account to continue</p>
+                      <p className="text-black text-sm">Sign in to your account to continue</p>
                     </div>
 
                     {/* General error */}
@@ -247,13 +247,13 @@ export default function Login({
                     <form onSubmit={handleSubmit} className="space-y-4">
                       {/* Email */}
                       <div>
-                        <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Email Address</label>
+                        <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">Email Address</label>
                         <div className="relative">
                           <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
                           <input
                             type="email" name="email" value={formData.email} onChange={handleChange}
                             placeholder="you@example.com" disabled={isLoading}
-                            className={`w-full pl-10 pr-4 py-3 bg-maroon/5 border ${errors.email ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
+                            className={`w-full pl-10 pr-4 py-3 bg-gray-50 border ${errors.email ? "border-maroon" : "border-gray-200"} rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                         </div>
                         {errors.email && <p className="mt-1.5 text-maroon text-xs">{errors.email}</p>}
@@ -262,7 +262,7 @@ export default function Login({
                       {/* Password */}
                       <div>
                         <div className="flex items-center justify-between mb-2">
-                          <label className="text-xs font-semibold text-maroon/70 uppercase tracking-wider">Password</label>
+                          <label className="text-xs font-semibold text-black uppercase tracking-wider">Password</label>
                           <button 
                             type="button" 
                             onClick={onSwitchToForgotPassword} 
@@ -277,7 +277,7 @@ export default function Login({
                           <input
                             type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange}
                             placeholder="Enter your password" disabled={isLoading}
-                            className={`w-full pl-10 pr-11 py-3 bg-maroon/5 border ${errors.password ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
+                            className={`w-full pl-10 pr-11 py-3 bg-gray-50 border ${errors.password ? "border-maroon" : "border-gray-200"} rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                           <button 
                             type="button" 
@@ -295,11 +295,11 @@ export default function Login({
                       <label className="flex items-center gap-2.5 cursor-pointer group">
                         <div className="relative">
                           <input type="checkbox" name="rememberMe" checked={formData.rememberMe} onChange={handleChange} disabled={isLoading} className="sr-only" />
-                          <div className={`w-4 h-4 rounded border transition-all ${formData.rememberMe ? "bg-maroon border-maroon" : "border-maroon/20 bg-white"} flex items-center justify-center`}>
+                          <div className={`w-4 h-4 rounded border transition-all ${formData.rememberMe ? "bg-maroon border-maroon" : "border-gray-300 bg-white"} flex items-center justify-center`}>
                             {formData.rememberMe && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 10"><path d="M1 5l3 4L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                           </div>
                         </div>
-                        <span className="text-sm text-maroon/60 group-hover:text-maroon transition">Remember me for 30 days</span>
+                        <span className="text-sm text-gray-600 group-hover:text-maroon transition">Remember me for 30 days</span>
                       </label>
 
                       {/* Submit */}
@@ -314,10 +314,10 @@ export default function Login({
                     {/* Divider */}
                     <div className="relative my-6">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-maroon/10" />
+                        <div className="w-full border-t border-gray-200" />
                       </div>
                       <div className="relative flex justify-center">
-                        <span className="px-3 bg-white text-maroon/40 text-xs">Or continue with</span>
+                        <span className="px-3 bg-white text-gray-400 text-xs">Or continue with</span>
                       </div>
                     </div>
 
@@ -330,14 +330,14 @@ export default function Login({
                         <button 
                           key={label} 
                           disabled={isLoading} 
-                          className="flex items-center justify-center gap-2.5 bg-maroon/5 hover:bg-maroon/10 border border-maroon/20 text-maroon/70 hover:text-maroon py-2.5 rounded-xl transition-all text-sm font-medium"
+                          className="flex items-center justify-center gap-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 hover:text-maroon py-2.5 rounded-xl transition-all text-sm font-medium"
                         >
                           {icon} {label}
                         </button>
                       ))}
                     </div>
 
-                    <p className="text-center text-maroon/60 text-sm mt-6">
+                    <p className="text-center text-gray-600 text-sm mt-6">
                       Don't have an account?{" "}
                       <button 
                         onClick={onSwitchToSignup} 

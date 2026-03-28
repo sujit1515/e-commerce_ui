@@ -17,14 +17,14 @@ interface Props {
 }
 
 const COLORS = [
-  { name: "Black",    hex: "#111111" },
-  { name: "Navy",     hex: "#0f172a" },
-  { name: "White",    hex: "#f5f5f5" },
-  { name: "Camel",    hex: "#c19a6b" },
-  { name: "Grey",     hex: "#9ca3af" },
-  { name: "Olive",    hex: "#6b7c45" },
-  { name: "Burgundy", hex: "#7c2335" },
-  { name: "Beige",    hex: "#e8dcc8" },
+  { name: "Black",    hex: "#111111", darkHex: "#111111" },
+  { name: "Navy",     hex: "#0f172a", darkHex: "#0a0f1f" },
+  { name: "White",    hex: "#f5f5f5", darkHex: "#e5e5e5" },
+  { name: "Camel",    hex: "#c19a6b", darkHex: "#b87a4a" },
+  { name: "Grey",     hex: "#9ca3af", darkHex: "#6b7280" },
+  { name: "Olive",    hex: "#6b7c45", darkHex: "#5a6a3a" },
+  { name: "Burgundy", hex: "#7c2335", darkHex: "#5c1a28" },
+  { name: "Beige",    hex: "#e8dcc8", darkHex: "#d4c5a8" },
 ];
 
 const SIZES    = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -34,17 +34,17 @@ const MAX_PRICE = 1500;
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   return (
-    <div className="border-b border-maroon/10 pb-6 mb-6">
+    <div className="border-b border-maroon/20 pb-6 mb-6">
       <button
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between mb-4 group"
       >
-        <span className="text-[11px] font-black tracking-[0.2em] uppercase text-maroon">
+        <span className="text-[11px] font-black tracking-[0.2em] uppercase text-black">
           {title}
         </span>
         {open
-          ? <ChevronUp   className="w-3.5 h-3.5 text-maroon/60 group-hover:text-maroon transition-colors" />
-          : <ChevronDown className="w-3.5 h-3.5 text-maroon/60 group-hover:text-maroon transition-colors" />
+          ? <ChevronUp   className="w-3.5 h-3.5 text-gray-600 group-hover:text-maroon transition-colors" />
+          : <ChevronDown className="w-3.5 h-3.5 text-gray-600 group-hover:text-maroon transition-colors" />
         }
       </button>
       {open && <div>{children}</div>}
@@ -78,10 +78,10 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
   return (
     <aside className="w-full">
       {/* Sidebar header */}
-      <div className="flex items-center justify-between mb-7 pb-4 border-b border-maroon/10">
+      <div className="flex items-center justify-between mb-7 pb-4 border-b border-maroon/20">
         <div className="flex items-center gap-2">
           <SlidersHorizontal className="w-4 h-4 text-maroon" />
-          <span className="text-[11px] font-black tracking-[0.22em] uppercase text-maroon">
+          <span className="text-[11px] font-black tracking-[0.22em] uppercase text-black">
             Filter By
           </span>
           {activeCount > 0 && (
@@ -92,9 +92,9 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
         </div>
         <button
           onClick={onMobileClose}
-          className="lg:hidden p-1.5 hover:bg-maroon/5 rounded-lg transition-colors"
+          className="lg:hidden p-1.5 hover:bg-maroon/10 rounded-lg transition-colors"
         >
-          <X className="w-4 h-4 text-maroon/60 hover:text-maroon" />
+          <X className="w-4 h-4 text-gray-500 hover:text-maroon" />
         </button>
       </div>
 
@@ -103,6 +103,7 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
         <div className="grid grid-cols-4 gap-x-2 gap-y-3">
           {COLORS.map(c => {
             const active = filters.colors.includes(c.name);
+            const colorHex = active ? c.darkHex : c.hex;
             return (
               <button
                 key={c.name}
@@ -113,12 +114,12 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
                 <span
                   className={`w-8 h-8 rounded-full border-2 block transition-all duration-200
                     ${active
-                      ? "border-maroon scale-110 shadow-md"
-                      : "border-gray-200 hover:border-maroon/50 hover:scale-105"}
+                      ? "border-maroon scale-110 shadow-md ring-2 ring-maroon/30"
+                      : "border-gray-300 hover:border-maroon/70 hover:scale-105"}
                     ${c.name === "White" ? "shadow-sm" : ""}`}
-                  style={{ backgroundColor: c.hex }}
+                  style={{ backgroundColor: colorHex }}
                 />
-                <span className={`text-[9px] font-semibold leading-none ${active ? "text-maroon" : "text-gray-400"}`}>
+                <span className={`text-[9px] font-semibold leading-none ${active ? "text-maroon font-bold" : "text-gray-600"}`}>
                   {c.name}
                 </span>
               </button>
@@ -138,8 +139,8 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
                 onClick={() => toggleSize(s)}
                 className={`py-2 text-xs font-bold rounded-xl border transition-all duration-200
                   ${active
-                    ? "bg-maroon text-white border-maroon shadow-md"
-                    : "bg-white text-gray-600 border-gray-200 hover:border-maroon hover:text-maroon"
+                    ? "bg-maroon text-white border-maroon shadow-md ring-2 ring-maroon/30"
+                    : "bg-white text-gray-800 border-gray-300 hover:border-maroon hover:text-maroon hover:bg-maroon/5"
                   }`}
               >
                 {s}
@@ -168,10 +169,10 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
             }}
           />
           <div className="flex items-center justify-between">
-            <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5">
-              <span className="text-[11px] font-bold text-gray-500">$0</span>
+            <div className="bg-gray-100 border border-gray-300 rounded-lg px-3 py-1.5">
+              <span className="text-[11px] font-bold text-gray-800">$0</span>
             </div>
-            <div className="bg-maroon/10 border border-maroon/20 rounded-lg px-3 py-1.5">
+            <div className="bg-maroon/15 border border-maroon/30 rounded-lg px-3 py-1.5">
               <span className="text-[11px] font-bold text-maroon">
                 ${filters.priceMax.toLocaleString()}
                 {filters.priceMax >= MAX_PRICE ? "+" : ""}
@@ -194,7 +195,7 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
         {activeCount > 0 && (
           <button
             onClick={() => onChange({ colors: [], sizes: [], priceMax: MAX_PRICE })}
-            className="w-full text-maroon/60 hover:text-maroon text-[11px] font-semibold
+            className="w-full text-gray-700 hover:text-maroon text-[11px] font-semibold
               tracking-wider uppercase py-2 transition-colors"
           >
             Clear All
@@ -211,6 +212,10 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
         
         .text-maroon {
           color: var(--maroon);
+        }
+        
+        .text-maroon-dark {
+          color: var(--maroon-dark);
         }
         
         .bg-maroon {
@@ -233,12 +238,12 @@ function SidebarInner({ filters, onChange, onApply, onMobileClose }: Omit<Props,
           -webkit-appearance:none;appearance:none;
           width:18px;height:18px;border-radius:50%;
           background:#800000;border:3px solid #fff;
-          box-shadow:0 1px 8px rgba(128,0,0,.35);cursor:pointer;
+          box-shadow:0 1px 8px rgba(128,0,0,.45);cursor:pointer;
         }
         input[type=range]::-moz-range-thumb{
           width:18px;height:18px;border-radius:50%;
           background:#800000;border:3px solid #fff;
-          box-shadow:0 1px 8px rgba(128,0,0,.35);cursor:pointer;
+          box-shadow:0 1px 8px rgba(128,0,0,.45);cursor:pointer;
         }
         
         input[type=range]::-webkit-slider-runnable-track {
@@ -269,7 +274,7 @@ export default function FilterSidebar(props: Props) {
         <div className="fixed inset-0 z-50 lg:hidden">
           {/* Backdrop */}
           <div
-            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={onMobileClose}
           />
           {/* Panel */}

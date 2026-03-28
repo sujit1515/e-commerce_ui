@@ -157,19 +157,19 @@ export default function SignUp({
                       <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-1.5">
                         Create Account
                       </Dialog.Title>
-                      <p className="text-maroon/60 text-sm">Join us and elevate your everyday</p>
+                      <p className="text-black text-sm">Join us and elevate your everyday</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                       {/* Full Name */}
                       <div>
-                        <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Full Name</label>
+                        <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">Full Name</label>
                         <div className="relative">
-                          <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
+                          <User className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                           <input 
                             type="text" name="fullName" value={formData.fullName} onChange={handleChange} 
                             placeholder="Alexandra Chen" disabled={isLoading}
-                            className={`w-full pl-10 pr-4 py-3 bg-maroon/5 border ${errors.fullName ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
+                            className={`w-full pl-10 pr-4 py-3 bg-gray-50 border ${errors.fullName ? "border-maroon" : "border-gray-200"} rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                         </div>
                         {errors.fullName && <p className="mt-1.5 text-maroon text-xs">{errors.fullName}</p>}
@@ -177,13 +177,13 @@ export default function SignUp({
 
                       {/* Email */}
                       <div>
-                        <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Email Address</label>
+                        <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">Email Address</label>
                         <div className="relative">
-                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
+                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                           <input 
                             type="email" name="email" value={formData.email} onChange={handleChange} 
                             placeholder="you@example.com" disabled={isLoading}
-                            className={`w-full pl-10 pr-4 py-3 bg-maroon/5 border ${errors.email ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
+                            className={`w-full pl-10 pr-4 py-3 bg-gray-50 border ${errors.email ? "border-maroon" : "border-gray-200"} rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                         </div>
                         {errors.email && <p className="mt-1.5 text-maroon text-xs">{errors.email}</p>}
@@ -191,17 +191,17 @@ export default function SignUp({
 
                       {/* Password */}
                       <div>
-                        <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Password</label>
+                        <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">Password</label>
                         <div className="relative">
-                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
+                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                           <input 
                             type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} 
                             placeholder="Create a strong password" disabled={isLoading}
-                            className={`w-full pl-10 pr-11 py-3 bg-maroon/5 border ${errors.password ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
+                            className={`w-full pl-10 pr-11 py-3 bg-gray-50 border ${errors.password ? "border-maroon" : "border-gray-200"} rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                           <button 
                             type="button" onClick={() => setShowPassword(!showPassword)} 
-                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-maroon/40 hover:text-maroon transition"
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-maroon transition"
                           >
                             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                           </button>
@@ -210,14 +210,14 @@ export default function SignUp({
                           <div className="mt-2 flex items-center gap-2">
                             <div className="flex gap-1 flex-1">
                               {[1, 2, 3, 4].map((n) => (
-                                <div key={n} className={`h-1 flex-1 rounded-full transition-all ${strength >= n ? strengthColor : "bg-maroon/10"}`} />
+                                <div key={n} className={`h-1 flex-1 rounded-full transition-all ${strength >= n ? strengthColor : "bg-gray-200"}`} />
                               ))}
                             </div>
                             <span className={`text-xs font-medium ${
                               strength === 1 ? "text-maroon" : 
                               strength === 2 ? "text-maroon-light" : 
                               strength === 3 ? "text-maroon" : 
-                              strength === 4 ? "text-maroon-dark" : "text-maroon/40"
+                              strength === 4 ? "text-maroon-dark" : "text-gray-400"
                             }`}>{strengthLabel}</span>
                           </div>
                         )}
@@ -226,17 +226,17 @@ export default function SignUp({
 
                       {/* Confirm Password */}
                       <div>
-                        <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Confirm Password</label>
+                        <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">Confirm Password</label>
                         <div className="relative">
-                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
+                          <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                           <input 
                             type={showConfirm ? "text" : "password"} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} 
                             placeholder="Repeat your password" disabled={isLoading}
-                            className={`w-full pl-10 pr-11 py-3 bg-maroon/5 border ${
+                            className={`w-full pl-10 pr-11 py-3 bg-gray-50 border ${
                               errors.confirmPassword ? "border-maroon" : 
                               formData.confirmPassword && formData.password === formData.confirmPassword ? "border-maroon" : 
-                              "border-maroon/20"
-                            } rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
+                              "border-gray-200"
+                            } rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                           <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
                             {formData.confirmPassword && formData.password === formData.confirmPassword && (
@@ -244,7 +244,7 @@ export default function SignUp({
                             )}
                             <button 
                               type="button" onClick={() => setShowConfirm(!showConfirm)} 
-                              className="text-maroon/40 hover:text-maroon transition"
+                              className="text-gray-400 hover:text-maroon transition"
                             >
                               {showConfirm ? <EyeOff size={16} /> : <Eye size={16} />}
                             </button>
@@ -257,11 +257,11 @@ export default function SignUp({
                       <div>
                         <label className="flex items-start gap-2.5 cursor-pointer group">
                           <div className="relative mt-0.5 flex-shrink-0" onClick={() => setFormData({ ...formData, agreeToTerms: !formData.agreeToTerms })}>
-                            <div className={`w-4 h-4 rounded border transition-all ${formData.agreeToTerms ? "bg-maroon border-maroon" : "border-maroon/20 bg-white"} flex items-center justify-center`}>
+                            <div className={`w-4 h-4 rounded border transition-all ${formData.agreeToTerms ? "bg-maroon border-maroon" : "border-gray-300 bg-white"} flex items-center justify-center`}>
                               {formData.agreeToTerms && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 10"><path d="M1 5l3 4L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
                             </div>
                           </div>
-                          <span className="text-sm text-maroon/60 leading-snug">
+                          <span className="text-sm text-gray-600 leading-snug">
                             I agree to the{" "}
                             <a href="/terms" className="text-maroon hover:text-maroon-dark transition underline underline-offset-2">Terms of Service</a>
                             {" "}and{" "}
@@ -282,10 +282,10 @@ export default function SignUp({
 
                     <div className="relative my-6">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-maroon/10" />
+                        <div className="w-full border-t border-gray-200" />
                       </div>
                       <div className="relative flex justify-center">
-                        <span className="px-3 bg-white text-maroon/40 text-xs">Or sign up with</span>
+                        <span className="px-3 bg-white text-gray-400 text-xs">Or sign up with</span>
                       </div>
                     </div>
 
@@ -297,14 +297,14 @@ export default function SignUp({
                         <button 
                           key={label} 
                           disabled={isLoading} 
-                          className="flex items-center justify-center gap-2.5 bg-maroon/5 hover:bg-maroon/10 border border-maroon/20 text-maroon/70 hover:text-maroon py-2.5 rounded-xl transition-all text-sm font-medium"
+                          className="flex items-center justify-center gap-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 hover:text-maroon py-2.5 rounded-xl transition-all text-sm font-medium"
                         >
                           {icon} {label}
                         </button>
                       ))}
                     </div>
 
-                    <p className="text-center text-maroon/60 text-sm mt-6">
+                    <p className="text-center text-gray-600 text-sm mt-6">
                       Already have an account?{" "}
                       <button 
                         onClick={onSwitchToLogin} 

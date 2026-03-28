@@ -947,7 +947,7 @@ export default function ProductDetailPage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F8F4F0' }}>
           <div className="text-center">
             <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0f172a] rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-500 text-sm sm:text-lg">Loading product...</p>
@@ -962,7 +962,7 @@ export default function ProductDetailPage() {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F8F4F0' }}>
           <p className="text-red-500 text-sm sm:text-lg">Product not found</p>
         </div>
       </>
@@ -1023,7 +1023,7 @@ export default function ProductDetailPage() {
 
       <Navbar />
       
-      <div className="min-h-screen bg-white pb-20 sm:pb-0">
+      <div className="min-h-screen pb-20 sm:pb-0" style={{ backgroundColor: '#F8F4F0' }}>
         {/* Breadcrumb */}
         <div className="hidden sm:block max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
           <nav className="flex items-center gap-1.5 flex-wrap">

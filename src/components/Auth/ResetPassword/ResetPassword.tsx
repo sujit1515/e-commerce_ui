@@ -160,7 +160,7 @@ export default function ResetPasswordPopup({
         }
       `}</style>
 
-      {/* Icon - changed to maroon */}
+      {/* Icon */}
       <div className="flex justify-center mb-5">
         <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/20 flex items-center justify-center">
           <KeyRound className="text-maroon" size={28} />
@@ -171,7 +171,7 @@ export default function ResetPasswordPopup({
         <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-1.5">
           Reset Password
         </Dialog.Title>
-        <p className="text-maroon/60 text-sm">Enter the 6-digit code sent to {email}</p>
+        <p className="text-black text-sm">Enter the 6-digit code sent to {email}</p>
       </div>
 
       {error && (
@@ -182,7 +182,7 @@ export default function ResetPasswordPopup({
 
       <form onSubmit={handleResetPassword} className="space-y-6">
         <div>
-          <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-3 text-center">
+          <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-3 text-center">
             Verification Code
           </label>
           <div className="flex gap-2 justify-center">
@@ -198,7 +198,7 @@ export default function ResetPasswordPopup({
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
                 disabled={isLoading}
-                className="w-12 h-12 text-center text-lg font-semibold bg-maroon/5 border border-maroon/20 rounded-xl text-maroon focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition"
+                className="w-12 h-12 text-center text-lg font-semibold bg-gray-50 border border-gray-200 rounded-xl text-black focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition"
               />
             ))}
           </div>
@@ -206,31 +206,31 @@ export default function ResetPasswordPopup({
 
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">New Password</label>
+            <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">New Password</label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
               <input
                 type="password"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={isLoading}
-                className="w-full pl-10 pr-4 py-3 bg-maroon/5 border border-maroon/20 rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Confirm Password</label>
+            <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">Confirm Password</label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
+              <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
                 disabled={isLoading}
-                className="w-full pl-10 pr-4 py-3 bg-maroon/5 border border-maroon/20 rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm"
+                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm"
               />
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function ResetPasswordPopup({
       <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-2">
         Password Reset!
       </Dialog.Title>
-      <p className="text-maroon/60 text-sm mb-6">
+      <p className="text-black text-sm mb-6">
         Your password has been successfully reset
       </p>
 
@@ -336,12 +336,10 @@ export default function ResetPasswordPopup({
                     <button 
                       onClick={handleClose} 
                       disabled={isLoading} 
-                      className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-maroon/5 hover:bg-maroon/10 text-maroon/40 hover:text-maroon transition-all"
+                      className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-maroon/5 text-gray-500 hover:text-maroon transition-all"
                     >
                       <X size={16} />
                     </button>
-
-                    {/* Logo removed - starting directly with content */}
 
                     {currentStep === "reset" && renderResetStep()}
                     {currentStep === "success" && renderSuccessStep()}

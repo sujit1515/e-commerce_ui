@@ -115,7 +115,7 @@ export default function ForgotPasswordPopup({
                     <button 
                       onClick={handleClose} 
                       disabled={isLoading} 
-                      className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-maroon/5 hover:bg-maroon/10 text-maroon/40 hover:text-maroon transition-all"
+                      className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-maroon/5 text-gray-500 hover:text-maroon transition-all"
                     >
                       <X size={16} />
                     </button>
@@ -131,7 +131,7 @@ export default function ForgotPasswordPopup({
                       <Dialog.Title as="h3" className="text-2xl sm:text-3xl font-black text-maroon tracking-tight mb-1.5">
                         Forgot Password?
                       </Dialog.Title>
-                      <p className="text-maroon/60 text-sm">Enter your email to receive OTP</p>
+                      <p className="text-black text-sm">Enter your email to receive OTP</p>
                     </div>
 
                     {error && (
@@ -142,9 +142,9 @@ export default function ForgotPasswordPopup({
 
                     <form onSubmit={handleSendOtp} className="space-y-4">
                       <div>
-                        <label className="block text-xs font-semibold text-maroon/70 uppercase tracking-wider mb-2">Email Address</label>
+                        <label className="block text-xs font-semibold text-black uppercase tracking-wider mb-2">Email Address</label>
                         <div className="relative">
-                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-maroon/40" size={16} />
+                          <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                           <input
                             type="email" 
                             value={email} 
@@ -154,7 +154,7 @@ export default function ForgotPasswordPopup({
                             }}
                             placeholder="you@example.com" 
                             disabled={isLoading}
-                            className={`w-full pl-10 pr-4 py-3 bg-maroon/5 border ${error ? "border-maroon" : "border-maroon/20"} rounded-xl text-maroon placeholder-maroon/30 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
+                            className={`w-full pl-10 pr-4 py-3 bg-gray-50 border ${error ? "border-maroon" : "border-gray-200"} rounded-xl text-black placeholder-gray-400 focus:border-maroon focus:ring-2 focus:ring-maroon/20 outline-none transition text-sm`}
                           />
                         </div>
                       </div>
@@ -171,7 +171,7 @@ export default function ForgotPasswordPopup({
                     <button 
                       onClick={onSwitchToLogin} 
                       disabled={isLoading}
-                      className="flex items-center justify-center gap-2 text-maroon/60 hover:text-maroon transition mt-6 text-sm w-full font-medium"
+                      className="flex items-center justify-center gap-2 text-gray-600 hover:text-maroon transition mt-6 text-sm w-full font-medium"
                     >
                       <ArrowLeft size={15} /> Back to Sign In
                     </button>

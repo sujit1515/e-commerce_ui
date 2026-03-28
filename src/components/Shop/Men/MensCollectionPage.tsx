@@ -189,6 +189,7 @@ export default function MensCollectionPage() {
           --maroon-dark: #5C0000;
           --maroon-light: #9D2A2A;
           --maroon-soft: #F5E6E6;
+          --bg-color: #F8F4F0;
         }
         
         .text-maroon {
@@ -225,7 +226,7 @@ export default function MensCollectionPage() {
         }
       `}</style>
 
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen" style={{ backgroundColor: '#F8F4F0' }}>
         <div className="max-w-[1400px] mx-auto px-4 py-10">
           <CollectionHeader
             sortValue={sortValue}
