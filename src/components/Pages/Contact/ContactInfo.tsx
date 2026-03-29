@@ -2,11 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Mail, Phone, MapPin, Clock, ArrowUpRight } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  ContactInfo.tsx
-//  Four info cards: Email · Phone · Address · Hours
-//  Responsive: 2 columns on mobile, 2 on tablet, 4 on desktop
-// ─────────────────────────────────────────────────────────────────────────────
 
 interface InfoCard {
   icon: React.ElementType;
@@ -15,7 +10,7 @@ interface InfoCard {
   detail: string;
   link?: string;
   linkLabel?: string;
-  color: "red" | "red-dark" | "red-light" | "red-bright";
+  color: "maroon" | "maroon-dark" | "maroon-light" | "maroon-bright";
 }
 
 const INFO_CARDS: InfoCard[] = [
@@ -26,7 +21,7 @@ const INFO_CARDS: InfoCard[] = [
     detail: "We reply to every message within 24 hours on business days.",
     link: "mailto:hello@luxe.com",
     linkLabel: "Send email",
-    color: "red",
+    color: "maroon",
   },
   {
     icon: Phone,
@@ -35,7 +30,7 @@ const INFO_CARDS: InfoCard[] = [
     detail: "Speak with our concierge team Monday – Friday, 9 AM – 7 PM EST.",
     link: "tel:+18005892200",
     linkLabel: "Call now",
-    color: "red-dark",
+    color: "maroon-dark",
   },
   {
     icon: MapPin,
@@ -44,22 +39,22 @@ const INFO_CARDS: InfoCard[] = [
     detail: "Paris, 75001 — Our flagship atelier and showroom.",
     link: "https://maps.google.com",
     linkLabel: "Get directions",
-    color: "red-light",
+    color: "maroon-light",
   },
   {
     icon: Clock,
     label: "Opening Hours",
     title: "Mon – Sat",
     detail: "10:00 AM – 8:00 PM\nSunday: 12:00 PM – 6:00 PM",
-    color: "red-bright",
+    color: "maroon-bright",
   },
 ];
 
 const COLOR = {
-  red:       { bg: "bg-red-500/10",    border: "border-red-500/20",    icon: "text-red-600",    hover: "group-hover:border-red-500/40",    link: "text-red-600 hover:text-red-700" },
-  "red-dark": { bg: "bg-red-700/10",    border: "border-red-700/20",    icon: "text-red-700",    hover: "group-hover:border-red-700/40",    link: "text-red-700 hover:text-red-800" },
-  "red-light": { bg: "bg-red-400/10",   border: "border-red-400/20",    icon: "text-red-500",    hover: "group-hover:border-red-400/40",    link: "text-red-500 hover:text-red-600" },
-  "red-bright": { bg: "bg-red-600/10",  border: "border-red-600/20",    icon: "text-red-600",    hover: "group-hover:border-red-600/40",    link: "text-red-600 hover:text-red-700" },
+  maroon:       { bg: "bg-maroon/10",    border: "border-maroon/20",    icon: "text-maroon",    hover: "group-hover:border-maroon/40",    link: "text-maroon hover:text-maroon-dark" },
+  "maroon-dark": { bg: "bg-maroon-dark/10", border: "border-maroon-dark/20", icon: "text-maroon-dark", hover: "group-hover:border-maroon-dark/40", link: "text-maroon-dark hover:text-maroon-darker" },
+  "maroon-light": { bg: "bg-maroon-light/10", border: "border-maroon-light/20", icon: "text-maroon-light", hover: "group-hover:border-maroon-light/40", link: "text-maroon-light hover:text-maroon" },
+  "maroon-bright": { bg: "bg-maroon/10",  border: "border-maroon/20",    icon: "text-maroon",    hover: "group-hover:border-maroon/40",    link: "text-maroon hover:text-maroon-dark" },
 };
 
 function useFadeIn(delay = 0) {
@@ -81,10 +76,13 @@ function InfoCard({ card, index }: { card: InfoCard; index: number }) {
   return (
     <div
       ref={ref}
-      className={`group relative bg-white border border-gray-200 rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 shadow-sm
+      className={`group relative bg-white border rounded-xl sm:rounded-2xl p-5 sm:p-6 lg:p-7 shadow-sm
         hover:shadow-xl hover:-translate-y-1.5 ${c.hover} transition-all duration-500 cursor-default
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-      style={{ transitionDelay: vis ? `${index * 90}ms` : "0ms" }}
+      style={{ 
+        transitionDelay: vis ? `${index * 90}ms` : "0ms",
+        borderColor: "rgba(128, 0, 0, 0.1)"
+      }}
     >
       {/* Icon */}
       <div className={`w-10 sm:w-12 h-10 sm:h-12 ${c.bg} ${c.border} border rounded-lg sm:rounded-xl flex items-center justify-center mb-4 sm:mb-5`}>
@@ -117,7 +115,7 @@ export default function ContactInfo() {
   }, []);
 
   return (
-    <section className="py-16 sm:py-20 lg:py-24 bg-white">
+    <section className="py-16 sm:py-20 lg:py-24" style={{ backgroundColor: "#F8F4F0" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div
@@ -125,14 +123,14 @@ export default function ContactInfo() {
           className={`text-center mb-10 sm:mb-12 lg:mb-14 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="inline-flex items-center gap-2 mb-3 sm:mb-4">
-            <div className="h-px w-4 sm:w-6 bg-red-600" />
-            <span className="text-red-600 text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase">Contact Details</span>
-            <div className="h-px w-4 sm:w-6 bg-red-600" />
+            <div className="h-px w-4 sm:w-6" style={{ backgroundColor: "#800000" }} />
+            <span className="text-maroon text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase" style={{ color: "#800000" }}>Contact Details</span>
+            <div className="h-px w-4 sm:w-6" style={{ backgroundColor: "#800000" }} />
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-black leading-tight px-4 sm:px-0">
-            Multiple Ways to
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight px-4 sm:px-0">
+            <span style={{ color: "#000000" }}>Multiple Ways to</span>
             <br />
-            <span className="italic text-red-600">Reach Us</span>
+            <span className="italic" style={{ color: "#800000" }}>Reach Us</span>
           </h2>
         </div>
 
@@ -144,12 +142,104 @@ export default function ContactInfo() {
         </div>
       </div>
 
-      {/* Custom breakpoint styles */}
+      {/* Custom styles */}
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
+        
+        .font-display {
+          font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
+        }
+        
+        .text-maroon {
+          color: #800000 !important;
+        }
+        
+        .text-maroon-dark {
+          color: #5C0000 !important;
+        }
+        
+        .text-maroon-light {
+          color: #9D2A2A !important;
+        }
+        
+        .bg-maroon\\/10 {
+          background-color: rgba(128, 0, 0, 0.1) !important;
+        }
+        
+        .bg-maroon-dark\\/10 {
+          background-color: rgba(92, 0, 0, 0.1) !important;
+        }
+        
+        .bg-maroon-light\\/10 {
+          background-color: rgba(157, 42, 42, 0.1) !important;
+        }
+        
+        .border-maroon\\/20 {
+          border-color: rgba(128, 0, 0, 0.2) !important;
+        }
+        
+        .border-maroon-dark\\/20 {
+          border-color: rgba(92, 0, 0, 0.2) !important;
+        }
+        
+        .border-maroon-light\\/20 {
+          border-color: rgba(157, 42, 42, 0.2) !important;
+        }
+        
+        .group-hover\\:border-maroon\\/40:hover {
+          border-color: rgba(128, 0, 0, 0.4) !important;
+        }
+        
+        .group-hover\\:border-maroon-dark\\/40:hover {
+          border-color: rgba(92, 0, 0, 0.4) !important;
+        }
+        
+        .group-hover\\:border-maroon-light\\/40:hover {
+          border-color: rgba(157, 42, 42, 0.4) !important;
+        }
+        
+        .hover\\:text-maroon-dark:hover {
+          color: #5C0000 !important;
+        }
+        
+        .hover\\:text-maroon-darker:hover {
+          color: #4a0000 !important;
+        }
+        
         @media (min-width: 480px) {
           .xs\\:grid-cols-2 {
             grid-template-columns: repeat(2, minmax(0, 1fr));
           }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+          .text-3xl {
+            font-size: 1.75rem !important;
+          }
+          .p-5 {
+            padding: 1rem !important;
+          }
+          .gap-4 {
+            gap: 0.75rem !important;
+          }
+        }
+        
+        /* Card hover effects */
+        .group:hover {
+          border-color: rgba(128, 0, 0, 0.3) !important;
+        }
+        
+        /* Smooth transitions */
+        * {
+          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Icon hover animation */
+        .group:hover .w-4,
+        .group:hover .w-5 {
+          transform: scale(1.1);
+          transition: transform 0.3s ease;
         }
       `}</style>
     </section>

@@ -59,27 +59,117 @@ export default function AboutStats() {
   }, []);
 
   return (
-    <section className="bg-white py-16 sm:py-20">
+    <section style={{ backgroundColor: "#F8F4F0" }} className="py-16 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
           ref={ref}
-          className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-gray-200 rounded-2xl overflow-hidden shadow-sm"
+          className="grid grid-cols-2 lg:grid-cols-4 gap-px rounded-2xl overflow-hidden shadow-lg"
+          style={{ backgroundColor: "#800000", borderColor: "#800000" }}
         >
           {STATS.map((s, i) => (
             <div
               key={i}
-              className="bg-white px-6 sm:px-8 py-10 text-center group hover:bg-black transition-colors duration-300 cursor-default"
+              className="px-6 sm:px-8 py-10 text-center group transition-all duration-300 cursor-default"
+              style={{ 
+                backgroundColor: "#F8F4F0",
+                transition: "all 0.3s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "#800000";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "#F8F4F0";
+              }}
             >
-              <p className="font-display text-4xl sm:text-5xl font-bold text-black group-hover:text-white transition-colors mb-2">
+              <p 
+                className="font-display text-4xl sm:text-5xl font-bold transition-colors mb-2"
+                style={{ 
+                  color: "#000000",
+                  transition: "color 0.3s ease"
+                }}
+                onMouseEnter={(e) => {
+                  const parent = e.currentTarget.parentElement;
+                  if (parent && parent.style.backgroundColor === "#800000") {
+                    e.currentTarget.style.color = "#F8F4F0";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#000000";
+                }}
+              >
                 <Counter value={s.value} suffix={s.suffix} inView={inView} />
               </p>
-              <p className="text-xs font-bold tracking-widest uppercase text-gray-400 group-hover:text-red-500 transition-colors">
+              <p 
+                className="text-xs font-bold tracking-widest uppercase transition-colors"
+                style={{ 
+                  color: "#666666",
+                  transition: "color 0.3s ease"
+                }}
+                onMouseEnter={(e) => {
+                  const parent = e.currentTarget.parentElement;
+                  if (parent && parent.style.backgroundColor === "#800000") {
+                    e.currentTarget.style.color = "#F8F4F0";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = "#666666";
+                }}
+              >
                 {s.label}
               </p>
             </div>
           ))}
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .stat-card {
+          animation: fadeInUp 0.6s ease-out forwards;
+          opacity: 0;
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+          .px-6 {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+          }
+          .py-10 {
+            padding-top: 2rem !important;
+            padding-bottom: 2rem !important;
+          }
+          .text-4xl {
+            font-size: 2rem !important;
+          }
+        }
+        
+        @media (min-width: 641px) and (max-width: 768px) {
+          .text-4xl {
+            font-size: 2.25rem !important;
+          }
+        }
+        
+        /* Smooth transitions */
+        * {
+          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+      `}</style>
     </section>
   );
 }

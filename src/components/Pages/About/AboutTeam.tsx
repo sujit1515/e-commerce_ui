@@ -60,21 +60,26 @@ function TeamCard({ member, delay }: { member: TeamMember; delay: number }) {
   return (
     <div
       ref={ref}
-      className={`group bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-xl
+      className={`group rounded-xl sm:rounded-2xl overflow-hidden shadow-sm hover:shadow-xl
         transition-all duration-500 hover:-translate-y-2
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-      style={{ transitionDelay: vis ? `${delay}ms` : "0ms" }}
+      style={{ 
+        transitionDelay: vis ? `${delay}ms` : "0ms",
+        backgroundColor: "#FFFFFF",
+        border: "1px solid rgba(128, 0, 0, 0.1)"
+      }}
     >
       {/* Portrait */}
       <div className="relative aspect-[3/4] overflow-hidden">
         <img
           src={member.img}
           alt={member.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           loading="lazy"
         />
-        {/* Gradient overlay - changed to black */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+        
+        {/* Dark gradient overlay on hover only */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/0 via-black/0 to-transparent transition-all duration-500 group-hover:from-black/70 group-hover:via-black/30" />
 
         {/* Social icons — slide up on hover */}
         <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 flex gap-1.5 sm:gap-2 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
@@ -86,7 +91,7 @@ function TeamCard({ member, delay }: { member: TeamMember; delay: number }) {
             <a
               key={j}
               href={href}
-              className="w-7 sm:w-8 h-7 sm:h-8 bg-white/15 backdrop-blur-sm border border-white/20 rounded-lg flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+              className="w-7 sm:w-8 h-7 sm:h-8 bg-black/50 backdrop-blur-sm border border-white/30 rounded-lg flex items-center justify-center text-white hover:bg-maroon hover:border-maroon transition-all duration-300 hover:scale-110"
               aria-label={`${member.name}'s social link ${j + 1}`}
             >
               <Icon className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
@@ -97,9 +102,15 @@ function TeamCard({ member, delay }: { member: TeamMember; delay: number }) {
 
       {/* Text */}
       <div className="p-3 sm:p-4 lg:p-5">
-        <h3 className="font-bold text-black text-sm sm:text-base lg:text-lg leading-tight">{member.name}</h3>
-        <p className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1.5 sm:mb-2">{member.role}</p>
-        <p className="text-gray-500 text-[10px] sm:text-xs leading-relaxed line-clamp-3 sm:line-clamp-none">{member.bio}</p>
+        <h3 className="font-bold text-black text-sm sm:text-base lg:text-lg leading-tight transition-colors duration-300 group-hover:text-maroon">
+          {member.name}
+        </h3>
+        <p className="text-gray-500 text-[10px] sm:text-xs font-semibold mb-1.5 sm:mb-2 transition-colors duration-300 group-hover:text-maroon">
+          {member.role}
+        </p>
+        <p className="text-gray-500 text-[10px] sm:text-xs leading-relaxed line-clamp-3 sm:line-clamp-none">
+          {member.bio}
+        </p>
       </div>
     </div>
   );
@@ -120,7 +131,7 @@ export default function AboutTeam() {
   }, []);
 
   return (
-    <section id="team" className="py-16 sm:py-20 lg:py-28 bg-white">
+    <section id="team" className="py-16 sm:py-20 lg:py-28" style={{ backgroundColor: "#F8F4F0" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Heading */}
         <div
@@ -128,18 +139,18 @@ export default function AboutTeam() {
           className={`text-center mb-10 sm:mb-12 lg:mb-14 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="inline-flex items-center gap-1.5 sm:gap-2 mb-3 sm:mb-4">
-            <div className="h-px w-4 sm:w-6 bg-red-600" />
-            <span className="text-red-600 text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase">
+            <div className="h-px w-4 sm:w-6" style={{ backgroundColor: "#800000" }} />
+            <span className="text-maroon text-[10px] sm:text-xs font-bold tracking-[0.2em] sm:tracking-[0.3em] uppercase" style={{ color: "#800000" }}>
               The People
             </span>
-            <div className="h-px w-4 sm:w-6 bg-red-600" />
+            <div className="h-px w-4 sm:w-6" style={{ backgroundColor: "#800000" }} />
           </div>
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-black leading-tight px-4 sm:px-0">
-            The Minds Behind
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-tight px-4 sm:px-0">
+            <span style={{ color: "#000000" }}>The Minds Behind</span>
             <br />
-            <span className="italic text-red-600">Every Detail</span>
+            <span className="italic" style={{ color: "#800000" }}>Every Detail</span>
           </h2>
-          <p className="text-gray-500 text-xs sm:text-sm lg:text-base mt-3 sm:mt-4 max-w-xl mx-auto px-4 sm:px-6 lg:px-0">
+          <p className="text-gray-600 text-xs sm:text-sm lg:text-base mt-3 sm:mt-4 max-w-xl mx-auto px-4 sm:px-6 lg:px-0">
             A small, fiercely dedicated team united by one belief: that the objects we surround
             ourselves with shape who we become.
           </p>
@@ -155,6 +166,33 @@ export default function AboutTeam() {
 
       {/* Custom styles */}
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
+        
+        .font-display {
+          font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
+        }
+        
+        .text-maroon {
+          color: #800000 !important;
+        }
+        
+        .bg-maroon {
+          background-color: #800000 !important;
+        }
+        
+        .hover\\:bg-maroon:hover {
+          background-color: #800000 !important;
+        }
+        
+        .hover\\:border-maroon:hover {
+          border-color: #800000 !important;
+        }
+        
+        /* Social icon hover effect */
+        .group:hover .hover\\:bg-maroon {
+          background-color: #800000;
+        }
+        
         @media (max-width: 380px) {
           .grid {
             gap: 0.5rem;
@@ -165,9 +203,45 @@ export default function AboutTeam() {
           .text-sm {
             font-size: 0.7rem;
           }
-          .text-red-600 {
+          .text-maroon {
             font-size: 0.6rem;
           }
+        }
+        
+        /* Card hover effect */
+        .group:hover {
+          border-color: rgba(128, 0, 0, 0.3) !important;
+          box-shadow: 0 20px 25px -12px rgba(128, 0, 0, 0.15) !important;
+        }
+        
+        /* Smooth transitions */
+        * {
+          transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Image zoom effect */
+        .group:hover img {
+          transform: scale(1.1);
+        }
+        
+        /* Text hover effects */
+        .group:hover h3 {
+          color: #800000;
+        }
+        
+        .group:hover .text-gray-500:first-of-type {
+          color: #800000;
+        }
+        
+        /* Social icon animations */
+        .group:hover .absolute.bottom-2 {
+          transform: translateY(0);
+          opacity: 1;
+        }
+        
+        /* Overlay transition */
+        .absolute.inset-0 {
+          transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
       `}</style>
     </section>

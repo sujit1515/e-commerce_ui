@@ -24,7 +24,7 @@ const fadeIn = (delay = 0) => ({
 // ── Stacked card cluster (left side) ─────────────────────────────────────
 function CardCluster() {
   return (
-    <div className="relative flex h-[420px] w-full items-center justify-center sm:h-[480px] lg:h-[520px]">
+    <div className="relative flex h-[320px] w-full items-center justify-center sm:h-[420px] lg:h-[520px]">
 
       {/* Back card — light grey, tilted left */}
       <motion.div
@@ -32,22 +32,22 @@ function CardCluster() {
         whileInView={{ opacity: 1, rotate: -6, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease, delay: 0.1 }}
-        className="absolute left-0 top-8 rounded-2xl bg-gray-100 shadow-md"
+        className="absolute left-0 top-4 sm:top-6 lg:top-8 rounded-xl sm:rounded-2xl bg-gray-800 shadow-md"
         style={{ width: "54%", aspectRatio: "3/4" }}
       >
         {/* Tiny "INSPIRA" label */}
         <p
-          className="absolute left-4 top-5 text-[9px] font-semibold uppercase tracking-[0.22em] text-gray-400"
+          className="absolute left-3 sm:left-4 top-3 sm:top-5 text-[7px] sm:text-[9px] font-semibold uppercase tracking-[0.22em] text-gray-500"
           style={{ fontFamily: "'Barlow', sans-serif" }}
         >
           Inspira
         </p>
         {/* leaf SVG placeholder */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-20">
-          <svg viewBox="0 0 80 120" className="h-28 w-20" fill="none">
+        <div className="absolute inset-0 flex items-center justify-center opacity-10">
+          <svg viewBox="0 0 80 120" className="h-20 w-14 sm:h-28 sm:w-20" fill="none">
             <path
               d="M40 110 C40 110 5 70 5 40 C5 15 20 5 40 5 C60 5 75 15 75 40 C75 70 40 110 40 110Z"
-              fill="#000000"
+              fill="#ffffff"
             />
             <line x1="40" y1="5" x2="40" y2="110" stroke="#fff" strokeWidth="1.2" />
             <line x1="20" y1="45" x2="40" y2="35" stroke="#fff" strokeWidth="0.8" />
@@ -64,19 +64,19 @@ function CardCluster() {
         whileInView={{ opacity: 1, rotate: 3, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, ease, delay: 0.2 }}
-        className="absolute right-4 top-0 overflow-hidden rounded-2xl bg-black shadow-xl"
+        className="absolute right-2 sm:right-4 top-0 overflow-hidden rounded-xl sm:rounded-2xl bg-black shadow-xl"
         style={{ width: "50%", aspectRatio: "3/4" }}
       >
         {/* Abstract letter shapes */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 opacity-30">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 opacity-20 sm:opacity-30">
           <p
-            className="text-4xl font-extrabold tracking-widest text-white"
+            className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-widest text-white"
             style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
           >
             RATION
           </p>
           <p
-            className="text-5xl font-extrabold tracking-widest text-white"
+            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-widest text-white"
             style={{ fontFamily: "'Barlow Condensed', sans-serif" }}
           >
             2
@@ -85,11 +85,11 @@ function CardCluster() {
         {/* Red glow circle */}
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-2xl"
-          style={{ width: 120, height: 120, background: "#ef4444" }}
+          style={{ width: 80, height: 80, background: "#ef4444" }}
         />
         {/* Bottom text */}
-        <div className="absolute bottom-5 left-5">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-gray-400"
+        <div className="absolute bottom-3 left-3 sm:bottom-5 sm:left-5">
+          <p className="text-[7px] sm:text-[9px] font-semibold uppercase tracking-[0.18em] text-gray-500"
              style={{ fontFamily: "'Barlow', sans-serif" }}>
             Silence Mode
           </p>
@@ -102,24 +102,24 @@ function CardCluster() {
         whileInView={{ opacity: 1, y: 0, scale: 1 }}
         viewport={{ once: true }}
         transition={{ duration: 0.85, ease, delay: 0.38 }}
-        whileHover={{ y: -6, boxShadow: "0 24px 60px rgba(0,0,0,0.16)" }}
-        className="absolute bottom-6 left-8 z-10 rounded-2xl bg-white px-6 py-5 shadow-2xl"
+        whileHover={{ y: -6, boxShadow: "0 24px 60px rgba(0,0,0,0.3)" }}
+        className="absolute bottom-4 left-4 sm:bottom-6 sm:left-8 z-10 rounded-xl sm:rounded-2xl bg-gray-900 px-4 py-3 sm:px-6 sm:py-5 shadow-2xl border border-gray-800"
         style={{
-          width: "clamp(200px, 55%, 280px)",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.13)",
+          width: "clamp(160px, 55%, 280px)",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.3)",
         }}
       >
         <p
-          className="mb-2 text-[10px] font-bold uppercase tracking-[0.22em] text-red-600"
+          className="mb-1 sm:mb-2 text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.22em] text-red-500"
           style={{ fontFamily: "'Barlow', sans-serif" }}
         >
           Our DNA
         </p>
         <p
-          className="italic text-black"
+          className="italic text-gray-200"
           style={{
             fontFamily: "'Barlow', sans-serif",
-            fontSize: "clamp(0.82rem, 1.4vw, 0.95rem)",
+            fontSize: "clamp(0.7rem, 1.4vw, 0.95rem)",
             fontWeight: 300,
             lineHeight: 1.6,
           }}
@@ -137,7 +137,7 @@ export default function PhilosophySection() {
     <>
       <Head>
         <title>The Philosophy — ElectroSleek</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -147,10 +147,13 @@ export default function PhilosophySection() {
       </Head>
 
       <section
-        className="w-full bg-white px-4 py-16 sm:px-8 md:px-12 xl:px-20"
-        style={{ fontFamily: "'Barlow', sans-serif" }}
+        className="w-full px-4 py-12 sm:px-6 md:px-8 lg:px-12 xl:px-20"
+        style={{ 
+          fontFamily: "'Barlow', sans-serif",
+          backgroundColor: "#0D0D0D",
+        }}
       >
-        <div className="mx-auto grid max-w-screen-xl grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-20">
+        <div className="mx-auto grid max-w-screen-xl grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-16">
 
           {/* ── LEFT — Card cluster ──────────────────────────────────── */}
           <motion.div
@@ -166,18 +169,18 @@ export default function PhilosophySection() {
             {/* Section label */}
             <motion.p
               {...fadeUp(0.1)}
-              className="mb-5 text-[10px] font-semibold uppercase tracking-[0.32em] text-gray-500"
+              className="mb-3 sm:mb-5 text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.32em] text-gray-400"
             >
               The Philosophy
             </motion.p>
 
             {/* Headline */}
-            <motion.div {...fadeUp(0.2)} className="mb-7 leading-none">
+            <motion.div {...fadeUp(0.2)} className="mb-5 sm:mb-7 leading-none">
               <p
-                className="font-bold text-black"
+                className="font-bold text-white"
                 style={{
                   fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: "clamp(2.8rem, 6vw, 5rem)",
+                  fontSize: "clamp(1.8rem, 6vw, 5rem)",
                   letterSpacing: "-0.01em",
                   lineHeight: 1.05,
                 }}
@@ -185,10 +188,10 @@ export default function PhilosophySection() {
                 BEYOND THE
               </p>
               <p
-                className="font-extrabold italic text-red-600"
+                className="font-extrabold italic text-red-500"
                 style={{
                   fontFamily: "'Barlow Condensed', sans-serif",
-                  fontSize: "clamp(2.8rem, 6vw, 5rem)",
+                  fontSize: "clamp(1.8rem, 6vw, 5rem)",
                   letterSpacing: "-0.01em",
                   lineHeight: 1.05,
                 }}
@@ -200,11 +203,11 @@ export default function PhilosophySection() {
             {/* Body copy */}
             <motion.p
               {...fadeUp(0.3)}
-              className="mb-10 text-gray-600"
+              className="mb-8 sm:mb-10 text-gray-300"
               style={{
-                fontSize: "clamp(0.88rem, 1.4vw, 1rem)",
+                fontSize: "clamp(0.85rem, 1.4vw, 1rem)",
                 fontWeight: 300,
-                lineHeight: 1.8,
+                lineHeight: 1.7,
                 maxWidth: 520,
               }}
             >
@@ -217,7 +220,7 @@ export default function PhilosophySection() {
             {/* Pillars row */}
             <motion.div
               {...fadeUp(0.4)}
-              className="mb-10 grid grid-cols-2 gap-4 border-t border-gray-200 pt-6"
+              className="mb-8 sm:mb-10 grid grid-cols-2 gap-4 border-t border-gray-800 pt-5 sm:pt-6"
             >
               {[
                 { num: "01", label: "Honest Materials" },
@@ -225,12 +228,12 @@ export default function PhilosophySection() {
               ].map(({ num, label }) => (
                 <div key={num}>
                   <p
-                    className="mb-1 text-3xl font-bold text-black"
+                    className="mb-1 text-2xl sm:text-3xl font-bold text-white"
                     style={{ fontFamily: "'Barlow Condensed', sans-serif", letterSpacing: "-0.02em" }}
                   >
                     {num}
                   </p>
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-gray-500">
+                  <p className="text-[9px] sm:text-[10px] font-semibold uppercase tracking-[0.22em] text-gray-400">
                     {label}
                   </p>
                 </div>
@@ -242,7 +245,7 @@ export default function PhilosophySection() {
               <motion.button
                 whileHover={{ letterSpacing: "0.28em", color: "#ef4444" }}
                 transition={{ duration: 0.3 }}
-                className="border-b-2 border-black pb-1 text-[11px] font-bold uppercase tracking-[0.22em] text-black"
+                className="border-b-2 border-gray-600 pb-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.22em] text-gray-300 hover:text-red-500 hover:border-red-500"
               >
                 Read the Manifest
               </motion.button>
@@ -250,6 +253,39 @@ export default function PhilosophySection() {
           </div>
         </div>
       </section>
+
+      {/* Responsive styles */}
+      <style>{`
+        @media (max-width: 640px) {
+          .rounded-2xl {
+            border-radius: 0.75rem;
+          }
+        }
+        
+        /* Touch-friendly improvements */
+        @media (max-width: 768px) {
+          button, 
+          [role="button"] {
+            min-height: 44px;
+          }
+          
+          button:active {
+            transform: scale(0.98);
+            transition: transform 0.1s ease;
+          }
+        }
+        
+        /* Smooth scrolling */
+        html {
+          scroll-behavior: smooth;
+        }
+        
+        /* Prevent text selection on buttons */
+        button {
+          user-select: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+      `}</style>
     </>
   );
 }

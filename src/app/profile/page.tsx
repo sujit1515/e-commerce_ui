@@ -4,6 +4,8 @@ import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { ShoppingBag, Heart, Settings, LogOut, Mail, Phone, MapPin, Package, Upload, X, Camera } from 'lucide-react'
 import { createProfile } from "@/api/profile";
+import Navbar from '@/components/Common/Navbar';
+import Footer from '@/components/Common/Footer';
 
 // User type definition
 interface User {
@@ -310,182 +312,188 @@ const ProfilePage = () => {
         }
       `}</style>
 
-      <div className="min-h-screen bg-white">
-        {/* Navbar will be imported here */}
-        {/* <Navbar /> */}
+      <div className="min-h-screen bg-white flex flex-col">
+        {/* Navbar */}
+        <Navbar />
 
-        <div className="container mx-auto px-4 py-8 md:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-            {/* Profile Card */}
-            <div className="lg:col-span-1">
-              <div className="border-2 border-maroon rounded-lg shadow-lg overflow-hidden">
-                <div className="text-center p-6">
-                  <div className="flex justify-center mb-4">
-                    <div className="relative">
-                      <div 
-                        className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-maroon overflow-hidden cursor-pointer group"
-                        onClick={handleAvatarClick}
-                      >
-                        {user.avatar ? (
-                          <img 
-                            src={user.avatar} 
-                            alt={user.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-maroon/10 flex items-center justify-center">
-                            <span className="text-2xl font-bold text-maroon">{getInitials(user.name)}</span>
+        {/* Main Content */}
+        <main className="flex-grow">
+          <div className="container mx-auto px-4 py-8 md:py-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+              {/* Profile Card */}
+              <div className="lg:col-span-1">
+                <div className="border-2 border-maroon rounded-lg shadow-lg overflow-hidden">
+                  <div className="text-center p-6">
+                    <div className="flex justify-center mb-4">
+                      <div className="relative">
+                        <div 
+                          className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-maroon overflow-hidden cursor-pointer group"
+                          onClick={handleAvatarClick}
+                        >
+                          {user.avatar ? (
+                            <img 
+                              src={user.avatar} 
+                              alt={user.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-maroon/10 flex items-center justify-center">
+                              <span className="text-2xl font-bold text-maroon">{getInitials(user.name)}</span>
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Upload className="w-6 h-6 text-white" />
                           </div>
-                        )}
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          <Upload className="w-6 h-6 text-white" />
                         </div>
-                      </div>
-                      {/* Hidden file input */}
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                      />
-                    </div>
-                  </div>
-                  <h2 className="text-2xl font-bold text-maroon">{user.name}</h2>
-                  <p className="text-maroon/60 mt-1">Member since {user.memberSince}</p>
-                  <p className="text-xs text-maroon/40 mt-2 cursor-pointer hover:text-maroon" onClick={handleAvatarClick}>
-                    Click on avatar to change photo
-                  </p>
-                </div>
-                
-                <div className="p-6 border-t border-maroon/10">
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <Mail className="w-5 h-5 text-maroon mt-1 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm text-maroon/50">Email</p>
-                        <p className="text-maroon font-medium break-all">{user.email}</p>
+                        {/* Hidden file input */}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileUpload}
+                          className="hidden"
+                        />
                       </div>
                     </div>
-                    
-                    <div className="border-t border-maroon/10 pt-4">
-                      <div className="flex items-start gap-3">
-                        <Phone className="w-5 h-5 text-maroon mt-1 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm text-maroon/50">Phone</p>
-                          <p className="text-maroon font-medium">{user.phone}</p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="border-t border-maroon/10 pt-4">
-                      <div className="flex items-start gap-3">
-                        <MapPin className="w-5 h-5 text-maroon mt-1 flex-shrink-0" />
-                        <div>
-                          <p className="text-sm text-maroon/50">Address</p>
-                          <p className="text-maroon font-medium">{user.address}</p>
-                        </div>
-                      </div>
-                    </div>
+                    <h2 className="text-2xl font-bold text-maroon">{user.name}</h2>
+                    <p className="text-maroon/60 mt-1">Member since {user.memberSince}</p>
+                    <p className="text-xs text-maroon/40 mt-2 cursor-pointer hover:text-maroon" onClick={handleAvatarClick}>
+                      Click on avatar to change photo
+                    </p>
                   </div>
                   
-                  <div className="border-t border-maroon/10 mt-6 pt-6">
-                    <button 
-                      className="w-full bg-maroon hover:bg-maroon-dark text-white py-3 rounded-md transition-colors flex items-center justify-center gap-2"
-                      onClick={handleEditProfile}
-                    >
-                      <Settings className="w-4 h-4" />
-                      Edit Profile
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Stats Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="border-2 border-maroon rounded-lg shadow-lg hover:shadow-xl transition-shadow p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Package className="w-5 h-5 text-maroon" />
-                    <h3 className="text-lg font-semibold text-maroon">Total Orders</h3>
-                  </div>
-                  <p className="text-4xl font-bold text-maroon">{user.totalOrders}</p>
-                </div>
-                
-                <div className="border-2 border-maroon rounded-lg shadow-lg hover:shadow-xl transition-shadow p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Heart className="w-5 h-5 text-maroon" />
-                    <h3 className="text-lg font-semibold text-maroon">Wishlist Items</h3>
-                  </div>
-                  <p className="text-4xl font-bold text-maroon">{user.wishlistItems}</p>
-                </div>
-              </div>
-
-              {/* Quick Actions */}
-              <div className="border-2 border-maroon rounded-lg shadow-lg overflow-hidden">
-                <div className="p-6 border-b border-maroon/10">
-                  <h3 className="text-xl font-bold text-maroon">Quick Actions</h3>
-                  <p className="text-maroon/50 mt-1">Manage your orders and wishlist</p>
-                </div>
-                <div className="p-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <Link href="/orders" className="block">
-                      <div className="w-full bg-maroon hover:bg-maroon-dark text-white rounded-lg p-6 text-center transition-colors cursor-pointer">
-                        <ShoppingBag className="w-8 h-8 mx-auto mb-2" />
-                        <span className="text-lg font-semibold block">My Orders</span>
-                        <span className="text-sm opacity-90">View order history</span>
+                  <div className="p-6 border-t border-maroon/10">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3">
+                        <Mail className="w-5 h-5 text-maroon mt-1 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm text-maroon/50">Email</p>
+                          <p className="text-maroon font-medium break-all">{user.email}</p>
+                        </div>
                       </div>
-                    </Link>
-                    <Link href="/wishlist" className="block">
-                      <div className="w-full bg-maroon hover:bg-maroon-dark text-white rounded-lg p-6 text-center transition-colors cursor-pointer">
-                        <Heart className="w-8 h-8 mx-auto mb-2" />
-                        <span className="text-lg font-semibold block">My Wishlist</span>
-                        <span className="text-sm opacity-90">View saved items</span>
+                      
+                      <div className="border-t border-maroon/10 pt-4">
+                        <div className="flex items-start gap-3">
+                          <Phone className="w-5 h-5 text-maroon mt-1 flex-shrink-0" />
+                          <div>
+                            <p className="text-sm text-maroon/50">Phone</p>
+                            <p className="text-maroon font-medium">{user.phone}</p>
+                          </div>
+                        </div>
                       </div>
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              {/* Recent Activity */}
-              <div className="border-2 border-maroon rounded-lg shadow-lg overflow-hidden">
-                <div className="p-6 border-b border-maroon/10">
-                  <h3 className="text-xl font-bold text-maroon">Recent Activity</h3>
-                </div>
-                <div className="p-6">
-                  <div className="space-y-4">
-                    {recentActivity.map((activity: ActivityItem) => (
-                      <div 
-                        key={activity.id} 
-                        className="flex items-center gap-4 p-4 bg-maroon/5 rounded-lg hover:bg-maroon/10 transition-colors"
+                      
+                      <div className="border-t border-maroon/10 pt-4">
+                        <div className="flex items-start gap-3">
+                          <MapPin className="w-5 h-5 text-maroon mt-1 flex-shrink-0" />
+                          <div>
+                            <p className="text-sm text-maroon/50">Address</p>
+                            <p className="text-maroon font-medium">{user.address}</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="border-t border-maroon/10 mt-6 pt-6">
+                      <button 
+                        className="w-full bg-maroon hover:bg-maroon-dark text-white py-3 rounded-md transition-colors flex items-center justify-center gap-2"
+                        onClick={handleEditProfile}
                       >
-                        <div className="w-12 h-12 bg-maroon rounded-full flex items-center justify-center flex-shrink-0">
-                          {activity.icon}
-                        </div>
-                        <div className="flex-1">
-                          <p className="font-semibold text-maroon">{activity.title}</p>
-                          <p className="text-sm text-maroon/60">{activity.description}</p>
-                          <p className="text-xs text-maroon/40 mt-1">{activity.date}</p>
-                        </div>
-                      </div>
-                    ))}
+                        <Settings className="w-4 h-4" />
+                        Edit Profile
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Logout Button */}
-              <button 
-                className="w-full border-2 border-maroon text-maroon hover:bg-maroon hover:text-white py-3 rounded-md transition-colors flex items-center justify-center gap-2"
-                onClick={handleLogout}
-              >
-                <LogOut className="w-4 h-4" />
-                Logout
-              </button>
+              {/* Main Content */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="border-2 border-maroon rounded-lg shadow-lg hover:shadow-xl transition-shadow p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Package className="w-5 h-5 text-maroon" />
+                      <h3 className="text-lg font-semibold text-maroon">Total Orders</h3>
+                    </div>
+                    <p className="text-4xl font-bold text-maroon">{user.totalOrders}</p>
+                  </div>
+                  
+                  <div className="border-2 border-maroon rounded-lg shadow-lg hover:shadow-xl transition-shadow p-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Heart className="w-5 h-5 text-maroon" />
+                      <h3 className="text-lg font-semibold text-maroon">Wishlist Items</h3>
+                    </div>
+                    <p className="text-4xl font-bold text-maroon">{user.wishlistItems}</p>
+                  </div>
+                </div>
+
+                {/* Quick Actions */}
+                <div className="border-2 border-maroon rounded-lg shadow-lg overflow-hidden">
+                  <div className="p-6 border-b border-maroon/10">
+                    <h3 className="text-xl font-bold text-maroon">Quick Actions</h3>
+                    <p className="text-maroon/50 mt-1">Manage your orders and wishlist</p>
+                  </div>
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Link href="/orders" className="block">
+                        <div className="w-full bg-maroon hover:bg-maroon-dark text-white rounded-lg p-6 text-center transition-colors cursor-pointer">
+                          <ShoppingBag className="w-8 h-8 mx-auto mb-2" />
+                          <span className="text-lg font-semibold block">My Orders</span>
+                          <span className="text-sm opacity-90">View order history</span>
+                        </div>
+                      </Link>
+                      <Link href="/wishlist" className="block">
+                        <div className="w-full bg-maroon hover:bg-maroon-dark text-white rounded-lg p-6 text-center transition-colors cursor-pointer">
+                          <Heart className="w-8 h-8 mx-auto mb-2" />
+                          <span className="text-lg font-semibold block">My Wishlist</span>
+                          <span className="text-sm opacity-90">View saved items</span>
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent Activity */}
+                <div className="border-2 border-maroon rounded-lg shadow-lg overflow-hidden">
+                  <div className="p-6 border-b border-maroon/10">
+                    <h3 className="text-xl font-bold text-maroon">Recent Activity</h3>
+                  </div>
+                  <div className="p-6">
+                    <div className="space-y-4">
+                      {recentActivity.map((activity: ActivityItem) => (
+                        <div 
+                          key={activity.id} 
+                          className="flex items-center gap-4 p-4 bg-maroon/5 rounded-lg hover:bg-maroon/10 transition-colors"
+                        >
+                          <div className="w-12 h-12 bg-maroon rounded-full flex items-center justify-center flex-shrink-0">
+                            {activity.icon}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-maroon">{activity.title}</p>
+                            <p className="text-sm text-maroon/60">{activity.description}</p>
+                            <p className="text-xs text-maroon/40 mt-1">{activity.date}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Logout Button */}
+                <button 
+                  className="w-full border-2 border-maroon text-maroon hover:bg-maroon hover:text-white py-3 rounded-md transition-colors flex items-center justify-center gap-2"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-4 h-4" />
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </main>
+
+        {/* Footer */}
+        <Footer />
 
         {/* Edit Profile Modal with Avatar Upload */}
         {isEditModalOpen && (
@@ -654,4 +662,4 @@ const ProfilePage = () => {
   )
 }
 
-export default ProfilePage
+export default ProfilePage;

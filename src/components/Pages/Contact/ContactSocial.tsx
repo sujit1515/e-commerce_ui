@@ -19,8 +19,8 @@ const SOCIALS: Social[] = [
     handle: "@luxe.official",
     desc: "Behind-the-scenes, new drops, and the LUXE lifestyle.",
     url: "https://instagram.com",
-    color: "text-red-400",
-    hoverBg: "hover:border-red-500/40 hover:bg-red-500/5",
+    color: "text-maroon",
+    hoverBg: "hover:border-maroon/40 hover:bg-maroon/5",
   },
   {
     icon: Twitter,
@@ -28,8 +28,8 @@ const SOCIALS: Social[] = [
     handle: "@luxebrand",
     desc: "News, opinions, and conversations that matter.",
     url: "https://twitter.com",
-    color: "text-red-500",
-    hoverBg: "hover:border-red-500/40 hover:bg-red-500/5",
+    color: "text-maroon",
+    hoverBg: "hover:border-maroon/40 hover:bg-maroon/5",
   },
   {
     icon: Youtube,
@@ -37,8 +37,8 @@ const SOCIALS: Social[] = [
     handle: "LUXE Official",
     desc: "Craft films, lookbooks, and the stories behind each collection.",
     url: "https://youtube.com",
-    color: "text-red-600",
-    hoverBg: "hover:border-red-600/40 hover:bg-red-600/5",
+    color: "text-maroon",
+    hoverBg: "hover:border-maroon/40 hover:bg-maroon/5",
   },
   {
     icon: Linkedin,
@@ -46,8 +46,8 @@ const SOCIALS: Social[] = [
     handle: "LUXE Lifestyle Brand",
     desc: "Company updates, sustainability reports, and career opportunities.",
     url: "https://linkedin.com",
-    color: "text-red-400",
-    hoverBg: "hover:border-red-500/40 hover:bg-red-500/5",
+    color: "text-maroon",
+    hoverBg: "hover:border-maroon/40 hover:bg-maroon/5",
   },
 ];
 
@@ -81,28 +81,37 @@ function SocialCard({ s, index }: { s: Social; index: number }) {
       href={s.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`group flex flex-col gap-4 bg-black/40 border border-white/10 rounded-2xl p-6 ${s.hoverBg}
+      className={`group flex flex-col gap-4 rounded-2xl p-6 ${s.hoverBg}
         hover:-translate-y-1.5 transition-all duration-300 cursor-pointer
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
-      style={{ transitionDelay: vis ? `${index * 80}ms` : "0ms" }}
+      style={{ 
+        transitionDelay: vis ? `${index * 80}ms` : "0ms",
+        backgroundColor: "#FFFFFF",
+        border: "1px solid rgba(128, 0, 0, 0.1)",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+      }}
     >
       <div className="flex items-start justify-between">
         <div
-          className={`w-11 h-11 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center ${s.color}`}
+          className={`w-11 h-11 rounded-xl flex items-center justify-center ${s.color}`}
+          style={{ 
+            backgroundColor: "rgba(128, 0, 0, 0.1)", 
+            border: "1px solid rgba(128, 0, 0, 0.2)" 
+          }}
         >
-          <Icon className="w-5 h-5" />
+          <Icon className="w-5 h-5" style={{ color: "#800000" }} />
         </div>
-        <ArrowUpRight className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
+        <ArrowUpRight className="w-4 h-4 text-gray-400 group-hover:text-maroon transition-colors" style={{ color: "rgba(128, 0, 0, 0.5)" }} />
       </div>
 
       <div>
-        <p className={`font-bold text-sm ${s.color}`}>{s.name}</p>
-        <p className="text-white font-semibold text-xs mt-0.5">
+        <p className={`font-bold text-sm ${s.color}`} style={{ color: "#800000" }}>{s.name}</p>
+        <p className="text-black font-semibold text-xs mt-0.5">
           {s.handle}
         </p>
       </div>
 
-      <p className="text-gray-400 text-xs leading-relaxed">
+      <p className="text-gray-500 text-xs leading-relaxed">
         {s.desc}
       </p>
     </a>
@@ -119,14 +128,14 @@ export default function ContactSocial() {
   }, []);
 
   return (
-    <section className="py-20 sm:py-24 bg-black relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent" />
+    <section className="py-20 sm:py-24 relative overflow-hidden" style={{ backgroundColor: "#F8F4F0" }}>
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-maroon/30 to-transparent" style={{ background: "linear-gradient(to right, transparent, #800000, transparent)" }} />
 
       {/* Subtle grid */}
       <div
         className="absolute inset-0 opacity-[0.025] pointer-events-none"
         style={{
-          backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)",
+          backgroundImage: "linear-gradient(#800000 1px,transparent 1px),linear-gradient(90deg,#800000 1px,transparent 1px)",
           backgroundSize: "50px 50px",
         }}
       />
@@ -137,14 +146,14 @@ export default function ContactSocial() {
           className={`text-center mb-12 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-red-600" />
-            <span className="text-red-500 text-xs font-bold tracking-[0.3em] uppercase">Stay Connected</span>
-            <div className="h-px w-6 bg-red-600" />
+            <div className="h-px w-6" style={{ backgroundColor: "#800000" }} />
+            <span className="text-maroon text-xs font-bold tracking-[0.3em] uppercase" style={{ color: "#800000" }}>Stay Connected</span>
+            <div className="h-px w-6" style={{ backgroundColor: "#800000" }} />
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold text-white leading-tight">
-            Follow the
+          <h2 className="font-display text-4xl sm:text-5xl font-bold leading-tight">
+            <span style={{ color: "#000000" }}>Follow the</span>
             <br />
-            <span className="italic text-red-500">LUXE World</span>
+            <span className="italic" style={{ color: "#800000" }}>LUXE World</span>
           </h2>
         </div>
 
@@ -152,6 +161,42 @@ export default function ContactSocial() {
           {SOCIALS.map((s, i) => <SocialCard key={i} s={s} index={i} />)}
         </div>
       </div>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
+        
+        .font-display {
+          font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
+        }
+        
+        .text-maroon {
+          color: #800000 !important;
+        }
+        
+        @media (max-width: 640px) {
+          .text-4xl {
+            font-size: 2rem !important;
+          }
+          .p-6 {
+            padding: 1rem !important;
+          }
+          .gap-4 {
+            gap: 0.75rem !important;
+          }
+        }
+        
+        /* Card hover effects */
+        .group:hover {
+          border-color: rgba(128, 0, 0, 0.3) !important;
+          box-shadow: 0 10px 25px -5px rgba(128, 0, 0, 0.1), 0 8px 10px -6px rgba(128, 0, 0, 0.05) !important;
+        }
+        
+        /* Icon hover animation */
+        .group:hover .w-5.h-5 {
+          transform: scale(1.1);
+          transition: transform 0.3s ease;
+        }
+      `}</style>
     </section>
   );
 }

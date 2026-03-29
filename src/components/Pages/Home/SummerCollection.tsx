@@ -63,7 +63,7 @@ function WishlistButton({ active, onToggle, loading }: WishlistButtonProps) {
         fill={active ? "#800000" : "none"}
         stroke={active ? "#800000" : "#000000"}
         strokeWidth={active ? "0" : "1.5"}
-        className="w-4 h-4 transition-all duration-300 group-hover:scale-110"
+        className="w-4 h-4 transition-all duration-300 group-hover:scale-110 group-hover:stroke-maroon"
       >
         <path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />
       </svg>
@@ -86,6 +86,7 @@ function ProductCard({ product }: { product: Product }) {
   const [loading, setLoading] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleAddToCart = () => {
     setAddedToCart(true);
@@ -115,13 +116,20 @@ function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div className="group flex flex-col">
+    <div 
+      className="group flex flex-col"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Image card - matching Signature Style aspect ratio and styling */}
       <div
-        className="relative rounded-xl overflow-hidden mb-4 aspect-[3/4] bg-white border border-gray-100 transition-all duration-300 group-hover:shadow-xl"
+        className="relative rounded-xl overflow-hidden mb-4 aspect-[3/4] bg-white border border-gray-100 transition-all duration-500 group-hover:shadow-2xl"
         style={{ 
           backgroundColor: product.bg,
-          boxShadow: "0 4px 20px rgba(128, 0, 0, 0.1)", // Maroon tinted shadow
+          boxShadow: isHovered 
+            ? "0 20px 40px rgba(128, 0, 0, 0.15)" 
+            : "0 4px 20px rgba(128, 0, 0, 0.1)",
+          transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
         <WishlistButton active={wished} onToggle={handleWishlistToggle} loading={loading} />
@@ -130,43 +138,65 @@ function ProductCard({ product }: { product: Product }) {
           <img
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
+            style={{
+              transition: "transform 0.7s cubic-bezier(0.4, 0, 0.2, 1)",
+            }}
             onError={() => setImageError(true)}
           />
         ) : (
           /* Fallback placeholder with emoji */
           <div className="w-full h-full flex items-center justify-center">
             <span
-              className="text-[5rem] sm:text-[6rem] md:text-[7rem] select-none transition-transform duration-500 group-hover:scale-110"
-              style={{ filter: "drop-shadow(0 8px 24px rgba(128, 0, 0, 0.08))" }}
+              className="text-[5rem] sm:text-[6rem] md:text-[7rem] select-none transition-all duration-500 group-hover:scale-110"
+              style={{ 
+                filter: isHovered 
+                  ? "drop-shadow(0 8px 24px rgba(128, 0, 0, 0.15))" 
+                  : "drop-shadow(0 4px 12px rgba(128, 0, 0, 0.08))",
+                transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+              }}
             >
               {product.emoji}
             </span>
           </div>
         )}
+        
+        {/* Animated overlay on hover */}
+        <div 
+          className="absolute inset-0 bg-gradient-to-t from-maroon/0 via-maroon/0 to-maroon/0 transition-all duration-500 group-hover:from-maroon/5 group-hover:via-maroon/0 group-hover:to-maroon/0"
+          style={{
+            transition: "all 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+          }}
+        />
       </div>
 
-      {/* Product info - matching Signature Style typography */}
+      {/* Product info - matching Signature Style typography with maroon hover animations */}
       <div className="px-1">
-        {/* Product Name */}
+        {/* Product Name with maroon hover animation */}
         <h3
-          className="font-semibold text-base sm:text-lg leading-tight mb-1 transition-colors duration-300 group-hover:text-maroon"
+          className="font-semibold text-base sm:text-lg leading-tight mb-1 transition-all duration-300 cursor-pointer"
           style={{ 
-            color: "#000000", 
+            color: isHovered ? "#800000" : "#000000",
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontWeight: 600,
             letterSpacing: "0.02em",
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            transform: isHovered ? "translateX(4px)" : "translateX(0)",
           }}
         >
           {product.name}
         </h3>
         
+        {/* Category with maroon color and hover animation */}
         <p 
-          className="text-sm mb-2" 
+          className="text-sm mb-2 transition-all duration-300"
           style={{ 
-            color: "#800000", // Maroon color
+            color: "#800000",
             fontFamily: "'Cormorant Garamond', Georgia, serif",
             fontWeight: 400,
+            opacity: isHovered ? 0.85 : 0.7,
+            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+            transform: isHovered ? "translateX(4px)" : "translateX(0)",
           }}
         >
           {product.category}
@@ -174,73 +204,99 @@ function ProductCard({ product }: { product: Product }) {
         
         {/* Price and Actions row */}
         <div className="flex items-center justify-between">
+          {/* Price with maroon hover animation */}
           <p 
-            className="font-semibold text-base transition-colors duration-300 group-hover:text-maroon" 
+            className="font-semibold text-base transition-all duration-300" 
             style={{ 
-              color: "#000000",
+              color: isHovered ? "#800000" : "#000000",
               fontFamily: "'Cormorant Garamond', Georgia, serif",
               fontWeight: 600,
+              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              transform: isHovered ? "scale(1.05)" : "scale(1)",
+              transformOrigin: "left",
             }}
           >
             ${product.price.toFixed(2)}
           </p>
           
-          {/* Buy Now and Cart Icons - Updated to Maroon */}
+          {/* Buy Now and Cart Icons - Updated to Maroon with enhanced animations */}
           <div className="flex items-center gap-2">
-            {/* Buy Now Button - Maroon with Dark Maroon Hover */}
+            {/* Buy Now Button - Enhanced animations */}
             <button
               onClick={handleBuyNow}
-              className="text-xs font-medium px-3 py-1.5 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 hover:shadow-md relative overflow-hidden group/buy"
+              className="text-xs font-medium px-3 py-1.5 rounded-full transition-all duration-300 hover:scale-105 active:scale-95 relative overflow-hidden group/buy"
               style={{
-                backgroundColor: "#800000",
+                backgroundColor: isHovered ? "#5C0000" : "#800000",
                 color: "#fff",
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 letterSpacing: "0.05em",
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: isHovered ? "translateY(-2px)" : "translateY(0)",
+                boxShadow: isHovered 
+                  ? "0 4px 12px rgba(128, 0, 0, 0.3)" 
+                  : "0 2px 6px rgba(128, 0, 0, 0.2)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "#5C0000";
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 6px 16px rgba(128, 0, 0, 0.4)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#800000";
+                e.currentTarget.style.backgroundColor = isHovered ? "#5C0000" : "#800000";
+                e.currentTarget.style.transform = isHovered ? "translateY(-2px)" : "translateY(0)";
+                e.currentTarget.style.boxShadow = isHovered 
+                  ? "0 4px 12px rgba(128, 0, 0, 0.3)" 
+                  : "0 2px 6px rgba(128, 0, 0, 0.2)";
               }}
             >
               <span className="relative z-10 cursor-pointer">Buy Now</span>
-              <div className="absolute inset-0 bg-[#5C0000] transform scale-x-0 group-hover/buy:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <div className="absolute inset-0 bg-[#4a0000] transform scale-x-0 group-hover/buy:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
             </button>
             
-            {/* Cart Icon Button - Maroon with Dark Maroon Hover */}
+            {/* Cart Icon Button - Enhanced animations */}
             <button
               onClick={handleAddToCart}
-              className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-lg relative overflow-hidden group/cart"
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 relative overflow-hidden group/cart"
               style={{
-                backgroundColor: addedToCart ? "#10b981" : "#800000",
+                backgroundColor: addedToCart ? "#10b981" : (isHovered ? "#5C0000" : "#800000"),
                 color: "#fff",
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                transform: isHovered && !addedToCart ? "scale(1.05)" : "scale(1)",
+                boxShadow: isHovered && !addedToCart 
+                  ? "0 4px 12px rgba(128, 0, 0, 0.3)" 
+                  : "0 2px 6px rgba(128, 0, 0, 0.2)",
               }}
               onMouseEnter={(e) => {
                 if (!addedToCart) {
-                  e.currentTarget.style.backgroundColor = "#5C0000";
+                  e.currentTarget.style.backgroundColor = "#4a0000";
+                  e.currentTarget.style.transform = "scale(1.1)";
+                  e.currentTarget.style.boxShadow = "0 6px 16px rgba(128, 0, 0, 0.4)";
                 }
               }}
               onMouseLeave={(e) => {
                 if (!addedToCart) {
-                  e.currentTarget.style.backgroundColor = "#800000";
+                  e.currentTarget.style.backgroundColor = isHovered ? "#5C0000" : "#800000";
+                  e.currentTarget.style.transform = isHovered ? "scale(1.05)" : "scale(1)";
+                  e.currentTarget.style.boxShadow = isHovered && !addedToCart 
+                    ? "0 4px 12px rgba(128, 0, 0, 0.3)" 
+                    : "0 2px 6px rgba(128, 0, 0, 0.2)";
                 }
               }}
               aria-label="Add to cart"
             >
               <span className="relative z-10">
-                <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover/cart:rotate-12" />
+                <ShoppingBag className="w-4 h-4 transition-all duration-300 group-hover/cart:rotate-12 group-hover/cart:scale-110" />
               </span>
-              <div className="absolute inset-0 bg-[#5C0000] transform scale-x-0 group-hover/cart:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <div className="absolute inset-0 bg-[#4a0000] transform scale-x-0 group-hover/cart:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Success message animation */}
+      {/* Enhanced success message animation */}
       {addedToCart && (
-        <div className="fixed bottom-4 right-4 bg-maroon text-white px-4 py-2 rounded-lg shadow-lg animate-bounce z-50" style={{ backgroundColor: "#800000" }}>
-          Added to cart!
+        <div className="fixed bottom-4 right-4 bg-maroon text-white px-4 py-2 rounded-lg shadow-lg animate-slide-in z-50" style={{ backgroundColor: "#800000" }}>
+          Added to cart! ✨
         </div>
       )}
     </div>
@@ -248,6 +304,8 @@ function ProductCard({ product }: { product: Product }) {
 }
 
 export default function CuratedSelection() {
+  const [isViewAllHovered, setIsViewAllHovered] = useState(false);
+
   return (
     <>
       <style>{`
@@ -257,6 +315,7 @@ export default function CuratedSelection() {
         :root {
           --maroon: #800000;
           --maroon-dark: #5C0000;
+          --maroon-darker: #4a0000;
           --maroon-light: #9D2A2A;
           --cream: #F8F4F0;
           --black: #000000;
@@ -271,11 +330,6 @@ export default function CuratedSelection() {
         /* Keep icons with their original styling */
         svg, [class*="lucide-"] {
           font-family: inherit !important;
-        }
-        
-        /* Maroon hover effect class */
-        .hover-maroon:hover {
-          color: var(--maroon) !important;
         }
         
         /* Custom animations */
@@ -299,8 +353,34 @@ export default function CuratedSelection() {
           }
         }
         
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.7;
+          }
+        }
+        
+        @keyframes shimmer {
+          0% {
+            background-position: -1000px 0;
+          }
+          100% {
+            background-position: 1000px 0;
+          }
+        }
+        
+        .animate-slide-in {
+          animation: slideIn 0.5s ease-out;
+        }
+        
         .animate-bounce {
           animation: bounce 0.5s ease-in-out;
+        }
+        
+        .animate-pulse-slow {
+          animation: pulse 2s ease-in-out infinite;
         }
         
         /* Maroon text utility */
@@ -325,55 +405,112 @@ export default function CuratedSelection() {
         /* Dark maroon hover for View All button */
         .view-all-btn {
           background-color: #800000 !important;
-          transition: all 0.3s ease;
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        .view-all-btn::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 0;
+          height: 0;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.2);
+          transform: translate(-50%, -50%);
+          transition: width 0.6s, height 0.6s;
+        }
+        
+        .view-all-btn:hover::before {
+          width: 300px;
+          height: 300px;
         }
         
         .view-all-btn:hover {
-          background-color: #5C0000 !important;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 20px rgba(92, 0, 0, 0.3);
+          background-color: #4a0000 !important;
+          transform: translateY(-3px) !important;
+          box-shadow: 0 12px 28px rgba(74, 0, 0, 0.4) !important;
+          letter-spacing: 0.15em !important;
+        }
+        
+        .view-all-btn:active {
+          transform: translateY(-1px) !important;
+        }
+        
+        /* Grid item hover effect */
+        .grid > div {
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Scroll reveal animation */
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fade-in-up {
+          animation: fadeInUp 0.8s ease-out forwards;
         }
       `}</style>
 
       <section
         className="w-full py-16 px-4 sm:px-6 lg:px-8"
         style={{ 
-          backgroundColor: "#F8F4F0", // Updated to cream color
+          backgroundColor: "#F8F4F0",
           padding: "4rem 1rem",
         }}
       >
         <div className="max-w-6xl mx-auto">
           {/* ── Header with Signature Style styling and maroon accents ── */}
-          <div className="text-center mb-12 sm:mb-16" style={{ marginBottom: "3rem" }}>
-            {/* Decorative Maroon Line */}
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <div className="h-px w-16 bg-maroon opacity-30" style={{ backgroundColor: "#800000" }}></div>
-              <div className="w-2 h-2 bg-maroon transform rotate-45 opacity-50" style={{ backgroundColor: "#800000" }}></div>
-              <div className="h-px w-16 bg-maroon opacity-30" style={{ backgroundColor: "#800000" }}></div>
+          <div className="text-center mb-12 sm:mb-16 animate-fade-in-up" style={{ marginBottom: "3rem" }}>
+            {/* Decorative Maroon Line with hover animation */}
+            <div className="flex items-center justify-center gap-4 mb-4 group">
+              <div 
+                className="h-px w-16 bg-maroon opacity-30 transition-all duration-500 group-hover:w-20 group-hover:opacity-60" 
+                style={{ backgroundColor: "#800000" }}
+              ></div>
+              <div 
+                className="w-2 h-2 bg-maroon transform rotate-45 opacity-50 transition-all duration-500 group-hover:scale-150 group-hover:opacity-100" 
+                style={{ backgroundColor: "#800000" }}
+              ></div>
+              <div 
+                className="h-px w-16 bg-maroon opacity-30 transition-all duration-500 group-hover:w-20 group-hover:opacity-60" 
+                style={{ backgroundColor: "#800000" }}
+              ></div>
             </div>
             
             <h2
-              className="text-4xl sm:text-5xl md:text-6xl font-semibold mb-4 transition-all duration-300 hover:tracking-wider"
+              className="text-4xl sm:text-5xl md:text-6xl font-semibold mb-4 transition-all duration-500 hover:tracking-wider hover:scale-105 cursor-default"
               style={{
-                color: "#800000", // Maroon color
+                color: "#800000",
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontWeight: 600,
                 letterSpacing: "0.25em",
                 fontSize: "clamp(1.5rem, 4vw, 2.4rem)",
                 margin: "0 0 0.5rem 0",
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
               SUMMER MINIMAL
             </h2>
             <p
-              className="text-base sm:text-lg max-w-md mx-auto italic transition-all duration-300 hover:text-maroon"
+              className="text-base sm:text-lg max-w-md mx-auto italic transition-all duration-500 hover:text-maroon hover:scale-105"
               style={{ 
-                color: "#800000", // Maroon color
+                color: "#800000",
                 fontFamily: "'Cormorant Garamond', Georgia, serif",
                 fontWeight: 500,
                 fontStyle: "italic",
                 fontSize: "clamp(0.85rem, 2vw, 1rem)",
                 letterSpacing: "0.05em",
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >
               Breathable fabrics and effortless silhouettes designed for the
@@ -386,15 +523,24 @@ export default function CuratedSelection() {
             className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 lg:gap-8"
             style={{ gap: "2rem" }}
           >
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {products.map((product, index) => (
+              <div
+                key={product.id}
+                className="animate-fade-in-up"
+                style={{
+                  animationDelay: `${index * 0.1}s`,
+                  animationFillMode: "backwards",
+                }}
+              >
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
 
-          {/* ── View All CTA - Maroon Button with Dark Maroon Hover ── */}
+          {/* ── View All CTA - Enhanced Maroon Button with Dark Maroon Hover ── */}
           <div className="mt-12 sm:mt-16 text-center" style={{ marginTop: "2rem" }}>
             <button
-              className="view-all-btn inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-300 hover:shadow-xl hover:-translate-y-1 active:translate-y-0 group relative overflow-hidden"
+              className="view-all-btn inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 active:translate-y-0 group relative overflow-hidden"
               style={{
                 backgroundColor: "#800000",
                 color: "#fff",
@@ -402,12 +548,8 @@ export default function CuratedSelection() {
                 letterSpacing: "0.12em",
                 fontWeight: 500,
               }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "#5C0000";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "#800000";
-              }}
+              onMouseEnter={() => setIsViewAllHovered(true)}
+              onMouseLeave={() => setIsViewAllHovered(false)}
             >
               <span className="relative z-10 flex items-center gap-2 cursor-pointer">
                 View All Collection
@@ -417,7 +559,10 @@ export default function CuratedSelection() {
                   viewBox="0 0 24 24"
                   strokeWidth={2}
                   stroke="currentColor"
-                  className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
+                  className="w-4 h-4 transition-all duration-500 group-hover:translate-x-2 group-hover:scale-110"
+                  style={{
+                    transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  }}
                 >
                   <path
                     strokeLinecap="round"
@@ -426,13 +571,13 @@ export default function CuratedSelection() {
                   />
                 </svg>
               </span>
-              <div className="absolute inset-0 bg-[#5C0000] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-full"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-[#4a0000] to-[#5C0000] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-full"></div>
             </button>
           </div>
         </div>
       </section>
 
-      {/* Responsive adjustments to match Signature Style */}
+      {/* Responsive adjustments */}
       <style>{`
         @media (max-width: 900px) {
           .grid {
@@ -445,7 +590,7 @@ export default function CuratedSelection() {
 
         @media (max-width: 640px) {
           .grid {
-            gap: 2rem !important;
+            gap: 1.5rem !important;
             max-width: 380px;
             margin: 0 auto;
           }

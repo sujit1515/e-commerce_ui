@@ -20,7 +20,7 @@ export default function AboutStory() {
   const right = useFadeIn();
 
   return (
-    <section id="story" className="py-20 sm:py-28 bg-white">
+    <section id="story" className="py-20 sm:py-28" style={{ backgroundColor: "#F8F4F0" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
@@ -39,26 +39,26 @@ export default function AboutStory() {
                 />
               </div>
 
-              {/* Floating quality card - changed to black */}
-              <div className="absolute -bottom-6 -right-3 sm:-right-8 bg-black text-white rounded-2xl p-5 shadow-2xl w-44 sm:w-56">
+              {/* Floating quality card - changed to maroon */}
+              <div className="absolute -bottom-6 -right-3 sm:-right-8 rounded-2xl p-5 shadow-2xl w-44 sm:w-56" style={{ backgroundColor: "#800000" }}>
                 <div className="flex items-center gap-1.5 mb-2">
                   <div className="flex gap-0.5">
                     {[1, 0.65, 0.35].map((op, i) => (
-                      <div key={i} className="w-2 h-2 rounded-full bg-white" style={{ opacity: op }} />
+                      <div key={i} className="w-2 h-2 rounded-full" style={{ backgroundColor: "#F8F4F0", opacity: op }} />
                     ))}
                   </div>
-                  <span className="text-white font-black tracking-widest text-[10px] ml-1">LUXE</span>
+                  <span className="font-black tracking-widest text-[10px] ml-1" style={{ color: "#F8F4F0" }}>LUXE</span>
                 </div>
-                <p className="text-red-500 font-bold text-2xl">47</p>
-                <p className="text-gray-400 text-xs leading-snug mt-0.5">
+                <p className="font-bold text-2xl" style={{ color: "#F8F4F0" }}>47</p>
+                <p className="text-xs leading-snug mt-0.5" style={{ color: "#D4A0A0" }}>
                   Quality checkpoints on every single piece
                 </p>
               </div>
 
-              {/* Year badge - changed to red */}
-              <div className="absolute -top-4 -left-3 sm:-left-6 bg-red-600 text-white rounded-2xl p-4 shadow-xl text-center">
-                <p className="font-display text-3xl font-bold leading-none">12</p>
-                <p className="text-red-200 text-[10px] font-bold tracking-widest">YEARS</p>
+              {/* Year badge - changed to maroon */}
+              <div className="absolute -top-4 -left-3 sm:-left-6 rounded-2xl p-4 shadow-xl text-center" style={{ backgroundColor: "#800000" }}>
+                <p className="font-display text-3xl font-bold leading-none" style={{ color: "#F8F4F0" }}>12</p>
+                <p className="text-[10px] font-bold tracking-widest" style={{ color: "#D4A0A0" }}>YEARS</p>
               </div>
             </div>
           </div>
@@ -70,17 +70,17 @@ export default function AboutStory() {
           >
             {/* Eyebrow */}
             <div className="inline-flex items-center gap-2 mb-6">
-              <div className="h-px w-6 bg-red-600" />
-              <span className="text-red-600 text-xs font-bold tracking-[0.3em] uppercase">Our Story</span>
+              <div className="h-px w-6" style={{ backgroundColor: "#800000" }} />
+              <span className="text-xs font-bold tracking-[0.3em] uppercase" style={{ color: "#800000" }}>Our Story</span>
             </div>
 
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-black leading-tight mb-6">
+            <h2 className="font-display text-4xl sm:text-5xl font-bold leading-tight mb-6" style={{ color: "#000000" }}>
               Born From a Refusal to
               <br />
-              <span className="italic text-red-600">Compromise</span>
+              <span className="italic" style={{ color: "#800000" }}>Compromise</span>
             </h2>
 
-            <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
+            <div className="space-y-4 text-sm sm:text-base leading-relaxed" style={{ color: "#4A4A4A" }}>
               <p>
                 In 2012, Eleanor Voss walked away from her position as lead designer at a storied
                 Parisian house. Not out of frustration — but conviction. She believed that true luxury
@@ -93,27 +93,101 @@ export default function AboutStory() {
               </p>
               <p>
                 Today, with 2.4 million customers across 180 countries, the philosophy remains unchanged:{" "}
-                <span className="text-black font-semibold">
+                <span className="font-semibold" style={{ color: "#000000" }}>
                   design everything as if it will be owned for a lifetime.
                 </span>
               </p>
             </div>
 
             {/* Founder attribution */}
-            <div className="mt-8 pt-8 border-t border-gray-200 flex items-center gap-4">
+            <div className="mt-8 pt-8 border-t flex items-center gap-4" style={{ borderColor: "#D4A0A0" }}>
               <img
                 src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&q=85"
                 alt="Eleanor Voss"
-                className="w-12 h-12 rounded-full object-cover border-2 border-red-100 flex-shrink-0"
+                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+                style={{ border: "2px solid #800000" }}
               />
               <div>
-                <p className="font-bold text-black text-sm">Eleanor Voss</p>
-                <p className="text-gray-500 text-xs">Founder & Creative Director</p>
+                <p className="font-bold text-sm" style={{ color: "#000000" }}>Eleanor Voss</p>
+                <p className="text-xs" style={{ color: "#800000" }}>Founder & Creative Director</p>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeInLeft {
+          from {
+            opacity: 0;
+            transform: translateX(-30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        @keyframes fadeInRight {
+          from {
+            opacity: 0;
+            transform: translateX(30px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+          .absolute.-bottom-6 {
+            bottom: -1rem !important;
+          }
+          .absolute.-right-3 {
+            right: -0.5rem !important;
+          }
+          .p-5 {
+            padding: 1rem !important;
+          }
+          .w-44 {
+            width: 10rem !important;
+          }
+          .text-2xl {
+            font-size: 1.25rem !important;
+          }
+          .text-3xl {
+            font-size: 1.5rem !important;
+          }
+        }
+        
+        /* Smooth hover effects */
+        .rounded-2xl {
+          transition: all 0.3s ease;
+        }
+        
+        .rounded-2xl:hover {
+          transform: scale(1.02);
+        }
+        
+        /* Image hover effect */
+        .aspect-\\[4\\/5\\] img {
+          transition: transform 0.5s ease;
+        }
+        
+        .aspect-\\[4\\/5\\]:hover img {
+          transform: scale(1.05);
+        }
+        
+        /* Badge animations */
+        .absolute.-bottom-6 {
+          animation: fadeInLeft 0.6s ease-out 0.3s both;
+        }
+        
+        .absolute.-top-4 {
+          animation: fadeInRight 0.6s ease-out 0.2s both;
+        }
+      `}</style>
     </section>
   );
 }

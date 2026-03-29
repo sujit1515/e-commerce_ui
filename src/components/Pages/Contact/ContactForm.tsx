@@ -3,11 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import { Send, CheckCircle, Loader2, User, Mail, MessageSquare, ChevronDown } from "lucide-react";
 import { sendContactMessage } from "@/api/contact";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  ContactForm.tsx
-//  Full contact form with validation, loading state, success screen.
-//  Left column = editorial context. Right column = form.
-// ─────────────────────────────────────────────────────────────────────────────
 
 const SUBJECTS = [
   "Order Enquiry",
@@ -51,7 +46,7 @@ function Field({
   const baseInput = `w-full bg-white border rounded-xl text-black text-sm outline-none transition-all duration-200
     placeholder-transparent resize-none
     focus:bg-white focus:ring-2
-    ${error ? "border-red-400 focus:border-red-400 focus:ring-red-100" : "border-gray-300 focus:border-red-500 focus:ring-red-50"}`;
+    ${error ? "border-maroon/40 focus:border-maroon focus:ring-maroon/10" : "border-gray-300 focus:border-maroon focus:ring-maroon/10"}`;
 
   return (
     <div className="relative">
@@ -59,11 +54,12 @@ function Field({
       <label
         className={`absolute left-11 pointer-events-none font-medium transition-all duration-200 z-10
           ${focused || hasVal
-            ? "top-2 text-[10px] tracking-wider uppercase text-red-600"
+            ? "top-2 text-[10px] tracking-wider uppercase text-maroon"
             : "top-1/2 -translate-y-1/2 text-sm text-gray-500"
           }
           ${as === "textarea" ? (focused || hasVal ? "top-2" : "top-4 -translate-y-0") : ""}
         `}
+        style={{ color: (focused || hasVal) ? "#800000" : undefined }}
       >
         {label}
       </label>
@@ -71,7 +67,8 @@ function Field({
       {/* Icon */}
       <Icon className={`absolute left-3.5 w-4 h-4 pointer-events-none transition-colors duration-200 z-10
         ${as === "textarea" ? "top-4" : "top-1/2 -translate-y-1/2"}
-        ${focused ? "text-red-500" : "text-gray-400"}`}
+        ${focused ? "text-maroon" : "text-gray-400"}`}
+        style={{ color: focused ? "#800000" : undefined }}
       />
 
       {as === "textarea" ? (
@@ -116,7 +113,7 @@ function Field({
         />
       )}
 
-      {error && <p className="mt-1.5 text-red-500 text-xs font-medium">{error}</p>}
+      {error && <p className="mt-1.5 text-maroon text-xs font-medium" style={{ color: "#800000" }}>{error}</p>}
     </div>
   );
 }
@@ -177,7 +174,7 @@ export default function ContactForm() {
   };
 
   return (
-    <section className="py-20 sm:py-28 bg-white">
+    <section className="py-20 sm:py-28" style={{ backgroundColor: "#F8F4F0" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
 
@@ -187,15 +184,15 @@ export default function ContactForm() {
             className={`transition-all duration-700 ${left.vis ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"} lg:sticky lg:top-28`}
           >
             <div className="inline-flex items-center gap-2 mb-6">
-              <div className="h-px w-6 bg-red-600" />
-              <span className="text-red-600 text-xs font-bold tracking-[0.3em] uppercase">Send a Message</span>
+              <div className="h-px w-6" style={{ backgroundColor: "#800000" }} />
+              <span className="text-maroon text-xs font-bold tracking-[0.3em] uppercase" style={{ color: "#800000" }}>Send a Message</span>
             </div>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-black leading-tight mb-5">
-              Let's Start a
+            <h2 className="font-display text-4xl sm:text-5xl font-bold leading-tight mb-5">
+              <span style={{ color: "#000000" }}>Let's Start a</span>
               <br />
-              <span className="italic text-red-600">Conversation</span>
+              <span className="italic" style={{ color: "#800000" }}>Conversation</span>
             </h2>
-            <p className="text-gray-500 text-sm sm:text-base leading-relaxed mb-10 max-w-md">
+            <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-10 max-w-md">
               Fill in the form and one of our team members will personally respond.
               We don't use bots — every reply is crafted with care.
             </p>
@@ -207,7 +204,7 @@ export default function ContactForm() {
                 { emoji: "🔒", title: "Private & Secure", detail: "Your data is never shared or sold" },
                 { emoji: "🎯", title: "Dedicated Support", detail: "Routed to the right expert, first time" },
               ].map((p, i) => (
-                <div key={i} className="flex items-start gap-4 bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div key={i} className="flex items-start gap-4 bg-white rounded-xl p-4 border shadow-sm" style={{ borderColor: "rgba(128, 0, 0, 0.1)" }}>
                   <span className="text-xl leading-none mt-0.5">{p.emoji}</span>
                   <div>
                     <p className="font-bold text-black text-sm">{p.title}</p>
@@ -232,9 +229,9 @@ export default function ContactForm() {
             ref={right.ref}
             className={`transition-all duration-700 delay-150 ${right.vis ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}
           >
-            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-              {/* Top accent */}
-              <div className="h-1 w-full bg-gradient-to-r from-red-600 via-red-500 to-red-600" />
+            <div className="bg-white rounded-2xl border shadow-sm overflow-hidden" style={{ borderColor: "rgba(128, 0, 0, 0.1)" }}>
+              {/* Top accent - maroon gradient */}
+              <div className="h-1 w-full bg-gradient-to-r" style={{ background: "linear-gradient(to right, #800000, #9D2A2A, #800000)" }} />
 
               <div className="p-7 sm:p-10">
                 {!submitted ? (
@@ -248,7 +245,7 @@ export default function ContactForm() {
 
                     {/* Character count */}
                     <div className="flex justify-end -mt-3">
-                      <span className={`text-xs font-medium ${form.message.length > 500 ? "text-red-400" : "text-gray-400"}`}>
+                      <span className={`text-xs font-medium ${form.message.length > 500 ? "text-maroon/60" : "text-gray-400"}`}>
                         {form.message.length} / 500
                       </span>
                     </div>
@@ -257,9 +254,15 @@ export default function ContactForm() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-black hover:bg-gray-900 disabled:bg-gray-300 disabled:cursor-not-allowed
+                      className="w-full disabled:bg-gray-300 disabled:cursor-not-allowed
                         text-white font-bold py-3.5 rounded-xl transition-all duration-200
-                        shadow-lg shadow-black/20 hover:shadow-xl flex items-center justify-center gap-2 text-sm"
+                        shadow-lg flex items-center justify-center gap-2 text-sm"
+                      style={{ 
+                        backgroundColor: "#800000",
+                        boxShadow: "0 10px 25px -5px rgba(128, 0, 0, 0.3)"
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#5C0000"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#800000"; }}
                     >
                       {loading
                         ? <><Loader2 className="animate-spin w-4 h-4" /> Sending message…</>
@@ -269,37 +272,41 @@ export default function ContactForm() {
 
                     <p className="text-center text-gray-500 text-xs">
                       By submitting, you agree to our{" "}
-                      <a href="/privacypolicy" className="text-red-500 hover:underline">Privacy Policy</a>.
+                      <a href="/privacypolicy" className="text-maroon hover:underline" style={{ color: "#800000" }}>Privacy Policy</a>.
                     </p>
                   </form>
                 ) : (
                   /* ── Success state ── */
                   <div className="py-8 text-center">
                     <div className="relative inline-flex mb-6">
-                      <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
-                        <CheckCircle className="w-8 h-8 text-red-600" />
+                      <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ backgroundColor: "rgba(128, 0, 0, 0.1)", border: "1px solid rgba(128, 0, 0, 0.2)" }}>
+                        <CheckCircle className="w-8 h-8" style={{ color: "#800000" }} />
                       </div>
-                      <div className="absolute -inset-2 rounded-3xl bg-red-500/5 animate-ping" style={{ animationDuration: "2s" }} />
+                      <div className="absolute -inset-2 rounded-3xl animate-ping" style={{ backgroundColor: "rgba(128, 0, 0, 0.05)", animationDuration: "2s" }} />
                     </div>
                     <h3 className="font-display text-3xl font-bold text-black mb-3">Message Sent!</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed max-w-xs mx-auto mb-2">
+                    <p className="text-gray-600 text-sm leading-relaxed max-w-xs mx-auto mb-2">
                       Thank you, <span className="font-semibold text-black">{form.name}</span>.
                       We've received your message and will reply to
                     </p>
-                    <div className="inline-flex items-center gap-2 bg-red-50 border border-red-100 rounded-xl px-4 py-2 mb-7">
-                      <Mail className="w-3.5 h-3.5 text-red-500 flex-shrink-0" />
-                      <span className="text-red-600 font-semibold text-sm break-all">{form.email}</span>
+                    <div className="inline-flex items-center gap-2 rounded-xl px-4 py-2 mb-7" style={{ backgroundColor: "rgba(128, 0, 0, 0.1)", border: "1px solid rgba(128, 0, 0, 0.2)" }}>
+                      <Mail className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#800000" }} />
+                      <span className="font-semibold text-sm break-all" style={{ color: "#800000" }}>{form.email}</span>
                     </div>
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
                       <button
                         onClick={reset}
-                        className="flex items-center justify-center gap-2 bg-black hover:bg-gray-900 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm shadow-md"
+                        className="flex items-center justify-center gap-2 text-white font-bold px-6 py-3 rounded-xl transition-all text-sm shadow-md"
+                        style={{ backgroundColor: "#800000" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#5C0000"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#800000"; }}
                       >
                         Send Another Message
                       </button>
                       <a
                         href="/"
-                        className="flex items-center justify-center gap-2 border border-gray-300 text-gray-600 hover:bg-gray-50 font-semibold px-6 py-3 rounded-xl transition-all text-sm"
+                        className="flex items-center justify-center gap-2 border text-gray-600 hover:bg-gray-50 font-semibold px-6 py-3 rounded-xl transition-all text-sm"
+                        style={{ borderColor: "rgba(128, 0, 0, 0.2)" }}
                       >
                         Back to Home
                       </a>
@@ -311,6 +318,27 @@ export default function ContactForm() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
+        
+        .font-display {
+          font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
+        }
+        
+        .text-maroon {
+          color: #800000 !important;
+        }
+        
+        @media (max-width: 640px) {
+          .text-4xl {
+            font-size: 2rem !important;
+          }
+          .p-7 {
+            padding: 1.25rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

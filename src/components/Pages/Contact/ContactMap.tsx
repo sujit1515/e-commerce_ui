@@ -2,11 +2,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MapPin, Navigation } from "lucide-react";
 
-// ─────────────────────────────────────────────────────────────────────────────
-//  ContactMap.tsx
-//  Embedded map section with store details overlay card.
-//  Replace MAP_EMBED_URL with your real Google Maps embed URL.
-// ─────────────────────────────────────────────────────────────────────────────
 
 const STORE = {
   name: "Gandhi Institute of Excellent Technocrats",
@@ -30,7 +25,7 @@ export default function ContactMap() {
   }, []);
 
   return (
-    <section className="py-20 sm:py-24 bg-white">
+    <section className="py-20 sm:py-24" style={{ backgroundColor: "#F8F4F0" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Heading */}
@@ -39,14 +34,14 @@ export default function ContactMap() {
           ref={ref}
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-red-600" />
-            <span className="text-red-600 text-xs font-bold tracking-[0.3em] uppercase">Find Us</span>
-            <div className="h-px w-6 bg-red-600" />
+            <div className="h-px w-6" style={{ backgroundColor: "#800000" }} />
+            <span className="text-maroon text-xs font-bold tracking-[0.3em] uppercase" style={{ color: "#800000" }}>Find Us</span>
+            <div className="h-px w-6" style={{ backgroundColor: "#800000" }} />
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold text-black leading-tight">
-            Visit Our
+          <h2 className="font-display text-4xl sm:text-5xl font-bold leading-tight">
+            <span style={{ color: "#000000" }}>Visit Our</span>
             <br />
-            <span className="italic text-red-600">Bhubaneswar</span>
+            <span className="italic" style={{ color: "#800000" }}>Bhubaneswar</span>
           </h2>
         </div>
 
@@ -67,16 +62,16 @@ export default function ContactMap() {
             />
           </div>
 
-          {/* Overlay card */}
+          {/* Overlay card - maroon themed */}
           <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 lg:bottom-8 lg:left-8 z-10">
-            <div className="bg-black/95 backdrop-blur-md border border-white/10 rounded-2xl p-5 sm:p-6 shadow-2xl max-w-xs sm:max-w-sm">
+            <div className="bg-black/95 backdrop-blur-md border rounded-2xl p-5 sm:p-6 shadow-2xl max-w-xs sm:max-w-sm" style={{ borderColor: "rgba(128, 0, 0, 0.3)" }}>
               {/* Dot + label */}
               <div className="flex items-center gap-2 mb-4">
                 <div className="relative flex-shrink-0">
-                  <div className="w-3 h-3 rounded-full bg-red-600" />
-                  <div className="absolute inset-0 rounded-full bg-red-600 animate-ping opacity-50" />
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: "#800000" }} />
+                  <div className="absolute inset-0 rounded-full animate-ping opacity-50" style={{ backgroundColor: "#800000" }} />
                 </div>
-                <span className="text-red-500 text-xs font-bold tracking-widest uppercase">Open Now</span>
+                <span className="text-maroon text-xs font-bold tracking-widest uppercase" style={{ color: "#800000" }}>Open Now</span>
               </div>
 
               <h3 className="font-bold text-white text-base sm:text-lg mb-1">{STORE.name}</h3>
@@ -93,7 +88,13 @@ export default function ContactMap() {
                 href={STORE.mapsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md shadow-red-900/40"
+                className="inline-flex items-center gap-2 mt-4 text-white font-semibold text-xs px-4 py-2.5 rounded-xl transition-all shadow-md"
+                style={{ 
+                  backgroundColor: "#800000",
+                  boxShadow: "0 4px 10px rgba(128, 0, 0, 0.4)"
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "#5C0000"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "#800000"; }}
               >
                 <Navigation className="w-3.5 h-3.5" /> Get Directions
               </a>
@@ -101,6 +102,27 @@ export default function ContactMap() {
           </div>
         </div>
       </div>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
+        
+        .font-display {
+          font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
+        }
+        
+        .text-maroon {
+          color: #800000 !important;
+        }
+        
+        @media (max-width: 640px) {
+          .text-4xl {
+            font-size: 2rem !important;
+          }
+          .p-5 {
+            padding: 1rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

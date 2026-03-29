@@ -27,21 +27,26 @@ function AccordionItem({ faq, index }: { faq: FAQ; index: number }) {
   return (
     <div
       ref={ref}
-      className={`border border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-500
-        ${open ? "shadow-md border-red-200" : "hover:border-gray-300"}
+      className={`border rounded-2xl overflow-hidden shadow-sm transition-all duration-500
+        ${open ? "shadow-md" : "hover:border-maroon/30"}
         ${vis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"}`}
-      style={{ transitionDelay: vis ? `${index * 60}ms` : "0ms" }}
+      style={{ 
+        transitionDelay: vis ? `${index * 60}ms` : "0ms",
+        borderColor: open ? "rgba(128, 0, 0, 0.3)" : "rgba(128, 0, 0, 0.1)"
+      }}
     >
       <button
         onClick={() => setOpen(!open)}
         className={`w-full flex items-center justify-between gap-4 px-6 py-5 text-left transition-colors duration-200
-          ${open ? "bg-red-50" : "bg-white hover:bg-gray-50"}`}
+          ${open ? "bg-maroon/5" : "bg-white hover:bg-maroon/5"}`}
+        style={{ backgroundColor: open ? "rgba(128, 0, 0, 0.05)" : undefined }}
       >
-        <span className={`font-bold text-sm sm:text-base ${open ? "text-red-700" : "text-black"}`}>
+        <span className={`font-bold text-sm sm:text-base ${open ? "text-maroon" : "text-black"}`} style={{ color: open ? "#800000" : "#000000" }}>
           {faq.q}
         </span>
         <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-200
-          ${open ? "bg-red-600 text-white" : "bg-gray-100 text-gray-600"}`}
+          ${open ? "text-white" : "bg-gray-100 text-gray-600"}`}
+          style={{ backgroundColor: open ? "#800000" : "#f3f4f6" }}
         >
           {open ? <Minus className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
         </div>
@@ -52,7 +57,7 @@ function AccordionItem({ faq, index }: { faq: FAQ; index: number }) {
         className="overflow-hidden transition-all duration-300 ease-in-out"
         style={{ maxHeight: open ? "300px" : "0px", opacity: open ? 1 : 0 }}
       >
-        <p className="px-6 pb-5 pt-2 text-gray-600 text-sm leading-relaxed border-t border-red-100">
+        <p className="px-6 pb-5 pt-2 text-gray-600 text-sm leading-relaxed" style={{ borderTop: "1px solid rgba(128, 0, 0, 0.1)" }}>
           {faq.a}
         </p>
       </div>
@@ -70,7 +75,7 @@ export default function ContactFAQ() {
   }, []);
 
   return (
-    <section className="py-20 sm:py-28 bg-white">
+    <section className="py-20 sm:py-28" style={{ backgroundColor: "#F8F4F0" }}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Heading */}
@@ -79,16 +84,16 @@ export default function ContactFAQ() {
           className={`text-center mb-12 transition-all duration-700 ${headVis ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}
         >
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="h-px w-6 bg-red-600" />
-            <span className="text-red-600 text-xs font-bold tracking-[0.3em] uppercase">FAQ</span>
-            <div className="h-px w-6 bg-red-600" />
+            <div className="h-px w-6" style={{ backgroundColor: "#800000" }} />
+            <span className="text-maroon text-xs font-bold tracking-[0.3em] uppercase" style={{ color: "#800000" }}>FAQ</span>
+            <div className="h-px w-6" style={{ backgroundColor: "#800000" }} />
           </div>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold text-black leading-tight mb-4">
-            Common
+          <h2 className="font-display text-4xl sm:text-5xl font-bold leading-tight mb-4">
+            <span style={{ color: "#000000" }}>Common</span>
             <br />
-            <span className="italic text-red-600">Questions</span>
+            <span className="italic" style={{ color: "#800000" }}>Questions</span>
           </h2>
-          <p className="text-gray-500 text-sm sm:text-base max-w-sm mx-auto">
+          <p className="text-gray-600 text-sm sm:text-base max-w-sm mx-auto">
             Can't find what you're looking for? Send us a message using the form above.
           </p>
         </div>
@@ -100,6 +105,32 @@ export default function ContactFAQ() {
           ))}
         </div>
       </div>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&display=swap');
+        
+        .font-display {
+          font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif !important;
+        }
+        
+        .text-maroon {
+          color: #800000 !important;
+        }
+        
+        @media (max-width: 640px) {
+          .text-4xl {
+            font-size: 2rem !important;
+          }
+          .px-6 {
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+          }
+          .py-5 {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
