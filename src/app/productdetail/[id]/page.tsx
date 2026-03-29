@@ -64,7 +64,7 @@ function Toast({ message, type, onClose }: { message: string; type: 'success' | 
   return (
     <div className={`fixed bottom-20 left-4 right-4 sm:left-auto sm:right-4 sm:bottom-4 z-50 animate-in`}>
       <div className={`px-4 py-3 rounded-lg shadow-lg ${
-        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        type === 'success' ? 'bg-maroon' : 'bg-maroon-dark'
       } text-white text-center text-sm font-medium`}>
         {message}
       </div>
@@ -114,7 +114,7 @@ function QuantitySelector({
         className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
           ${quantity <= 1 || disabled
             ? "border-gray-200 text-gray-300 cursor-not-allowed"
-            : "border-gray-300 text-gray-600 hover:border-[#0f172a] hover:text-[#0f172a] hover:bg-gray-50"
+            : "border-gray-300 text-gray-600 hover:border-maroon hover:text-maroon hover:bg-gray-50"
           }`}
         aria-label="Decrease quantity"
       >
@@ -129,7 +129,7 @@ function QuantitySelector({
         min="1"
         max={maxStock}
         className="w-14 h-8 text-center border border-gray-200 rounded-lg text-sm font-medium
-          focus:outline-none focus:border-[#0f172a] focus:ring-1 focus:ring-[#0f172a]
+          focus:outline-none focus:border-maroon focus:ring-1 focus:ring-maroon
           disabled:bg-gray-50 disabled:text-gray-400"
       />
       
@@ -139,7 +139,7 @@ function QuantitySelector({
         className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all
           ${quantity >= maxStock || disabled
             ? "border-gray-200 text-gray-300 cursor-not-allowed"
-            : "border-gray-300 text-gray-600 hover:border-[#0f172a] hover:text-[#0f172a] hover:bg-gray-50"
+            : "border-gray-300 text-gray-600 hover:border-maroon hover:text-maroon hover:bg-gray-50"
           }`}
         aria-label="Increase quantity"
       >
@@ -232,7 +232,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
         {!zoomed && !imageErrors[active] && (
           <div className="hidden sm:flex absolute top-3 sm:top-4 right-3 sm:right-4 w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-white/80 backdrop-blur-sm
             flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity">
-            <ZoomIn className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-[#0f172a]" />
+            <ZoomIn className="w-3.5 sm:w-4 h-3.5 sm:h-4 text-maroon" />
           </div>
         )}
 
@@ -250,7 +250,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
                 bg-white/80 backdrop-blur-sm shadow-md items-center justify-center
                 opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
             >
-              <ChevronLeft className="w-3.5 lg:w-4 h-3.5 lg:h-4 text-[#0f172a]" />
+              <ChevronLeft className="w-3.5 lg:w-4 h-3.5 lg:h-4 text-maroon" />
             </button>
             <button
               onClick={next}
@@ -258,7 +258,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
                 bg-white/80 backdrop-blur-sm shadow-md items-center justify-center
                 opacity-0 group-hover:opacity-100 transition-all hover:bg-white hover:scale-110"
             >
-              <ChevronRight className="w-3.5 lg:w-4 h-3.5 lg:h-4 text-[#0f172a]" />
+              <ChevronRight className="w-3.5 lg:w-4 h-3.5 lg:h-4 text-maroon" />
             </button>
           </>
         )}
@@ -270,7 +270,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
               key={i}
               onClick={() => setActive(i)}
               className={`transition-all duration-200 min-w-[20px] h-1.5
-                ${i === active ? "w-5 bg-[#0f172a]" : "w-1.5 bg-gray-300"}`}
+                ${i === active ? "w-5 bg-maroon" : "w-1.5 bg-gray-300"}`}
               aria-label={`Go to image ${i + 1}`}
             />
           ))}
@@ -292,7 +292,7 @@ function ProductImageGallery({ images }: { images: GalleryImage[] }) {
               className={`flex-shrink-0 rounded-lg sm:rounded-xl overflow-hidden border-2 transition-all duration-200
                 w-16 sm:w-20 lg:w-24 h-16 sm:h-20 lg:h-24 bg-gray-100
                 ${i === active
-                  ? "border-[#0f172a] shadow-md scale-[1.02]"
+                  ? "border-maroon shadow-md scale-[1.02]"
                   : "border-transparent hover:border-gray-300"}`}
             >
               {imageErrors[i] ? (
@@ -327,7 +327,7 @@ function Accordion({ title, children }: { title: string; children: React.ReactNo
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-3 sm:py-4 text-left group"
       >
-        <span className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#0f172a] group-hover:text-red-600 transition-colors">
+        <span className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-maroon group-hover:text-maroon-light transition-colors">
           {title}
         </span>
         {open
@@ -377,7 +377,6 @@ function ProductInfo({
 
   // Sync with initialWishlistStatus when it changes
   useEffect(() => {
-    console.log('ProductInfo - Wishlist status updated:', initialWishlistStatus);
     setWish(initialWishlistStatus);
   }, [initialWishlistStatus]);
 
@@ -498,7 +497,7 @@ function ProductInfo({
     <div className="flex flex-col gap-0">
       {/* Top badges */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 flex-wrap mb-4 sm:mb-5">
-        <span className="bg-red-600 text-white text-[8px] sm:text-[9px] font-black tracking-[0.15em] sm:tracking-[0.18em] uppercase px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
+        <span className="bg-maroon text-white text-[8px] sm:text-[9px] font-black tracking-[0.15em] sm:tracking-[0.18em] uppercase px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
           {product.badge}
         </span>
         <div className="flex items-center gap-1 sm:gap-1.5 text-gray-400">
@@ -510,14 +509,14 @@ function ProductInfo({
       </div>
 
       {/* Title */}
-      <h1 className="font-display font-bold text-[#0f172a] text-2xl sm:text-3xl lg:text-4xl leading-tight mb-3 sm:mb-5">
+      <h1 className="font-display font-bold text-black text-2xl sm:text-3xl lg:text-4xl leading-tight mb-3 sm:mb-5">
         {product.name}
       </h1>
 
       {/* Price + Stars */}
       <div className="flex flex-col xs:flex-row xs:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-gray-100">
         <div className="flex items-center gap-2">
-          <span className="font-black text-[#0f172a] text-2xl sm:text-3xl">
+          <span className="font-black text-black text-2xl sm:text-3xl">
             ${totalPrice.toFixed(2)}
           </span>
           {quantity > 1 && (
@@ -533,15 +532,15 @@ function ProductInfo({
                 key={i}
                 className={`w-3.5 sm:w-4 h-3.5 sm:h-4 ${
                   i < Math.floor(product.rating)
-                    ? "fill-red-500 text-red-500"
+                    ? "fill-maroon text-maroon"
                     : i < product.rating
-                    ? "fill-red-300 text-red-300"
+                    ? "fill-maroon-light text-maroon-light"
                     : "fill-gray-200 text-gray-200"
                 }`}
               />
             ))}
           </div>
-          <a href="#reviews" className="text-xs sm:text-sm font-bold text-red-500 hover:underline">
+          <a href="#reviews" className="text-xs sm:text-sm font-bold text-maroon hover:underline">
             {product.reviewCount} Reviews
           </a>
         </div>
@@ -550,8 +549,8 @@ function ProductInfo({
       {/* Color selector */}
       {product.colors.length > 0 && (
         <div className="mb-4 sm:mb-6">
-          <p className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#0f172a] mb-2 sm:mb-3">
-            Color: <span className="text-red-600 font-black">{selectedColor.toUpperCase()}</span>
+          <p className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-black mb-2 sm:mb-3">
+            Color: <span className="text-maroon font-black">{selectedColor.toUpperCase()}</span>
           </p>
           <div className="flex gap-2 sm:gap-2.5 flex-wrap">
             {product.colors.map(c => (
@@ -561,7 +560,7 @@ function ProductInfo({
                 title={c.name}
                 className={`w-8 sm:w-9 h-8 sm:h-9 rounded-full border-2 transition-all duration-200
                   ${selectedColor === c.name
-                    ? "border-[#0f172a] scale-110 shadow-md"
+                    ? "border-maroon scale-110 shadow-md"
                     : "border-gray-200 hover:border-gray-500 hover:scale-105"}`}
                 style={{ backgroundColor: c.hex }}
                 aria-label={`Select ${c.name} color`}
@@ -575,10 +574,10 @@ function ProductInfo({
       {product.sizes.length > 0 && (
         <div className="mb-4 sm:mb-6">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
-            <p className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#0f172a]">
+            <p className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-black">
               Select Size
             </p>
-            <button className="flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-red-500 hover:text-red-700 transition-colors">
+            <button className="flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-maroon hover:text-maroon-dark transition-colors">
               <Ruler className="w-3 h-3" /> Size Guide
             </button>
           </div>
@@ -595,8 +594,8 @@ function ProductInfo({
                     ${oos
                       ? "border-gray-100 text-gray-300 line-through cursor-not-allowed bg-gray-50"
                       : active
-                      ? "border-red-500 bg-red-50 text-red-600 shadow-sm"
-                      : "border-gray-200 text-gray-600 hover:border-gray-800 hover:text-[#0f172a]"}`}
+                      ? "border-maroon bg-maroon/5 text-maroon shadow-sm"
+                      : "border-gray-200 text-gray-600 hover:border-maroon hover:text-maroon"}`}
                 >
                   {s}
                 </button>
@@ -604,7 +603,7 @@ function ProductInfo({
             })}
           </div>
           {sizeError && (
-            <p className="mt-2 text-[10px] sm:text-xs font-semibold text-red-500">
+            <p className="mt-2 text-[10px] sm:text-xs font-semibold text-maroon">
               Please select a size before continuing
             </p>
           )}
@@ -613,7 +612,7 @@ function ProductInfo({
 
       {/* Quantity Selector */}
       <div className="mb-4 sm:mb-6">
-        <p className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-[#0f172a] mb-2 sm:mb-3">
+        <p className="text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase text-black mb-2 sm:mb-3">
           Quantity
         </p>
         <QuantitySelector 
@@ -623,7 +622,7 @@ function ProductInfo({
           disabled={!selectedSize}
         />
         {quantityError && (
-          <p className="mt-2 text-[10px] sm:text-xs font-semibold text-red-500">
+          <p className="mt-2 text-[10px] sm:text-xs font-semibold text-maroon">
             Selected quantity exceeds available stock
           </p>
         )}
@@ -644,7 +643,7 @@ function ProductInfo({
             
             <button
               onClick={handleBuy}
-              className="w-full sm:flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-black text-xs sm:text-sm
+              className="w-full sm:flex-1 bg-black hover:bg-maroon text-white font-black text-xs sm:text-sm
                 tracking-[0.15em] sm:tracking-[0.18em] uppercase py-4 sm:py-4 rounded-xl sm:rounded-2xl transition-all shadow-md
                 hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]"
             >
@@ -656,7 +655,7 @@ function ProductInfo({
             <button
               onClick={handleCart}
               disabled={isAddingToCart}
-              className="w-full sm:flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-black text-xs sm:text-sm
+              className="w-full sm:flex-1 bg-black hover:bg-maroon text-white font-black text-xs sm:text-sm
                 tracking-[0.15em] sm:tracking-[0.18em] uppercase py-4 sm:py-4 rounded-xl sm:rounded-2xl transition-all shadow-md
                 hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]
                 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -673,7 +672,7 @@ function ProductInfo({
 
             <button
               onClick={handleBuy}
-              className="w-full sm:flex-1 border-2 border-[#0f172a] text-[#0f172a] font-black text-xs sm:text-sm
+              className="w-full sm:flex-1 border-2 border-black text-black font-black text-xs sm:text-sm
                 tracking-[0.15em] sm:tracking-[0.18em] uppercase py-4 sm:py-3.5 rounded-xl sm:rounded-2xl transition-all
                 hover:bg-gray-50 active:scale-[0.98] flex items-center justify-center gap-2 min-h-[48px]"
             >
@@ -689,11 +688,11 @@ function ProductInfo({
             transition-all duration-200 hover:scale-105 active:scale-95 min-h-[48px]
             ${isWishlistLoading ? "opacity-50 cursor-wait" : ""}
             ${wishlisted
-              ? "border-red-500 bg-red-50 text-red-500"
+              ? "border-maroon bg-maroon/5 text-maroon"
               : "border-gray-200 text-gray-400 hover:border-gray-400"}`}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >
-          <Heart className={`w-5 sm:w-5 h-5 sm:h-5 ${wishlisted ? "fill-red-500" : ""}`} />
+          <Heart className={`w-5 sm:w-5 h-5 sm:h-5 ${wishlisted ? "fill-maroon" : ""}`} />
         </button>
       </div>
 
@@ -767,7 +766,6 @@ export default function ProductDetailPage() {
         setIsCheckingCart(true);
         
         const productData = await getProductById(id as string);
-        console.log('Fetched product:', productData);
 
         if (!productData) {
           setLoading(false);
@@ -782,7 +780,6 @@ export default function ProductDetailPage() {
         // Check wishlist status
         try {
           const wishlistData = await getWishlist();
-          console.log('Wishlist data:', wishlistData);
           
           if (wishlistData?.success && wishlistData?.wishlist) {
             let isInWishlist = false;
@@ -799,7 +796,6 @@ export default function ProductDetailPage() {
               });
             }
             
-            console.log(`Product ${productData._id} is in wishlist:`, isInWishlist);
             setWishlistStatus(isInWishlist);
             setMobileWishlist(isInWishlist);
           } else {
@@ -844,7 +840,6 @@ export default function ProductDetailPage() {
   };
 
   const handleWishlistToggle = (newStatus: boolean) => {
-    console.log('Wishlist toggled to:', newStatus);
     setWishlistStatus(newStatus);
     setMobileWishlist(newStatus);
   };
@@ -949,7 +944,7 @@ export default function ProductDetailPage() {
         <Navbar />
         <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F8F4F0' }}>
           <div className="text-center">
-            <div className="w-12 h-12 border-4 border-gray-200 border-t-[#0f172a] rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-12 h-12 border-4 border-gray-200 border-t-maroon rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-500 text-sm sm:text-lg">Loading product...</p>
           </div>
         </div>
@@ -963,7 +958,7 @@ export default function ProductDetailPage() {
       <>
         <Navbar />
         <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F8F4F0' }}>
-          <p className="text-red-500 text-sm sm:text-lg">Product not found</p>
+          <p className="text-maroon text-sm sm:text-lg">Product not found</p>
         </div>
       </>
     );
@@ -1019,6 +1014,19 @@ export default function ProductDetailPage() {
         .animate-in { animation: animate-in 0.2s ease; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .text-maroon { color: #800000; }
+        .text-maroon-light { color: #9D2A2A; }
+        .text-maroon-dark { color: #5C0000; }
+        .bg-maroon { background-color: #800000; }
+        .bg-maroon-dark { background-color: #5C0000; }
+        .border-maroon { border-color: #800000; }
+        .hover\\:text-maroon:hover { color: #800000; }
+        .hover\\:text-maroon-dark:hover { color: #5C0000; }
+        .hover\\:bg-maroon:hover { background-color: #800000; }
+        .focus\\:border-maroon:focus { border-color: #800000; }
+        .focus\\:ring-maroon:focus { --tw-ring-color: #800000; }
+        .fill-maroon { fill: #800000; }
       `}</style>
 
       <Navbar />
@@ -1031,7 +1039,7 @@ export default function ProductDetailPage() {
             <ChevronRight className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-gray-300" />
             <span className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-gray-400">Products</span>
             <ChevronRight className="w-2.5 sm:w-3 h-2.5 sm:h-3 text-gray-300" />
-            <span className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-[#0f172a] truncate max-w-[200px]">
+            <span className="text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-black truncate max-w-[200px]">
               {product.name}
             </span>
           </nav>
@@ -1049,7 +1057,7 @@ export default function ProductDetailPage() {
             <div className="w-full lg:sticky lg:top-6 lg:self-start">
               {isCheckingWishlist || isCheckingCart ? (
                 <div className="flex justify-center items-center py-20">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-maroon"></div>
                 </div>
               ) : (
                 <ProductInfo 
@@ -1105,10 +1113,10 @@ export default function ProductDetailPage() {
                   className={`w-12 h-12 rounded-xl border-2 flex items-center justify-center flex-shrink-0 transition-all
                     ${isMobileWishlistLoading ? "opacity-50 cursor-wait" : "active:scale-95"}
                     ${mobileWishlist
-                      ? "border-red-500 bg-red-50 text-red-500"
+                      ? "border-maroon bg-maroon/5 text-maroon"
                       : "border-gray-200 text-gray-400 hover:border-gray-400"}`}
                 >
-                  <Heart className={`w-5 h-5 ${mobileWishlist ? "fill-red-500" : ""}`} />
+                  <Heart className={`w-5 h-5 ${mobileWishlist ? "fill-maroon" : ""}`} />
                 </button>
                 
                 {mobileIsInCart ? (
@@ -1122,7 +1130,7 @@ export default function ProductDetailPage() {
                     </button>
                     <button
                       onClick={handleMobileBuyNow}
-                      className="flex-1 border-2 border-[#0f172a] text-[#0f172a] font-bold text-xs
+                      className="flex-1 border-2 border-black text-black font-bold text-xs
                         tracking-wider uppercase rounded-xl transition-all py-3 active:scale-95 bg-white"
                     >
                       Buy Now
@@ -1133,7 +1141,7 @@ export default function ProductDetailPage() {
                     <button
                       onClick={handleMobileAddToCart}
                       disabled={isMobileAddingToCart}
-                      className="flex-1 bg-[#0f172a] hover:bg-red-600 text-white font-bold text-xs
+                      className="flex-1 bg-black hover:bg-maroon text-white font-bold text-xs
                         tracking-wider uppercase rounded-xl transition-all py-3 active:scale-95
                         disabled:opacity-50 disabled:cursor-not-allowed"
                     >
@@ -1148,7 +1156,7 @@ export default function ProductDetailPage() {
                     </button>
                     <button
                       onClick={handleMobileBuyNow}
-                      className="flex-1 border-2 border-[#0f172a] text-[#0f172a] font-bold text-xs
+                      className="flex-1 border-2 border-black text-black font-bold text-xs
                         tracking-wider uppercase rounded-xl transition-all py-3 active:scale-95 bg-white"
                     >
                       Buy Now

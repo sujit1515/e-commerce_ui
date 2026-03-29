@@ -6,7 +6,10 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthManager from "../Auth/AuthManager/AuthManager";
 import { logoutApi } from "@/api/auth";
+import { getWishlist } from "@/api/wishlist";
+import { getCart } from "@/api/cart";
 import { Variants } from "framer-motion";
+import ElectronicsNavbar from "./ElectronicsNavbar";
 
 // Define types
 interface NavLink {
@@ -66,8 +69,8 @@ const navLinks: NavLink[] = [
 ];
 
 export default function Navbar({ 
-  wishlistCount = 0, 
-  cartCount = 0,
+  wishlistCount: propWishlistCount = 0, 
+  cartCount: propCartCount = 0,
 }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -82,6 +85,8 @@ export default function Navbar({
   const [currentUser, setCurrentUser] = useState<UserData | null>(null);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [logoError, setLogoError] = useState<boolean>(false);
+  const [wishlistCount, setWishlistCount] = useState<number>(0);
+  const [cartCount, setCartCount] = useState<number>(0);
   
   // Scroll hide/show state
   const [lastScrollY, setLastScrollY] = useState<number>(0);
@@ -89,6 +94,42 @@ export default function Navbar({
 
   // Check if on electronics page
   const isElectronicsPage = pathname === "/electronics" || pathname?.startsWith("/electronics/");
+
+  // Fetch wishlist and cart counts
+  const fetchCounts = async () => {
+    if (!loggedIn) {
+      setWishlistCount(0);
+      setCartCount(0);
+      return;
+    }
+
+    try {
+      // Fetch wishlist
+      const wishlistRes = await getWishlist();
+      if (wishlistRes?.success && wishlistRes?.wishlist) {
+        setWishlistCount(wishlistRes.wishlist.length);
+      } else {
+        setWishlistCount(0);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist count:", error);
+      setWishlistCount(0);
+    }
+
+    try {
+      // Fetch cart
+      const cartRes = await getCart();
+      if (cartRes && Array.isArray(cartRes)) {
+        const totalItems = cartRes.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0);
+        setCartCount(totalItems);
+      } else {
+        setCartCount(0);
+      }
+    } catch (error) {
+      console.error("Error fetching cart count:", error);
+      setCartCount(0);
+    }
+  };
 
   // Check login when Navbar loads
   useEffect(() => {
@@ -103,8 +144,33 @@ export default function Navbar({
     if (token && storedUser) {
       setLoggedIn(true);
       setCurrentUser(JSON.parse(storedUser));
+    } else {
+      setLoggedIn(false);
+      setCurrentUser(null);
     }
   }, []);
+
+  // Fetch counts when login status changes
+  useEffect(() => {
+    if (loggedIn) {
+      fetchCounts();
+    } else {
+      setWishlistCount(0);
+      setCartCount(0);
+    }
+  }, [loggedIn]);
+
+  // Also fetch counts when the page becomes visible (user might have added items from another tab)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible" && loggedIn) {
+        fetchCounts();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [loggedIn]);
 
   // Check if user is admin
   const isAdmin = currentUser?.role === "admin";
@@ -207,6 +273,8 @@ export default function Navbar({
     sessionStorage.removeItem("user");
     setLoggedIn(false);
     setCurrentUser(null);
+    setWishlistCount(0);
+    setCartCount(0);
     setUserMenuOpen(false);
     setMenuOpen(false);
     router.push("/");
@@ -218,6 +286,8 @@ export default function Navbar({
     sessionStorage.removeItem("user");
     setLoggedIn(false);
     setCurrentUser(null);
+    setWishlistCount(0);
+    setCartCount(0);
     setUserMenuOpen(false);
     setMenuOpen(false);
     router.push("/");
@@ -1023,6 +1093,9 @@ export default function Navbar({
           )}
         </AnimatePresence>
       </motion.nav>
+
+      {/* Electronics Secondary Navbar - Shows only on electronics page */}
+      {isElectronicsPage && <ElectronicsNavbar />}
 
       <AuthManager 
         isOpen={authModalOpen}

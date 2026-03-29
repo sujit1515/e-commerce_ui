@@ -30,12 +30,12 @@ export default function ProductGrid({
 
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
+      <div className="flex flex-col items-center justify-center py-16 sm:py-24 text-center px-4">
         <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/10 flex items-center justify-center mb-4">
           <ShoppingCart className="w-7 h-7 text-maroon/40" />
         </div>
-        <p className="font-bold text-maroon text-lg mb-1">No products found</p>
-        <p className="text-maroon/50 text-sm">Try adjusting your filters</p>
+        <p className="font-bold text-maroon text-base sm:text-lg mb-1">No products found</p>
+        <p className="text-maroon/50 text-xs sm:text-sm">Try adjusting your filters</p>
       </div>
     );
   }
@@ -88,41 +88,81 @@ export default function ProductGrid({
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
+        
+        /* Responsive breakpoints */
+        @media (max-width: 480px) {
+          .grid {
+            gap: 0.75rem !important;
+          }
+        }
+        
+        @media (min-width: 481px) and (max-width: 640px) {
+          .grid {
+            gap: 1rem !important;
+          }
+        }
+        
+        @media (min-width: 641px) and (max-width: 768px) {
+          .grid {
+            gap: 1.25rem !important;
+          }
+        }
+        
+        /* Touch-friendly tap targets */
+        @media (max-width: 768px) {
+          button {
+            min-height: 36px;
+          }
+        }
       `}</style>
 
-      <div>
-        <p className="text-xs text-maroon/50 font-medium mb-4 sm:mb-6">
+      <div className="w-full px-2 sm:px-0">
+        <p className="text-[10px] sm:text-xs text-maroon/50 font-medium mb-4 sm:mb-6">
           Showing <span className="font-bold text-maroon">{visibleCount}</span> of <span className="font-bold text-maroon">{totalCount}</span> products
         </p>
 
-        {/* 4 products per row on large screens */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5">
-          {products.map(product => (
+        {/* Responsive grid: 2 cols mobile, 2 cols tablet, 3 cols md, 4 cols lg */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+          {products.map((product, index) => (
             <ProductCard
               key={product._id}
               product={product}
               initialWishlisted={wishlistedIds.has(product._id)}
               onWishlistToggle={onWishlistToggle}
+              index={index}
             />
           ))}
         </div>
 
         {hasMore && products.length > 0 && (
-          <div className="mt-10 sm:mt-14 pt-8 sm:pt-10 border-t border-maroon/10 flex flex-col items-center gap-5">
-            <div className="w-full max-w-xs text-center">
-              <p className="text-xs text-maroon/50 mb-2.5">
+          <div className="mt-10 sm:mt-14 pt-6 sm:pt-10 border-t border-maroon/10 flex flex-col items-center gap-4 sm:gap-5 px-4">
+            <div className="w-full max-w-[200px] sm:max-w-xs text-center">
+              <p className="text-[10px] sm:text-xs text-maroon/50 mb-2">
                 Showing {visibleCount} of {totalCount} products
               </p>
-              <div className="h-[3px] w-full bg-maroon/10 rounded-full overflow-hidden">
-                <div className="h-full bg-maroon rounded-full transition-all duration-500" style={{ width: `${progress}%` }} />
+              <div className="h-[2px] sm:h-[3px] w-full bg-maroon/10 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-maroon rounded-full transition-all duration-500" 
+                  style={{ width: `${progress}%` }} 
+                />
               </div>
             </div>
             <button
               onClick={onLoadMore}
               disabled={loading}
-              className="border border-maroon/30 text-maroon text-[11px] font-black tracking-[0.2em] uppercase px-8 sm:px-10 py-3 sm:py-3.5 rounded-xl hover:bg-maroon hover:text-white hover:border-maroon transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+              className="border border-maroon/30 text-maroon text-[10px] sm:text-[11px] font-black tracking-[0.15em] sm:tracking-[0.2em] uppercase px-6 sm:px-10 py-2.5 sm:py-3.5 rounded-xl hover:bg-maroon hover:text-white hover:border-maroon transition-all duration-300 shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? "Loading..." : "Load More"}
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin w-3 h-3 sm:w-4 sm:h-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                  </svg>
+                  Loading...
+                </span>
+              ) : (
+                "Load More"
+              )}
             </button>
           </div>
         )}
@@ -131,10 +171,11 @@ export default function ProductGrid({
   );
 }
 
-function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: { 
+function ProductCard({ product, initialWishlisted = false, onWishlistToggle, index }: { 
   product: any; 
   initialWishlisted?: boolean;
   onWishlistToggle?: (productId: string, isWishlisted: boolean) => void;
+  index?: number;
 }) {
   const router = useRouter();
   const [wishlisted, setWishlisted] = useState(initialWishlisted);
@@ -234,27 +275,36 @@ function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: {
   const handleProductClick = () => router.push(`/productdetail/${product._id}`);
 
   return (
-    <div className="group flex flex-col cursor-pointer" onClick={handleProductClick}>
-      <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-gray-50 mb-3 sm:mb-4" style={{ aspectRatio: "3/4" }}>
+    <div 
+      className="group flex flex-col cursor-pointer animate-fadeIn" 
+      onClick={handleProductClick}
+      style={{ animationDelay: `${(index || 0) * 50}ms` }}
+    >
+      {/* Product Image Container */}
+      <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-gray-50 mb-2 sm:mb-3 md:mb-4" style={{ aspectRatio: "3/4" }}>
         <img
           src={product.img || (product.images && product.images[0]) || "https://via.placeholder.com/600x800?text=No+Image"}
           alt={product.name}
           className="w-full h-full object-cover object-top group-hover:scale-[1.04] transition-transform duration-700 ease-out"
+          loading="lazy"
         />
+        
+        {/* Badge */}
         {product.badge && (
-          <span className="absolute top-2 left-2 sm:top-3 sm:left-3 text-[8px] sm:text-[9px] font-black tracking-[0.15em] uppercase px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-maroon text-white">
+          <span className="absolute top-2 left-2 sm:top-3 sm:left-3 text-[7px] sm:text-[9px] font-black tracking-[0.15em] uppercase px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-maroon text-white">
             {product.badge}
           </span>
         )}
 
+        {/* Wishlist Button */}
         <button
           onClick={handleWishlistClick}
           disabled={isTogglingWishlist}
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
-          className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-9 sm:h-9 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 ${isTogglingWishlist ? "opacity-60 cursor-not-allowed" : ""}`}
+          className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 rounded-full bg-white/90 backdrop-blur-sm shadow-md flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 z-10 ${isTogglingWishlist ? "opacity-60 cursor-not-allowed" : ""}`}
         >
           <Heart
-            className={`w-3 h-3 sm:w-4 sm:h-4 transition-colors duration-200 ${
+            className={`w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 transition-colors duration-200 ${
               wishlisted
                 ? "fill-maroon text-maroon"
                 : "fill-none text-maroon/60"
@@ -262,60 +312,125 @@ function ProductCard({ product, initialWishlisted = false, onWishlistToggle }: {
           />
         </button>
 
+        {/* Quick Add Button - Hidden on mobile, visible on hover on desktop */}
         <div className="absolute bottom-0 inset-x-0 p-2 sm:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out hidden sm:block">
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart}
-            className="w-full bg-maroon/90 backdrop-blur-sm text-white text-[11px] font-bold tracking-widest uppercase py-2 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-maroon-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-maroon/90 backdrop-blur-sm text-white text-[10px] sm:text-[11px] font-bold tracking-widest uppercase py-1.5 sm:py-2 md:py-2.5 rounded-xl flex items-center justify-center gap-1 sm:gap-2 hover:bg-maroon-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ShoppingCart className="w-3 sm:w-3.5 h-3 sm:h-3.5" />
+            <ShoppingCart className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5" />
             {isAddingToCart ? "Adding..." : cartFlash ? "Added ✓" : "Quick Add"}
           </button>
         </div>
       </div>
 
+      {/* Product Info */}
       <div className="flex-1 flex flex-col">
-        <div className="flex items-center gap-1 sm:gap-1.5 mb-1 sm:mb-1.5">
+        {/* Rating */}
+        <div className="flex items-center gap-0.5 sm:gap-1 mb-0.5 sm:mb-1">
           <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${i < Math.floor(product.rating || 0) ? "fill-maroon text-maroon" : "fill-gray-200 text-gray-200"}`}
+                className={`w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 ${
+                  i < Math.floor(product.rating || 0) 
+                    ? "fill-maroon text-maroon" 
+                    : "fill-gray-200 text-gray-200"
+                }`}
               />
             ))}
           </div>
-          <span className="text-[9px] sm:text-[10px] text-maroon/40 font-medium">({product.reviews || 0})</span>
+          <span className="text-[8px] sm:text-[9px] md:text-[10px] text-maroon/40 font-medium">
+            ({product.reviews || 0})
+          </span>
         </div>
 
-        <h3 className="font-bold text-maroon text-xs sm:text-sm md:text-base leading-snug mb-1 line-clamp-2">
+        {/* Product Name */}
+        <h3 className="font-bold text-maroon text-[11px] sm:text-xs md:text-sm lg:text-base leading-tight mb-1 line-clamp-2">
           {product.name}
         </h3>
         
-        {/* Price and buttons in one row */}
-        <div className="flex items-center justify-between gap-2 mt-auto">
+        {/* Price and Buttons Row */}
+        <div className="flex flex-col xs:flex-row xs:items-center justify-between gap-2 mt-auto">
+          {/* Price */}
           <p className="text-maroon font-black text-sm sm:text-base md:text-lg">
-            ${product.price.toLocaleString()}.00
+            ${product.price.toLocaleString()}
           </p>
           
-          {/* Buttons on the right side of the price */}
-          <div className="flex items-center gap-2 sm:gap-2.5" onClick={(e) => e.stopPropagation()}>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1.5 sm:gap-2" onClick={(e) => e.stopPropagation()}>
+            {/* Add to Cart Button - Mobile version (icon only) */}
             <button
               onClick={handleAddToCart}
               disabled={isAddingToCart}
-              className="text-[10px] sm:text-[11px] font-bold tracking-wider uppercase px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg border border-maroon/20 text-maroon hover:border-maroon hover:bg-maroon/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="sm:hidden text-[9px] sm:text-[10px] font-bold tracking-wider uppercase px-2 py-1.5 rounded-lg border border-maroon/20 text-maroon hover:border-maroon hover:bg-maroon/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            >
+              {isAddingToCart ? "..." : cartFlash ? "✓" : "Cart"}
+            </button>
+            
+            {/* Add to Cart Button - Desktop version (full text) */}
+            <button
+              onClick={handleAddToCart}
+              disabled={isAddingToCart}
+              className="hidden sm:flex text-[9px] sm:text-[10px] md:text-[11px] font-bold tracking-wider uppercase px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 md:py-2 rounded-lg border border-maroon/20 text-maroon hover:border-maroon hover:bg-maroon/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               {isAddingToCart ? "Adding..." : cartFlash ? "Added ✓" : "Add to Cart"}
             </button>
+            
+            {/* Buy Now Button */}
             <button
               onClick={handleBuyNow}
               disabled={isAddingToCart}
-              className="text-[10px] sm:text-[11px] font-bold tracking-wider uppercase px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-maroon text-white hover:bg-maroon-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="text-[9px] sm:text-[10px] md:text-[11px] font-bold tracking-wider uppercase px-2 sm:px-2.5 md:px-3 py-1 sm:py-1.5 md:py-2 rounded-lg bg-maroon text-white hover:bg-maroon-dark transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               Buy Now
             </button>
           </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.4s ease-out forwards;
+          opacity: 0;
+        }
+        
+        /* Extra small devices (<=480px) */
+        @media (max-width: 480px) {
+          .rounded-xl {
+            border-radius: 0.75rem;
+          }
+        }
+        
+        /* Landscape mode optimization */
+        @media (max-width: 768px) and (orientation: landscape) {
+          .grid {
+            gap: 1rem !important;
+          }
+        }
+        
+        /* Touch device optimization */
+        @media (hover: none) and (pointer: coarse) {
+          .group\\:hover\\:translate-y-0 {
+            transform: translateY(0) !important;
+          }
+          .hidden.sm\\:block {
+            display: none !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

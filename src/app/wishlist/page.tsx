@@ -165,12 +165,12 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
         </div>
 
         <p className="text-[10px] text-maroon/50 font-semibold tracking-wider uppercase mb-0.5">{item.category}</p>
-        <h3 className="font-bold text-maroon text-sm leading-snug mb-2">{item.name}</h3>
+        <h3 className="font-bold text-black text-sm leading-snug mb-2">{item.name}</h3>
 
         <div className="flex items-center gap-2 mb-3">
-          <span className="font-black text-maroon text-base">${item.price.toLocaleString()}</span>
+          <span className="font-black text-black text-base">${item.price.toLocaleString()}</span>
           {item.originalPrice && (
-            <span className="text-maroon/30 text-xs line-through font-medium">${item.originalPrice.toLocaleString()}</span>
+            <span className="text-black/30 text-xs line-through font-medium">${item.originalPrice.toLocaleString()}</span>
           )}
           {item.originalPrice && (
             <span className="text-[9px] font-black text-maroon bg-maroon/10 px-1.5 py-0.5 rounded-full">
@@ -188,7 +188,7 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
                 className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition-all ${
                   selectedSize === s 
                     ? "border-maroon bg-maroon text-white" 
-                    : "border-maroon/20 text-maroon/60 hover:border-maroon hover:text-maroon"
+                    : "border-maroon/20 text-black/60 hover:border-maroon hover:text-maroon"
                 }`}
               >
                 {s}
@@ -204,7 +204,7 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
             ${!item.inStock 
               ? "bg-maroon/10 text-maroon/40 cursor-not-allowed" 
               : !selectedSize 
-                ? "bg-maroon/10 text-maroon/60 hover:bg-maroon hover:text-white border border-dashed border-maroon/30" 
+                ? "bg-maroon/10 text-black/60 hover:bg-maroon hover:text-white border border-dashed border-maroon/30" 
                 : cartFlash 
                   ? "bg-maroon text-white shadow-md border-l-4 border-maroon-light" 
                   : "bg-maroon text-white hover:bg-maroon-dark shadow-md hover:shadow-lg"
@@ -267,12 +267,12 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
         <div className="flex items-start justify-between gap-2 mb-1">
           <div className="min-w-0">
             <p className="text-[10px] text-maroon/50 font-bold tracking-wider uppercase mb-0.5">{item.category}</p>
-            <h3 className="font-bold text-maroon text-sm sm:text-base leading-snug truncate">{item.name}</h3>
+            <h3 className="font-bold text-black text-sm sm:text-base leading-snug truncate">{item.name}</h3>
           </div>
           <button 
             onClick={handleRemove} 
             disabled={isRemoving}
-            className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-maroon/10 flex items-center justify-center text-maroon/40 hover:text-maroon transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-maroon/10 flex items-center justify-center text-black/40 hover:text-maroon transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isRemoving ? (
               <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
@@ -299,8 +299,8 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-black text-maroon text-sm sm:text-base">${item.price.toLocaleString()}</span>
-            {item.originalPrice && <span className="text-maroon/30 text-xs line-through">${item.originalPrice.toLocaleString()}</span>}
+            <span className="font-black text-black text-sm sm:text-base">${item.price.toLocaleString()}</span>
+            {item.originalPrice && <span className="text-black/30 text-xs line-through">${item.originalPrice.toLocaleString()}</span>}
           </div>
         </div>
 
@@ -313,7 +313,7 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
                 className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-all ${
                   selectedSize === s 
                     ? "border-maroon bg-maroon text-white" 
-                    : "border-maroon/20 text-maroon/50 hover:border-maroon hover:text-maroon"
+                    : "border-maroon/20 text-black/50 hover:border-maroon hover:text-maroon"
                 }`}
               >
                 {s}
@@ -327,7 +327,7 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
           disabled={!item.inStock || isRemoving} 
           className={`self-start flex items-center gap-1.5 text-[11px] font-black tracking-wider uppercase px-4 py-2 rounded-xl transition-all 
             ${!item.inStock 
-              ? "bg-maroon/10 text-maroon/40 cursor-not-allowed" 
+              ? "bg-maroon/10 text-black/40 cursor-not-allowed" 
               : cartFlash 
                 ? "bg-maroon text-white border-l-4 border-maroon-light" 
                 : "bg-maroon text-white hover:bg-maroon-dark shadow-sm"
@@ -354,8 +354,8 @@ function EmptyState() {
           <Sparkles className="w-4 h-4 text-white" />
         </div>
       </div>
-      <h2 className="font-display font-bold text-maroon text-3xl mb-2">Your wishlist is empty</h2>
-      <p className="text-maroon/50 text-sm max-w-xs mb-8 leading-relaxed">
+      <h2 className="font-display font-bold text-black text-3xl mb-2">Your wishlist is empty</h2>
+      <p className="text-black/50 text-sm max-w-xs mb-8 leading-relaxed">
         Discover pieces worth keeping. Add your favourites and they'll appear right here.
       </p>
       <a href="/mens-collection" className="flex items-center gap-2 bg-maroon hover:bg-maroon-dark text-white font-bold text-sm tracking-wider uppercase px-7 py-3.5 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:scale-[1.03] active:scale-[0.98]">
@@ -368,7 +368,7 @@ function EmptyState() {
 // ── Main Wishlist Page ───────────────────────────────────────────────────────
 export default function WishlistPage() {
   const [items, setItems] = useState<WishItem[]>([]);
-  const [view, setView] = useState<ViewMode>("grid");
+  const [view, setView] = useState<ViewMode>("list");
   const [sort, setSort] = useState<SortKey>("recent");
   const [toast, setToast] = useState<{ msg: string; item: WishItem } | null>(null);
   const [cartSnack, setSnack] = useState(false);
@@ -445,7 +445,7 @@ export default function WishlistPage() {
     return (
       <>
         <Navbar wishlistCount={0} />
-        <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#F8F4F0" }}>
           <div className="text-center">
             <svg className="animate-spin w-10 h-10 mx-auto mb-4 text-maroon" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
@@ -514,15 +514,15 @@ export default function WishlistPage() {
       `}</style>
 
       <Navbar wishlistCount={items.length} />
-      <div className="min-h-screen bg-white p-4 sm:p-6 lg:p-8">
+      <div className="min-h-screen p-4 sm:p-6 lg:p-8" style={{ backgroundColor: "#F8F4F0" }}>
         {items.length === 0 ? (
           <EmptyState />
         ) : (
           <>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
               <div>
-                <h1 className="text-2xl font-display italic font-bold text-maroon">My Wishlist</h1>
-                <p className="text-maroon/50 text-sm mt-1">
+                <h1 className="text-2xl font-display italic font-bold text-black">My Wishlist</h1>
+                <p className="text-black/50 text-sm mt-1">
                   {items.length} item{items.length !== 1 ? "s" : ""} · ${totalValue.toLocaleString()} total value
                 </p>
               </div>
@@ -532,7 +532,7 @@ export default function WishlistPage() {
                   className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     view === "grid" 
                       ? "bg-maroon text-white" 
-                      : "bg-maroon/5 text-maroon/60 hover:bg-maroon/10"
+                      : "bg-white/50 text-black/60 hover:bg-maroon/10"
                   }`}
                 >
                   Grid
@@ -542,7 +542,7 @@ export default function WishlistPage() {
                   className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     view === "list" 
                       ? "bg-maroon text-white" 
-                      : "bg-maroon/5 text-maroon/60 hover:bg-maroon/10"
+                      : "bg-white/50 text-black/60 hover:bg-maroon/10"
                   }`}
                 >
                   List
@@ -552,7 +552,7 @@ export default function WishlistPage() {
                   className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
                     shared 
                       ? "bg-maroon text-white" 
-                      : "bg-maroon/5 text-maroon/60 hover:bg-maroon/10"
+                      : "bg-white/50 text-black/60 hover:bg-maroon/10"
                   }`}
                 >
                   <Share2 className="w-4 h-4" />
@@ -566,7 +566,7 @@ export default function WishlistPage() {
               <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value as SortKey)}
-                className="bg-white border border-maroon/20 text-maroon text-sm font-bold px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent"
+                className="bg-white border border-maroon/20 text-black text-sm font-bold px-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-maroon focus:border-transparent"
               >
                 <option value="recent">Recently Added</option>
                 <option value="price-asc">Price: Low to High</option>

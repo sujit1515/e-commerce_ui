@@ -251,13 +251,13 @@ function CartRow({
         {/* Top row: name + remove */}
         <div className="flex items-start justify-between gap-2 mb-1">
           <div className="min-w-0">
-            <p className="text-[10px] text-maroon/50 font-bold tracking-wider uppercase mb-0.5">{item.category}</p>
-            <h3 className="font-bold text-maroon text-sm sm:text-base leading-snug">{item.name}</h3>
+            <p className="text-[10px] text-maroon/60 font-bold tracking-wider uppercase mb-0.5">{item.category}</p>
+            <h3 className="font-bold text-black text-sm sm:text-base leading-snug">{item.name}</h3>
           </div>
           <button
             onClick={handleRemove}
             className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-maroon/10 flex items-center
-              justify-center text-maroon/40 hover:text-maroon transition-all"
+              justify-center text-black/40 hover:text-maroon transition-all"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -291,7 +291,7 @@ function CartRow({
               >
                 <Minus className="w-3 h-3" />
               </button>
-              <span className="w-7 text-center text-sm font-black text-maroon">{item.qty}</span>
+              <span className="w-7 text-center text-sm font-black text-black">{item.qty}</span>
               <button
                 onClick={() => onQtyChange(item.id, 1)}
                 disabled={item.qty >= item.maxQty}
@@ -309,13 +309,13 @@ function CartRow({
             <button
               onClick={handleWishlist}
               className={`flex items-center gap-1 text-[10px] font-bold transition-all
-                ${wishlisted ? "text-maroon" : "text-maroon/40 hover:text-maroon"}`}
+                ${wishlisted ? "text-maroon" : "text-black/40 hover:text-maroon"}`}
             >
-              <Heart className={`w-3.5 h-3.5 ${wishlisted ? "fill-maroon" : ""}`} />
+              <Heart className={`w-3.5 h-3.5 ${wishlisted ? "fill-maroon text-maroon" : "text-black/40"}`} />
               <span className="hidden sm:inline">{wishlisted ? "Saved" : "Wishlist"}</span>
             </button>
             {/* Line total */}
-            <span className="font-black text-maroon text-base sm:text-lg">
+            <span className="font-black text-black text-base sm:text-lg">
               ${(item.price * item.qty).toLocaleString()}
             </span>
           </div>
@@ -360,7 +360,7 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
           value={code}
           onChange={e => { setCode(e.target.value.toUpperCase()); setState("idle"); }}
           placeholder="Enter promo code"
-          className="flex-1 py-3 px-2 text-sm text-maroon placeholder-maroon/30 outline-none bg-transparent"
+          className="flex-1 py-3 px-2 text-sm text-black placeholder-black/30 outline-none bg-transparent"
           onKeyDown={e => e.key === "Enter" && handleApply()}
         />
         <button
@@ -388,50 +388,8 @@ function PromoInput({ onApply }: { onApply: (code: string, discount: number) => 
   );
 }
 
-// ── Suggested card ────────────────────────────────────────────────────────────
-function SuggestedCard({ item, onAdd }: { item: SuggestedItem; onAdd: (item: SuggestedItem) => void }) {
-  const [added, setAdded] = useState(false);
-  
-  const handleAdd = () => {
-    setAdded(true);
-    onAdd(item);
-    setTimeout(() => setAdded(false), 1800);
-  };
-
-  return (
-    <div className="group flex-shrink-0 w-36 sm:w-44">
-      <div className="relative rounded-xl overflow-hidden bg-maroon/5 mb-2.5"
-        style={{ aspectRatio: "3/4" }}>
-        <img src={item.img} alt={item.name}
-          className="w-full h-full object-cover object-top
-            group-hover:scale-105 transition-transform duration-500" />
-        <div className="absolute bottom-0 inset-x-0 p-2
-          translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-          <button
-            onClick={handleAdd}
-            className="w-full bg-maroon/90 backdrop-blur-sm text-white text-[9px]
-              font-bold tracking-widest uppercase py-1.5 rounded-lg flex items-center
-              justify-center gap-1 hover:bg-maroon-dark transition-colors"
-          >
-            {added ? <><Check className="w-2.5 h-2.5" /> Added</> : <><Plus className="w-2.5 h-2.5" /> Add</>}
-          </button>
-        </div>
-      </div>
-      <p className="font-bold text-maroon text-xs leading-snug mb-0.5">{item.name}</p>
-      <div className="flex items-center justify-between">
-        <span className="font-black text-maroon text-sm">${item.price.toLocaleString()}</span>
-        <div className="flex gap-0.5">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star key={i} className={`w-2.5 h-2.5 ${i < Math.floor(item.rating) ? "fill-maroon text-maroon" : "fill-maroon/20 text-maroon/20"}`} />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ── Empty state ───────────────────────────────────────────────────────────────
-function EmptyCart({ onClearCart }: { onClearCart?: () => void }) {
+function EmptyCart() {
   return (
     <div className="flex flex-col items-center justify-center py-24 text-center">
       <div className="relative mb-6">
@@ -444,8 +402,8 @@ function EmptyCart({ onClearCart }: { onClearCart?: () => void }) {
           0
         </div>
       </div>
-      <h2 className="font-display italic font-bold text-maroon text-3xl mb-2">Your cart is empty</h2>
-      <p className="text-maroon/50 text-sm max-w-xs mb-8 leading-relaxed">
+      <h2 className="font-display italic font-bold text-black text-3xl mb-2">Your cart is empty</h2>
+      <p className="text-black/50 text-sm max-w-xs mb-8 leading-relaxed">
         You haven't added anything yet. Explore the collection and find something you love.
       </p>
       <a
@@ -463,7 +421,6 @@ function EmptyCart({ onClearCart }: { onClearCart?: () => void }) {
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [suggestedItems, setSuggestedItems] = useState<SuggestedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [appliedCode, setApplied] = useState("");
   const [toast, setToast] = useState<{ msg: string; item: CartItem } | null>(null);
@@ -506,12 +463,6 @@ export default function CartPage() {
         }));
 
         setItems(cartItems);
-        
-        setSuggestedItems([
-          { id: "s1", name: "Linen Oxford Shirt", price: 195, rating: 4.6, img: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80" },
-          { id: "s2", name: "Urban Suede Bomber", price: 1100, rating: 4.9, img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80" },
-          { id: "s3", name: "Leather Chelsea Boot", price: 580, rating: 4.8, img: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80" },
-        ]);
       }
     } catch (error) {
       console.error("Error fetching cart:", error);
@@ -568,22 +519,6 @@ export default function CartPage() {
     setItems(prev => prev.filter(i => i.id !== id));
   };
 
-  const handleAddSuggested = (suggestedItem: SuggestedItem) => {
-    const newCartItem: CartItem = {
-      id: suggestedItem.id,
-      name: suggestedItem.name,
-      category: "Suggested",
-      price: suggestedItem.price,
-      img: suggestedItem.img,
-      size: "M",
-      color: "Black",
-      colorHex: "#111111",
-      qty: 1,
-      maxQty: 5,
-    };
-    setItems(prev => [...prev, newCartItem]);
-  };
-
   const handleCheckout = () => {
     if (!isAuthenticated()) {
       setShowLoginPrompt(true);
@@ -626,7 +561,7 @@ export default function CartPage() {
     return (
       <>
         <Navbar wishlistCount={0} cartCount={0} />
-        <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#F8F4F0" }}>
           <div className="text-center">
             <svg className="animate-spin w-10 h-10 mx-auto mb-4 text-maroon" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
@@ -644,7 +579,7 @@ export default function CartPage() {
     return (
       <>
         <Navbar wishlistCount={0} cartCount={0} />
-        <div className="min-h-screen bg-white flex items-center justify-center p-4">
+        <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: "#F8F4F0" }}>
           <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center border border-maroon/10">
             <div className="relative inline-flex mb-6">
               <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/10 flex items-center justify-center">
@@ -652,9 +587,9 @@ export default function CartPage() {
               </div>
               <div className="absolute -inset-2 rounded-3xl bg-maroon/5 animate-ping" style={{ animationDuration: "2s" }} />
             </div>
-            <h2 className="font-display italic font-bold text-maroon text-3xl mb-2">Order Placed!</h2>
-            <p className="text-maroon/60 text-sm mb-1">Your order has been confirmed</p>
-            <p className="font-black text-maroon text-2xl mb-7">${total.toFixed(2)}</p>
+            <h2 className="font-display italic font-bold text-black text-3xl mb-2">Order Placed!</h2>
+            <p className="text-black/60 text-sm mb-1">Your order has been confirmed</p>
+            <p className="font-black text-black text-2xl mb-7">${total.toFixed(2)}</p>
             <a href="/" className="block w-full bg-maroon text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-maroon-dark transition-colors">
               Continue Shopping
             </a>
@@ -716,8 +651,8 @@ export default function CartPage() {
 
       <Navbar wishlistCount={0} cartCount={totalCartItems} />
 
-      <div className="min-h-screen bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <div className="min-h-screen p-4 sm:p-6 lg:p-8" style={{ backgroundColor: "#F8F4F0" }}>
+        <div className="max-w-7xl mx-auto">
 
           {/* Header with Clear Cart button */}
           <div className="flex items-end justify-between mb-10 gap-4 flex-wrap">
@@ -728,11 +663,11 @@ export default function CartPage() {
                   My Bag
                 </span>
               </div>
-              <h1 className="font-display italic font-bold text-maroon text-4xl sm:text-5xl leading-none">
+              <h1 className="font-display italic font-bold text-black text-4xl sm:text-5xl leading-none">
                 Shopping Cart
               </h1>
               {items.length > 0 && (
-                <p className="text-maroon/50 text-sm mt-1.5">
+                <p className="text-black/50 text-sm mt-1.5">
                   {totalCartItems} item{totalCartItems !== 1 ? "s" : ""}
                 </p>
               )}
@@ -751,7 +686,7 @@ export default function CartPage() {
               )}
               <a href="/mens-collection"
                 className="hidden sm:flex items-center gap-1.5 text-[11px] font-bold tracking-wider
-                  uppercase text-maroon/40 hover:text-maroon transition-colors">
+                  uppercase text-black/40 hover:text-maroon transition-colors">
                 Continue Shopping <ChevronRight className="w-3.5 h-3.5" />
               </a>
             </div>
@@ -769,7 +704,7 @@ export default function CartPage() {
                 <div className={`rounded-2xl p-4 sm:p-5 border transition-all bg-maroon/5 border-maroon/10`}>
                   <div className="flex items-center gap-2.5 mb-3">
                     <Truck className={`w-4 h-4 flex-shrink-0 text-maroon`} />
-                    <p className={`text-xs font-bold text-maroon`}>
+                    <p className={`text-xs font-bold text-black`}>
                       {shipping === 0
                         ? "🎉 You've unlocked FREE shipping!"
                         : `Add $${toFreeShip.toFixed(2)} more for FREE shipping`}
@@ -794,25 +729,6 @@ export default function CartPage() {
                     onWishlist={handleWishlist}
                   />
                 ))}
-
-                {/* Suggested items */}
-                {suggestedItems.length > 0 && (
-                  <div className="bg-white rounded-2xl border border-maroon/10 shadow-sm p-5 sm:p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Gift className="w-4 h-4 text-maroon" />
-                      <h3 className="font-bold text-maroon text-sm">You Might Also Like</h3>
-                    </div>
-                    <div className="flex gap-4 overflow-x-auto pb-1 scrollbar-hide snap-x snap-mandatory">
-                      {suggestedItems.map(s => (
-                        <SuggestedCard 
-                          key={s.id} 
-                          item={s} 
-                          onAdd={handleAddSuggested}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* RIGHT: order summary */}
@@ -822,17 +738,17 @@ export default function CartPage() {
                   <div className="h-1 bg-gradient-to-r from-maroon via-maroon-light to-maroon" />
 
                   <div className="p-5 sm:p-6 space-y-5">
-                    <h2 className="font-bold text-maroon text-lg">Order Summary</h2>
+                    <h2 className="font-bold text-black text-lg">Order Summary</h2>
 
                     {/* Line items */}
                     <div className="space-y-3 pb-4 border-b border-maroon/10">
                       {items.map(item => (
                         <div key={item.id} className="flex justify-between gap-3 text-sm">
-                          <span className="text-maroon/60 leading-snug">
+                          <span className="text-black/60 leading-snug">
                             {item.name}
-                            <span className="text-maroon/30 ml-1 text-xs">×{item.qty}</span>
+                            <span className="text-black/30 ml-1 text-xs">×{item.qty}</span>
                           </span>
-                          <span className="font-bold text-maroon flex-shrink-0">
+                          <span className="font-bold text-black flex-shrink-0">
                             ${(item.price * item.qty).toLocaleString()}
                           </span>
                         </div>
@@ -842,8 +758,8 @@ export default function CartPage() {
                     {/* Breakdown */}
                     <div className="space-y-2.5 pb-4 border-b border-maroon/10">
                       <div className="flex justify-between text-sm">
-                        <span className="text-maroon/60">Subtotal</span>
-                        <span className="font-semibold text-maroon">${subtotal.toLocaleString()}</span>
+                        <span className="text-black/60">Subtotal</span>
+                        <span className="font-semibold text-black">${subtotal.toLocaleString()}</span>
                       </div>
                       {discountAmt > 0 && (
                         <div className="flex justify-between text-sm items-center">
@@ -854,21 +770,21 @@ export default function CartPage() {
                         </div>
                       )}
                       <div className="flex justify-between text-sm items-center">
-                        <span className="text-maroon/60">Shipping</span>
+                        <span className="text-black/60">Shipping</span>
                         {shipping === 0
                           ? <span className="text-[10px] font-black text-maroon bg-maroon/5 border border-maroon/10 px-2 py-0.5 rounded-full">FREE</span>
-                          : <span className="font-semibold text-maroon">${shipping}</span>}
+                          : <span className="font-semibold text-black">${shipping}</span>}
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-maroon/60">Tax (8%)</span>
-                        <span className="font-semibold text-maroon">${tax.toFixed(2)}</span>
+                        <span className="text-black/60">Tax (8%)</span>
+                        <span className="font-semibold text-black">${tax.toFixed(2)}</span>
                       </div>
                     </div>
 
                     {/* Total */}
                     <div className="flex justify-between items-center pb-5 border-b border-maroon/10">
-                      <span className="font-black text-maroon text-base">Total</span>
-                      <span className="font-black text-maroon text-2xl">${total.toFixed(2)}</span>
+                      <span className="font-black text-black text-base">Total</span>
+                      <span className="font-black text-black text-2xl">${total.toFixed(2)}</span>
                     </div>
 
                     {/* Promo code */}
@@ -904,7 +820,7 @@ export default function CartPage() {
                             flex items-center justify-center">
                             <Icon className="w-3.5 h-3.5 text-maroon" />
                           </div>
-                          <span className="text-[9px] font-bold text-maroon/40 leading-tight">{label}</span>
+                          <span className="text-[9px] font-bold text-black/40 leading-tight">{label}</span>
                         </div>
                       ))}
                     </div>
@@ -915,7 +831,7 @@ export default function CartPage() {
                 <div className="mt-4 flex items-center justify-center gap-3 flex-wrap">
                   {["Visa", "Mastercard", "Amex", "PayPal", "Apple Pay"].map(p => (
                     <span key={p} className="text-[9px] font-black tracking-wider uppercase
-                      text-maroon/30 bg-white border border-maroon/10 px-2.5 py-1 rounded-lg shadow-sm
+                      text-black/30 bg-white border border-maroon/10 px-2.5 py-1 rounded-lg shadow-sm
                       hover:text-maroon hover:border-maroon/20 transition-colors">
                       {p}
                     </span>
