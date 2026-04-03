@@ -5,7 +5,7 @@ import {
   Home, Briefcase, Building2, Check, X, Phone, User,
   Globe, Map, Hash, Navigation, ArrowRight,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../../components/Common/Navbar";
 import Footer from "../../components/Common/Footer";
 import {
@@ -15,7 +15,7 @@ import {
   getAddresses,
   setDefaultAddress,
 } from "../../api/address";
-import { buyNowApi } from "../../api/buynow"; 
+import { getOrderByIdApi, addAddressToOrderApi } from "../../api/order";
 
 // ── Types 
 interface Address {
@@ -30,6 +30,28 @@ interface Address {
   zip: string;
   country: string;
   isDefault: boolean;
+}
+
+interface OrderItem {
+  product: {
+    _id: string;
+    name: string;
+    price: number;
+    images?: string[];
+  };
+  quantity: number;
+  size: string;
+  color: string;
+  price: number;
+}
+
+interface OrderData {
+  _id: string;
+  items: OrderItem[];
+  totalAmount: number;
+  address?: any;
+  paymentMethod?: string;
+  orderStatus?: string;
 }
 
 const COUNTRIES = [
@@ -95,11 +117,13 @@ function Field({
   );
 }
 
-// ── Address card ──────────────────────────────────────────────────────────────
+// ── Address card with radio selection ──────────────────────────────────────────────
 function AddressCard({
-  address, onEdit, onDelete, onSetDefault,
+  address, isSelected, onSelect, onEdit, onDelete, onSetDefault,
 }: {
   address: Address;
+  isSelected: boolean;
+  onSelect: (id: string) => void;
   onEdit: (a: Address) => void;
   onDelete: (id: string) => void;
   onSetDefault: (id: string) => void;
@@ -108,8 +132,26 @@ function AddressCard({
   const labelCls = LABEL_COLORS[address.label];
 
   return (
-    <div className={`relative rounded-2xl border-2 p-5 sm:p-6 transition-all duration-300 bg-white
-      ${address.isDefault ? "border-black shadow-lg" : "border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md"}`}>
+    <div 
+      className={`relative rounded-2xl border-2 p-5 sm:p-6 transition-all duration-300 cursor-pointer
+        ${isSelected 
+          ? "border-red-600 bg-red-50/20 shadow-lg ring-2 ring-red-600/20" 
+          : address.isDefault 
+            ? "border-black shadow-lg" 
+            : "border-gray-100 hover:border-gray-200 shadow-sm hover:shadow-md"
+        }`}
+      onClick={() => onSelect(address.id)}
+    >
+      {/* Radio selection indicator */}
+      <div className="absolute top-5 right-5">
+        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all
+          ${isSelected 
+            ? "border-red-600 bg-red-600" 
+            : "border-gray-300 bg-white hover:border-red-400"
+          }`}>
+          {isSelected && <Check className="w-3 h-3 text-white" />}
+        </div>
+      </div>
 
       {/* Default badge */}
       {address.isDefault && (
@@ -131,14 +173,14 @@ function AddressCard({
         {/* Actions */}
         <div className="flex items-center gap-1">
           <button
-            onClick={() => onEdit(address)}
+            onClick={(e) => { e.stopPropagation(); onEdit(address); }}
             className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center
               text-gray-400 hover:text-red-600 transition-all"
           >
             <Pencil className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => onDelete(address.id)}
+            onClick={(e) => { e.stopPropagation(); onDelete(address.id); }}
             className="w-8 h-8 rounded-lg hover:bg-red-50 flex items-center justify-center
               text-gray-400 hover:text-red-500 transition-all"
           >
@@ -164,7 +206,7 @@ function AddressCard({
       {/* Set default toggle */}
       {!address.isDefault && (
         <button
-          onClick={() => onSetDefault(address.id)}
+          onClick={(e) => { e.stopPropagation(); onSetDefault(address.id); }}
           className="flex items-center gap-2 text-[11px] font-bold text-gray-400
             hover:text-black transition-colors group"
         >
@@ -179,7 +221,7 @@ function AddressCard({
   );
 }
 
-// ── Address form modal ────────────────────────────────────────────────────────
+// ── Address form modal ─────────────────────────────────────────────────
 function AddressForm({
   initial, onSave, onCancel,
 }: {
@@ -371,16 +413,126 @@ function AddressForm({
   );
 }
 
-// ── Main page ─────────────────────────────────────────────────────────────────
+// ── Order Summary Component (Correctly accesses nested data) ──
+function OrderSummary({ order, loading }: { order: OrderData | null; loading: boolean }) {
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6 shadow-sm">
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!order || !order.items || order.items.length === 0) {
+    return null;
+  }
+
+  // ✅ CORRECT: Access the first item from items array
+  const orderItem = order.items[0];
+  
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-6 mb-6 shadow-sm">
+      <h2 className="font-display font-bold text-black text-xl mb-4">Order Summary</h2>
+      
+      <div className="space-y-3">
+        {/* Product details - Accessing nested properties correctly */}
+        <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Product:</span>
+          <span className="font-medium text-black text-sm">
+            {orderItem.product?.name || "Product"}
+          </span>
+        </div>
+        
+        <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Quantity:</span>
+          <span className="font-medium text-black text-sm">
+            {orderItem.quantity} {/* ✅ From items[0].quantity */}
+          </span>
+        </div>
+        
+        <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Size:</span>
+          <span className="font-medium text-black text-sm">
+            {orderItem.size || "N/A"} {/* ✅ From items[0].size */}
+          </span>
+        </div>
+        
+        <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Color:</span>
+          <span className="font-medium text-black text-sm">
+            {orderItem.color || "N/A"} {/* ✅ From items[0].color */}
+          </span>
+        </div>
+        
+        <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+          <span className="text-gray-500 text-sm">Price per item:</span>
+          <span className="font-medium text-black text-sm">
+            ${orderItem.price?.toFixed(2) || "0.00"}
+          </span>
+        </div>
+        
+        <div className="flex justify-between items-center pt-2">
+          <span className="font-bold text-black">Total Amount:</span>
+          <span className="font-bold text-red-600 text-lg">
+            ${order.totalAmount?.toFixed(2) || "0.00"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
 export default function AddressPage() {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId");
   const router = useRouter();
+  
   const [addresses, setAddresses] = useState<Address[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [formData, setFormData] = useState<(Omit<Address, "id"> & { id?: string }) | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [order, setOrder] = useState<OrderData | null>(null);
+  const [orderLoading, setOrderLoading] = useState(true);
+  const [addingAddress, setAddingAddress] = useState(false);
 
-  const displayed = showAll ? addresses : addresses.slice(0, 2);
+  // ✅ FETCH ORDER DETAILS USING YOUR API (with correct nested data access)
+  useEffect(() => {
+    const fetchOrder = async () => {
+      if (!orderId) {
+        setOrderLoading(false);
+        return;
+      }
+      
+      try {
+        setOrderLoading(true);
+        // ✅ Using your existing getOrderByIdApi
+        const response = await getOrderByIdApi(orderId);
+        
+        if (response?.success && response?.order) {
+          console.log("Order fetched successfully:", response.order);
+          console.log("Order items:", response.order.items);
+          console.log("✅ Size from items[0]:", response.order.items[0]?.size);
+          console.log("✅ Color from items[0]:", response.order.items[0]?.color);
+          console.log("✅ Quantity from items[0]:", response.order.items[0]?.quantity);
+          
+          setOrder(response.order);
+        } else {
+          console.error("Failed to fetch order");
+        }
+      } catch (error) {
+        console.error("Error fetching order:", error);
+      } finally {
+        setOrderLoading(false);
+      }
+    };
+    
+    fetchOrder();
+  }, [orderId]);
 
   // ✅ FETCH ADDRESSES FROM BACKEND
   useEffect(() => {
@@ -404,6 +556,12 @@ export default function AddressPage() {
         }));
 
         setAddresses(formatted);
+        
+        // Set selected address to default if exists
+        const defaultAddr = formatted.find(a => a.isDefault);
+        if (defaultAddr) {
+          setSelectedAddressId(defaultAddr.id);
+        }
       } catch (error) {
         console.error("Error fetching addresses:", error);
       } finally {
@@ -432,18 +590,23 @@ export default function AddressPage() {
           isDefault: data.isDefault,
         });
 
-        setAddresses((prev) =>
-          prev.map((a) =>
-            a.id === data.id
-              ? {
-                  ...res.address,
-                  id: res.address._id,
-                  zip: res.address.postalCode,
-                  label: res.address.label || "Home",
-                }
-              : a
-          )
+        const updatedAddresses = addresses.map((a) =>
+          a.id === data.id
+            ? {
+                ...res.address,
+                id: res.address._id,
+                zip: res.address.postalCode,
+                label: res.address.label || "Home",
+              }
+            : a
         );
+        
+        setAddresses(updatedAddresses);
+        
+        // Update selected address if it was the edited one
+        if (selectedAddressId === data.id) {
+          setSelectedAddressId(data.id);
+        }
       } else {
         // Add new address
         const res = await addAddress({
@@ -467,6 +630,11 @@ export default function AddressPage() {
         };
 
         setAddresses((prev) => [...prev, newAddress]);
+        
+        // Auto-select new address if it's set as default
+        if (data.isDefault) {
+          setSelectedAddressId(newAddress.id);
+        }
       }
 
       setFormData(null);
@@ -479,7 +647,14 @@ export default function AddressPage() {
   const handleDelete = async (id: string) => {
     try {
       await deleteAddress(id);
-      setAddresses((prev) => prev.filter((a) => a.id !== id));
+      const remainingAddresses = addresses.filter((a) => a.id !== id);
+      setAddresses(remainingAddresses);
+      
+      // Clear selected address if it was deleted
+      if (selectedAddressId === id) {
+        setSelectedAddressId(null);
+      }
+      
       setDeleteConfirm(null);
     } catch (error) {
       console.error("Error deleting address:", error);
@@ -490,67 +665,54 @@ export default function AddressPage() {
   const handleSetDefault = async (id: string) => {
     try {
       await setDefaultAddress(id);
-      setAddresses((prev) =>
-        prev.map((a) => ({
-          ...a,
-          isDefault: a.id === id,
-        }))
-      );
+      const updatedAddresses = addresses.map((a) => ({
+        ...a,
+        isDefault: a.id === id,
+      }));
+      setAddresses(updatedAddresses);
+      setSelectedAddressId(id);
     } catch (error) {
       console.error("Error setting default address:", error);
     }
   };
 
-  // ✅ NEXT BUTTON HANDLER - Redirect to Payment Page
+  // ✅ ADD ADDRESS TO ORDER AND PROCEED TO PAYMENT (Using your API)
   const handleNext = async () => {
-  try {
     if (addresses.length === 0) {
-      alert("Please add address");
+      alert("Please add an address first");
       return;
     }
 
-    const defaultAddress = addresses.find(addr => addr.isDefault);
-
-    if (!defaultAddress) {
-      alert("Select default address");
+    if (!selectedAddressId) {
+      alert("Please select an address to continue");
       return;
     }
 
-    // ✅ Get product data from URL
-    const params = new URLSearchParams(window.location.search);
-
-    const productId = params.get("productId");
-    const size = params.get("size");
-    const color = params.get("color");
-    const quantity = Number(params.get("quantity"));
-
-    if (!productId || !quantity) {
-      alert("Invalid product data");
+    if (!orderId) {
+      alert("No order found. Please try again.");
       return;
     }
 
-    // ✅ CALL BUY NOW API
-    const res = await buyNowApi({
-      productId,
-      quantity,
-      size: size || undefined,
-      color: color || undefined,
-      addressId: defaultAddress.id,
-    });
+    try {
+      setAddingAddress(true);
+      // ✅ Using your existing addAddressToOrderApi
+      const response = await addAddressToOrderApi(orderId, selectedAddressId);
+      
+      if (response?.success) {
+        // Navigate to payment page with orderId
+        router.push(`/payment?orderId=${orderId}`);
+      } else {
+        alert(response?.message || "Failed to add address to order");
+      }
+    } catch (error: any) {
+      console.error("Error adding address:", error);
+      alert(error?.message || "Failed to process address selection");
+    } finally {
+      setAddingAddress(false);
+    }
+  };
 
-    console.log("Order Created:", res);
-
-    // ✅ Save orderId
-    localStorage.setItem("orderId", res.order._id);
-
-    // ✅ Go to payment page
-    router.push("/payment");
-
-  } catch (error) {
-    console.error(error);
-    alert("Failed to create order");
-  }
-};
+  const displayed = showAll ? addresses : addresses.slice(0, 2);
 
   return (
     <>
@@ -564,7 +726,7 @@ export default function AddressPage() {
       <Navbar />
 
       {/* Main Content */}
-      <div className="min-h-screen bg-gray-50 py-10 sm:py-14">
+      <div className="min-h-screen py-10 sm:py-14" style={{ backgroundColor: "#F8F4F0" }}>
         <div className="max-w-2xl mx-auto px-4 sm:px-6">
 
           {/* ── Page header ── */}
@@ -573,19 +735,22 @@ export default function AddressPage() {
               <MapPin className="w-5 h-5 text-white" />
             </div>
             <h1 className="font-display font-bold text-black text-3xl sm:text-4xl mb-2">
-              My Addresses
+              Select Delivery Address
             </h1>
-            <p className="text-gray-400 text-sm">
-              Manage your saved delivery addresses
+            <p className="text-gray-500 text-sm">
+              Choose where you want your order to be delivered
             </p>
           </div>
+
+          {/* ── Order Summary Section (shows nested data correctly) ── */}
+          <OrderSummary order={order} loading={orderLoading} />
 
           {/* ── Add new address button ── */}
           <button
             onClick={() => setFormData({ ...EMPTY })}
             className="w-full flex items-center justify-center gap-2.5 border-2 border-dashed border-gray-300
               hover:border-red-400 hover:bg-red-50/50 text-gray-400 hover:text-red-600
-              font-bold text-sm tracking-wide rounded-2xl py-4 mb-6 transition-all duration-200 group"
+              font-bold text-sm tracking-wide rounded-2xl py-4 mb-6 transition-all duration-200 group bg-white/50"
           >
             <div className="w-8 h-8 rounded-xl bg-gray-100 group-hover:bg-red-100 flex items-center justify-center transition-colors">
               <Plus className="w-4 h-4" />
@@ -612,6 +777,8 @@ export default function AddressPage() {
                   <AddressCard
                     key={addr.id}
                     address={addr}
+                    isSelected={selectedAddressId === addr.id}
+                    onSelect={setSelectedAddressId}
                     onEdit={a => setFormData({ ...a })}
                     onDelete={id => setDeleteConfirm(id)}
                     onSetDefault={handleSetDefault}
@@ -625,7 +792,7 @@ export default function AddressPage() {
                     className="w-full flex items-center justify-center gap-2 text-[11px] font-black
                       tracking-[0.2em] uppercase text-gray-400 hover:text-black py-3.5
                       border border-gray-200 rounded-2xl hover:border-gray-300 hover:bg-white
-                      transition-all duration-200 bg-white/60 shadow-sm"
+                      transition-all duration-200 bg-white/50 shadow-sm"
                   >
                     {showAll ? (
                       <><ChevronUp className="w-3.5 h-3.5" /> Show Less</>
@@ -637,22 +804,43 @@ export default function AddressPage() {
               </div>
 
               {/* Summary bar */}
-              <p className="text-center text-xs text-gray-300 font-medium mt-6">
+              <p className="text-center text-xs text-gray-400 font-medium mt-6">
                 {addresses.length} address{addresses.length !== 1 ? "es" : ""} saved ·{" "}
-                {addresses.find(a => a.isDefault)?.city || "—"} is your default
+                {selectedAddressId 
+                  ? `${addresses.find(a => a.id === selectedAddressId)?.city || "Address"} selected`
+                  : "No address selected"}
               </p>
 
-              {/* ── Next Button (Inline) ── */}
+              {/* ── Next Button ── */}
               <div className="mt-8 pt-4 border-t border-gray-200">
                 <button
                   onClick={handleNext}
-                  className="w-full flex items-center justify-center gap-3 bg-black hover:bg-red-700 
+                  disabled={!selectedAddressId || addingAddress}
+                  className={`w-full flex items-center justify-center gap-3 
+                    ${selectedAddressId && !addingAddress
+                      ? "bg-black hover:bg-red-700" 
+                      : "bg-gray-300 cursor-not-allowed"
+                    } 
                     text-white font-bold text-sm tracking-wide py-4 rounded-xl 
-                    transition-all duration-300 shadow-md hover:shadow-lg group"
+                    transition-all duration-300 shadow-md hover:shadow-lg group`}
                 >
-                  <span>Proceed to Payment</span>
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                  {addingAddress ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Proceed to Payment</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                    </>
+                  )}
                 </button>
+                {!selectedAddressId && !addingAddress && (
+                  <p className="text-center text-xs text-red-500 mt-2">
+                    Please select an address to continue
+                  </p>
+                )}
               </div>
             </>
           )}

@@ -9,10 +9,10 @@ import {
 import { getProductById } from "@/api/product";
 import { getWishlist, toggleWishlist } from "@/api/wishlist"
 import { addToCart, getCart } from "@/api/cart";
+import { createOrderApi } from "@/api/order";
 import Navbar from "@/components/Common/Navbar";
 
 // TYPES
-
 interface Product {
   _id: string;
   name: string;
@@ -422,30 +422,32 @@ function ProductInfo({
     }
   };
 
-  const handleBuy = () => {
-    if (!selectedSize) { 
-      setSizeError(true); 
-      return; 
-    }
-    setSizeError(false);
-    
-    if (quantity > maxStock) {
-      setQuantityError(true);
-      onToast(`Only ${maxStock} items available`, "error");
-      return;
-    }
-    setQuantityError(false);
-    
-    const queryParams = new URLSearchParams({
+const handleBuy = async () => {
+  if (!selectedSize) { 
+    setSizeError(true); 
+    return; 
+  }
+
+  try {
+    const res = await createOrderApi({
       productId: product._id,
+      quantity,
       size: selectedSize,
       color: selectedColor,
-      price: product.price.toString(),
-      quantity: quantity.toString()
-    }).toString();
-    
-    router.push(`/address?${queryParams}`);
-  };
+    });
+
+    if (res?.success) {
+      // ✅ Only pass orderId
+      router.push(`/address?orderId=${res.orderId}`);
+    } else {
+      onToast(res?.message || "Failed to create order", "error");
+    }
+
+  } catch (error) {
+    console.error(error);
+    onToast("Something went wrong", "error");
+  }
+};
 
   const handleCart = async () => {
     if (!selectedSize) { 
@@ -717,7 +719,8 @@ function ProductInfo({
 // ============================================================================
 
 export default function ProductDetailPage() {
-  const { id } = useParams();
+  const params = useParams();
+  const id = params?.id as string;
   const router = useRouter();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -742,7 +745,7 @@ export default function ProductDetailPage() {
       const cartData = await getCart();
       if (cartData && Array.isArray(cartData)) {
         const exists = cartData.some((item: any) => {
-          const itemProductId = item.productId || item._id;
+          const itemProductId = item.productId?._id || item.productId || item._id;
           return itemProductId === productId;
         });
         setIsInCart(exists);
@@ -758,7 +761,7 @@ export default function ProductDetailPage() {
   // Fetch Product and check wishlist & cart status
   useEffect(() => {
     const fetchProductAndCheckStatus = async () => {
-      if (!id) return;
+      if (!id || typeof id !== "string") return;
 
       try {
         setLoading(true);
@@ -916,26 +919,35 @@ export default function ProductDetailPage() {
     router.push('/cart');
   };
 
-  const handleMobileBuyNow = () => {
-    if (!selectedSizeForMobile) {
-      handleToast("Please select a size", "error");
-      return;
-    }
-    if (mobileQuantity > maxMobileStock) {
-      handleToast(`Only ${maxMobileStock} items available`, "error");
-      return;
-    }
-    
-    const queryParams = new URLSearchParams({
+  const handleMobileBuyNow = async () => {
+  if (!selectedSizeForMobile) {
+    handleToast("Please select a size", "error");
+    return;
+  }
+
+  if (mobileQuantity > maxMobileStock) {
+    handleToast(`Only ${maxMobileStock} items available`, "error");
+    return;
+  }
+
+  try {
+    const res = await createOrderApi({
       productId: product!._id,
+      quantity: mobileQuantity,
       size: selectedSizeForMobile,
       color: selectedColorForMobile,
-      price: product!.price.toString(),
-      quantity: mobileQuantity.toString()
-    }).toString();
-    
-    router.push(`/address?${queryParams}`);
-  };
+    });
+
+    if (res?.success) {
+      router.push(`/address?orderId=${res.orderId}`);
+    } else {
+      handleToast(res?.message || "Failed to create order", "error");
+    }
+  } catch (error) {
+    console.error(error);
+    handleToast("Something went wrong", "error");
+  }
+};
 
   // Loading State
   if (loading) {

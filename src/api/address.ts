@@ -17,7 +17,10 @@ export interface Address {
 
 // ADD ADDRESS
 export const addAddress = async (data: Address) => {
-  const res = await axiosInstance.post("/address/add", data);
+  const res = await axiosInstance.post("/address/add", {
+    ...data,
+    postalCode: data.zip, // ✅ FIX HERE
+  });
   return res.data;
 };
 
@@ -29,7 +32,10 @@ export const getAddresses = async () => {
 
 // UPDATE ADDRESS
 export const updateAddress = async (id: string, data: Address) => {
-  const res = await axiosInstance.put(`/address/update/${id}`, data);
+  const res = await axiosInstance.put(`/address/update/${id}`, {
+    ...data,
+    postalCode: data.zip, // ✅ FIX HERE
+  });
   return res.data;
 };
 
@@ -42,5 +48,11 @@ export const deleteAddress = async (id: string) => {
 // SET DEFAULT ADDRESS
 export const setDefaultAddress = async (id: string) => {
   const res = await axiosInstance.put(`/address/default/${id}`);
+  return res.data;
+};
+
+// SELECT ADDRESS (for checkout)
+export const selectAddress = async (id: string) => {
+  const res = await axiosInstance.get(`/address/select/${id}`);
   return res.data;
 };

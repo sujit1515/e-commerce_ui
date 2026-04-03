@@ -1,18 +1,13 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   ShieldCheck, CreditCard, Smartphone, Landmark, Package,
   ChevronDown, ChevronUp, ArrowRight, Check, Lock, Wifi,
 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../../components/Common/Navbar";
 import Footer from "../../components/Common/Footer";
-
-// ── Order data (swap with real cart) ─────────────────────────────────────────
-const ORDER_ITEMS = [
-  { name: "Signature Wool Overcoat", size: "M", qty: 1, price: 89 },
-  { name: "Linen Oxford Shirt",      size: "L", qty: 1, price: 39 },
-];
-const SUMMARY = { subtotal: 128, shipping: 0, tax: 10.24 };
+import { getOrderByIdApi, placeOrderApi } from "../../api/order";
 
 // ── UPI apps ──────────────────────────────────────────────────────────────────
 const UPI_APPS = ["Google Pay", "PhonePe", "BHIM", "Paytm", "Amazon Pay"];
@@ -42,7 +37,7 @@ function Input({
         </label>
       )}
       <div className={`relative rounded-xl border transition-all duration-200 bg-white
-        ${focused ? "border-red-500 ring-2 ring-red-50" : "border-gray-200 hover:border-gray-300"}`}>
+        ${focused ? "border-maroon ring-2 ring-maroon/10" : "border-gray-200 hover:border-gray-300"}`}>
         <input
           type={type}
           value={value}
@@ -66,15 +61,38 @@ function Input({
 
 // ── Accordion method wrapper ──────────────────────────────────────────────────
 function MethodBlock({
-  id, active, onToggle, icon: Icon, title, subtitle, iconBg, children,
+  id, active, onToggle, icon: Icon, title, subtitle, iconBg, children, disabled = false,
 }: {
   id: Method; active: boolean; onToggle: () => void;
   icon: React.ElementType; title: string; subtitle: string;
-  iconBg: string; children?: React.ReactNode;
+  iconBg: string; children?: React.ReactNode; disabled?: boolean;
 }) {
+  if (disabled) {
+    return (
+      <div className="relative">
+        <div className="absolute inset-0 bg-gray-50/80 rounded-2xl z-10 flex items-center justify-center cursor-not-allowed">
+          <span className="text-xs font-bold text-gray-400 bg-white px-3 py-1 rounded-full shadow-sm">Currently Unavailable</span>
+        </div>
+        <div className="rounded-2xl border-2 border-gray-100 bg-white opacity-50">
+          <div className="flex items-center justify-between px-5 py-4">
+            <div className="flex items-center gap-3.5">
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${iconBg}`}>
+                <Icon className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="font-bold text-black text-sm">{title}</p>
+                <p className="text-gray-400 text-xs mt-0.5">{subtitle}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={`rounded-2xl border-2 transition-all duration-300 overflow-hidden bg-white
-      ${active ? "border-red-500 shadow-md shadow-red-100" : "border-gray-100 hover:border-gray-200 shadow-sm"}`}>
+      ${active ? "border-maroon shadow-md shadow-maroon/10" : "border-gray-100 hover:border-gray-200 shadow-sm"}`}>
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between px-5 py-4 text-left"
@@ -89,14 +107,14 @@ function MethodBlock({
           </div>
         </div>
         <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-colors
-          ${active ? "bg-red-100 text-red-600" : "bg-gray-100 text-gray-400"}`}>
+          ${active ? "bg-maroon/10 text-maroon" : "bg-gray-100 text-gray-400"}`}>
           {active ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </div>
       </button>
 
       {/* Expanded content */}
       {active && children && (
-        <div className="px-5 pb-5 pt-1 border-t border-red-100 animate-slideDown">
+        <div className="px-5 pb-5 pt-1 border-t border-maroon/10 animate-slideDown">
           {children}
         </div>
       )}
@@ -106,8 +124,18 @@ function MethodBlock({
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export default function PaymentPage() {
-  const [activeMethod, setActiveMethod] = useState<Method>("card");
-
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId"); // ✅ Get orderId from URL
+  
+  const [activeMethod, setActiveMethod] = useState<Method>("cod");
+  
+  // Order data state
+  const [order, setOrder] = useState<any>(null);
+  const [orderItems, setOrderItems] = useState<any[]>([]);
+  const [orderSummary, setOrderSummary] = useState({ subtotal: 0, shipping: 0, tax: 0 });
+  const [loadingOrder, setLoadingOrder] = useState(true);
+  
   // Card form state
   const [cardNum,   setCardNum]   = useState("");
   const [cardName,  setCardName]  = useState("");
@@ -125,8 +153,61 @@ export default function PaymentPage() {
   // Processing
   const [loading,   setLoading]   = useState(false);
   const [success,   setSuccess]   = useState(false);
+  const [error,     setError]     = useState("");
 
-  const total = SUMMARY.subtotal + SUMMARY.shipping + SUMMARY.tax;
+  // Fetch order data on component mount
+  useEffect(() => {
+    const fetchOrderData = async () => {
+      if (!orderId) {
+        setError("Order ID not found. Please go back and select an address.");
+        setLoadingOrder(false);
+        return;
+      }
+
+      try {
+        setLoadingOrder(true);
+        const response = await getOrderByIdApi(orderId);
+        
+        if (response?.success && response?.order) {
+          const orderData = response.order;
+          setOrder(orderData);
+          
+          // ✅ Transform order items - accessing nested data correctly
+          const items = orderData.items.map((item: any) => ({
+            name: item.product?.name || "Product",
+            size: item.size || "One Size",
+            color: item.color || "N/A",
+            qty: item.quantity,
+            price: item.price
+          }));
+          
+          setOrderItems(items);
+          
+          // Calculate summary
+          const subtotal = items.reduce((sum: number, item: any) => sum + (item.price * item.qty), 0);
+          const shipping = 0; // Free shipping
+          const tax = subtotal * 0.08; // 8% tax
+          
+          setOrderSummary({
+            subtotal,
+            shipping,
+            tax
+          });
+        } else {
+          setError("Failed to load order details");
+        }
+      } catch (err: any) {
+        console.error("Error fetching order:", err);
+        setError(err.message || "Failed to load order details");
+      } finally {
+        setLoadingOrder(false);
+      }
+    };
+
+    fetchOrderData();
+  }, [orderId]);
+
+  const total = orderSummary.subtotal + orderSummary.shipping + orderSummary.tax;
 
   const formatCard = (v: string) =>
     v.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
@@ -138,29 +219,80 @@ export default function PaymentPage() {
 
   const toggle = (m: Method) => setActiveMethod(prev => (prev === m ? m : m));
 
-  const handlePay = () => {
+  const handlePay = async () => {
+    setError("");
+    
+    // Validate based on payment method
+    if (activeMethod !== "cod") {
+      setError("Sorry, only Cash on Delivery (COD) is available at the moment. Please select COD to complete your purchase.");
+      return;
+    }
+
+    if (!orderId) {
+      setError("Order ID not found. Please go back and try again.");
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSuccess(true); }, 2200);
+
+    try {
+      // ✅ Call your place order API
+      const response = await placeOrderApi(orderId);
+      
+      if (response?.success) {
+        setSuccess(true);
+        // Redirect to success page after 2 seconds
+        setTimeout(() => {
+          router.push(`/order-success?orderId=${orderId}`);
+        }, 2000);
+      } else {
+        setError(response?.message || "Payment failed. Please try again.");
+      }
+    } catch (err: any) {
+      console.error("Payment error:", err);
+      setError(err.message || "Payment failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Loading state
+  if (loadingOrder) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-[#F8F4F0] flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-maroon border-t-transparent"></div>
+            <p className="mt-4 text-gray-500">Loading order details...</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
 
   if (success) {
     return (
       <>
         <Navbar />
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-[#F8F4F0] flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center">
             <div className="relative inline-flex mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center">
-                <Check className="w-8 h-8 text-red-600" />
+              <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/10 flex items-center justify-center">
+                <Check className="w-8 h-8 text-maroon" />
               </div>
-              <div className="absolute -inset-2 rounded-3xl bg-red-500/5 animate-ping" style={{ animationDuration: "2s" }} />
+              <div className="absolute -inset-2 rounded-3xl bg-maroon/5 animate-ping" style={{ animationDuration: "2s" }} />
             </div>
-            <h2 className="font-display font-bold text-black text-3xl mb-2">Payment Successful!</h2>
-            <p className="text-gray-400 text-sm mb-1">Order confirmed</p>
-            <p className="font-black text-red-600 text-xl mb-7">${total.toFixed(2)}</p>
-            <a href="/" className="block w-full bg-black text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-red-700 transition-colors">
-              Continue Shopping
-            </a>
+            <h2 className="font-display font-bold text-black text-3xl mb-2">Order Placed!</h2>
+            <p className="text-gray-400 text-sm mb-1">Your order has been confirmed</p>
+            <p className="font-black text-maroon text-xl mb-7">₹{(total + (activeMethod === "cod" ? 2 : 0)).toFixed(2)}</p>
+            <button 
+              onClick={() => router.push("/orders")} 
+              className="w-full bg-maroon text-white font-bold text-sm tracking-wider uppercase py-3.5 rounded-xl hover:bg-maroon/80 transition-colors"
+            >
+              View My Orders
+            </button>
           </div>
           <style>{`
             @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=DM+Sans:wght@400;700;900&display=swap');
@@ -184,7 +316,7 @@ export default function PaymentPage() {
 
       <Navbar />
 
-      <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
+      <div className="min-h-screen bg-[#F8F4F0] py-8 sm:py-12">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* ── Page title + SSL badge ── */}
@@ -192,11 +324,18 @@ export default function PaymentPage() {
             <h1 className="font-black text-black text-2xl sm:text-3xl tracking-tight">
               Payment Method
             </h1>
-            <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-700
+            <div className="flex items-center gap-1.5 bg-maroon/5 border border-maroon/20 text-maroon
               text-[10px] font-black tracking-[0.18em] uppercase px-3 py-1.5 rounded-full">
               <ShieldCheck className="w-3.5 h-3.5" /> Secure SSL
             </div>
           </div>
+
+          {/* Error message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
+              {error}
+            </div>
+          )}
 
           {/* ── Two-column layout ── */}
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 lg:gap-8 items-start">
@@ -204,23 +343,20 @@ export default function PaymentPage() {
             {/* ── LEFT: payment methods ── */}
             <div className="space-y-3">
 
-              {/* UPI */}
+              {/* UPI - Disabled */}
               <MethodBlock
-                id="upi" active={activeMethod === "upi"} onToggle={() => setActiveMethod("upi")}
+                id="upi" active={activeMethod === "upi"} onToggle={() => toggle("upi")}
                 icon={Smartphone} title="UPI (Google Pay, PhonePe, BHIM)"
                 subtitle="Pay directly from your bank account"
                 iconBg="bg-indigo-50 text-indigo-600"
+                disabled={true}
               >
                 <div className="space-y-4 pt-3">
                   <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                     {UPI_APPS.map(app => (
                       <button
                         key={app}
-                        onClick={() => setUpiApp(app)}
-                        className={`py-2 px-2 text-[10px] font-bold rounded-xl border transition-all
-                          ${upiApp === app
-                            ? "border-red-500 bg-red-50 text-red-700"
-                            : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
+                        className="py-2 px-2 text-[10px] font-bold rounded-xl border border-gray-200 text-gray-500"
                       >
                         {app}
                       </button>
@@ -235,12 +371,13 @@ export default function PaymentPage() {
                 </div>
               </MethodBlock>
 
-              {/* Credit / Debit Card */}
+              {/* Credit / Debit Card - Disabled */}
               <MethodBlock
-                id="card" active={activeMethod === "card"} onToggle={() => setActiveMethod("card")}
+                id="card" active={activeMethod === "card"} onToggle={() => toggle("card")}
                 icon={CreditCard} title="Credit / Debit / ATM Card"
                 subtitle="Visa, Mastercard, RuPay & More"
-                iconBg="bg-red-50 text-red-600"
+                iconBg="bg-maroon/5 text-maroon"
+                disabled={true}
               >
                 <div className="space-y-4 pt-3">
                   <Input
@@ -275,12 +412,11 @@ export default function PaymentPage() {
                       icon={<Lock className="w-3.5 h-3.5" />}
                     />
                   </div>
-                  {/* Save card */}
                   <label className="flex items-center gap-2.5 cursor-pointer group">
                     <div
                       onClick={() => setSaveCard(!saveCard)}
                       className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all flex-shrink-0
-                        ${saveCard ? "bg-red-600 border-red-600" : "border-gray-300 group-hover:border-red-400"}`}
+                        ${saveCard ? "bg-maroon border-maroon" : "border-gray-300 group-hover:border-maroon"}`}
                     >
                       {saveCard && <Check className="w-3 h-3 text-white" />}
                     </div>
@@ -291,12 +427,13 @@ export default function PaymentPage() {
                 </div>
               </MethodBlock>
 
-              {/* Netbanking */}
+              {/* Netbanking - Disabled */}
               <MethodBlock
-                id="netbanking" active={activeMethod === "netbanking"} onToggle={() => setActiveMethod("netbanking")}
+                id="netbanking" active={activeMethod === "netbanking"} onToggle={() => toggle("netbanking")}
                 icon={Landmark} title="Netbanking"
                 subtitle="Login to your bank portal"
                 iconBg="bg-amber-50 text-amber-600"
+                disabled={true}
               >
                 <div className="pt-3 space-y-3">
                   <p className="text-[11px] font-black tracking-[0.18em] uppercase text-gray-500">
@@ -306,34 +443,26 @@ export default function PaymentPage() {
                     {BANKS.map(b => (
                       <button
                         key={b}
-                        onClick={() => setBank(b)}
-                        className={`py-2.5 px-2 text-[11px] font-bold rounded-xl border transition-all text-center
-                          ${bank === b
-                            ? "border-red-500 bg-red-50 text-red-700"
-                            : "border-gray-200 text-gray-500 hover:border-gray-300"}`}
+                        className="py-2.5 px-2 text-[11px] font-bold rounded-xl border border-gray-200 text-gray-500"
                       >
                         {b}
                       </button>
                     ))}
                   </div>
-                  {bank && (
-                    <p className="text-xs text-red-600 font-semibold">
-                      ✓ You'll be redirected to {bank}'s secure portal
-                    </p>
-                  )}
                 </div>
               </MethodBlock>
 
-              {/* Cash on Delivery */}
+              {/* Cash on Delivery - Available */}
               <MethodBlock
-                id="cod" active={activeMethod === "cod"} onToggle={() => setActiveMethod("cod")}
+                id="cod" active={activeMethod === "cod"} onToggle={() => toggle("cod")}
                 icon={Package} title="Cash on Delivery (COD)"
                 subtitle="Pay when you receive the order"
                 iconBg="bg-rose-50 text-rose-500"
+                disabled={false}
               >
                 <div className="pt-3">
-                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-xs text-red-700 font-medium leading-relaxed">
-                    ⚠️ An additional handling fee of <strong>$2.00</strong> applies for Cash on Delivery orders.
+                  <div className="bg-maroon/5 border border-maroon/20 rounded-xl p-4 text-xs text-maroon font-medium leading-relaxed">
+                    ⚠️ An additional handling fee of <strong>₹10</strong> applies for Cash on Delivery orders.
                     Payment must be made in exact change to the delivery agent.
                   </div>
                 </div>
@@ -342,19 +471,21 @@ export default function PaymentPage() {
 
             {/* ── RIGHT: Order Summary ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden lg:sticky lg:top-6">
-              <div className="h-1 bg-gradient-to-r from-red-600 via-red-500 to-red-600" />
+              <div className="h-1 bg-gradient-to-r from-maroon via-maroon to-maroon" />
               <div className="p-6">
                 <h2 className="font-bold text-black text-lg mb-5">Order Summary</h2>
 
                 {/* Items */}
                 <div className="space-y-3 mb-5 pb-5 border-b border-gray-100">
-                  {ORDER_ITEMS.map((item, i) => (
+                  {orderItems.map((item, i) => (
                     <div key={i} className="flex justify-between items-start gap-3">
                       <div>
                         <p className="text-sm font-semibold text-black leading-snug">{item.name}</p>
-                        <p className="text-[11px] text-gray-400 mt-0.5">Size: {item.size} · Qty: {item.qty}</p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">
+                          Size: {item.size} · Color: {item.color} · Qty: {item.qty}
+                        </p>
                       </div>
-                      <span className="text-sm font-bold text-black flex-shrink-0">${item.price}.00</span>
+                      <span className="text-sm font-bold text-black flex-shrink-0">₹{(item.price * item.qty).toFixed(2)}</span>
                     </div>
                   ))}
                 </div>
@@ -363,23 +494,23 @@ export default function PaymentPage() {
                 <div className="space-y-3 mb-5 pb-5 border-b border-gray-100">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-500">Subtotal</span>
-                    <span className="font-semibold text-black">${SUMMARY.subtotal.toFixed(2)}</span>
+                    <span className="font-semibold text-black">₹{orderSummary.subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-gray-500">Shipping</span>
-                    {SUMMARY.shipping === 0
-                      ? <span className="text-[10px] font-black tracking-wider text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded-full">FREE</span>
-                      : <span className="font-semibold text-black">${SUMMARY.shipping.toFixed(2)}</span>
+                    {orderSummary.shipping === 0
+                      ? <span className="text-[10px] font-black tracking-wider text-maroon bg-maroon/5 border border-maroon/20 px-2 py-0.5 rounded-full">FREE</span>
+                      : <span className="font-semibold text-black">₹{orderSummary.shipping.toFixed(2)}</span>
                     }
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Tax</span>
-                    <span className="font-semibold text-black">${SUMMARY.tax.toFixed(2)}</span>
+                    <span className="text-gray-500">Tax (8%)</span>
+                    <span className="font-semibold text-black">₹{orderSummary.tax.toFixed(2)}</span>
                   </div>
                   {activeMethod === "cod" && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-red-600">COD Fee</span>
-                      <span className="font-semibold text-red-600">$2.00</span>
+                      <span className="text-maroon">COD Fee</span>
+                      <span className="font-semibold text-maroon">₹2.00</span>
                     </div>
                   )}
                 </div>
@@ -387,8 +518,8 @@ export default function PaymentPage() {
                 {/* Total */}
                 <div className="flex justify-between items-center mb-6">
                   <span className="font-bold text-black text-base">Total Amount</span>
-                  <span className="font-black text-red-600 text-2xl">
-                    ${(total + (activeMethod === "cod" ? 2 : 0)).toFixed(2)}
+                  <span className="font-black text-maroon text-2xl">
+                    ₹{(total + (activeMethod === "cod" ? 2 : 0)).toFixed(2)}
                   </span>
                 </div>
 
@@ -396,8 +527,8 @@ export default function PaymentPage() {
                 <button
                   onClick={handlePay}
                   disabled={loading}
-                  className="w-full bg-black hover:bg-red-700 disabled:bg-gray-400 text-white font-black
-                    text-sm tracking-wide py-4 rounded-xl transition-all shadow-md shadow-black/20
+                  className="w-full bg-maroon hover:bg-maroon/80 disabled:bg-gray-400 text-white font-black
+                    text-sm tracking-wide py-4 rounded-xl transition-all shadow-md shadow-maroon/20
                     hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   {loading ? (

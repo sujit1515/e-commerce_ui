@@ -641,7 +641,7 @@
 //           </div>
 //           <div className="newsletter-right">
 //             <p className="nl-desc">
-//               New stories drop every week. No spam, no promotions — just the essays, process
+//               New stories drop every week. No , no promotions — just the essays, process
 //               notes, and cultural takes that make this journal worth reading.
 //             </p>
 //             <div className="nl-form">
