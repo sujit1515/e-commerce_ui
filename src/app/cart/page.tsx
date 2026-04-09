@@ -443,33 +443,40 @@ export default function CartPage() {
 
   // Fetch cart data from API
   const fetchCartData = async () => {
-    try {
-      setLoading(true);
-      const cartData = await getCart();
-      
-      if (cartData && Array.isArray(cartData)) {
-        const cartItems: CartItem[] = cartData.map((item: any, index: number) => ({
-          id: item._id || item.id || `temp-${index}`,
-          name: item.name || "Product",
-          category: item.category || "Uncategorized",
-          price: item.price || 0,
-          img: item.images?.[0] || item.img || "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=500&q=85",
-          size: item.size || "M",
-          color: item.color || "Black",
-          colorHex: getColorHex(item.color || "Black"),
-          qty: item.quantity || item.qty || 1,
-          maxQty: 5,
-          badge: item.badge,
-        }));
+  try {
+    setLoading(true);
+     const cartData = await getCart() as any;
 
-        setItems(cartItems);
-      }
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    // ✅ Handle different response shapes
+    const rawItems =
+      cartData?.cart?.items ||
+      cartData?.items ||
+      (Array.isArray(cartData) ? cartData : []);
+
+    const cartItems: CartItem[] = rawItems.map((item: any, index: number) => {
+      const p = item.product || item; // ✅ unwrap nested product
+      return {
+        id:       item._id || item.id || `temp-${index}`,
+        name:     p.name || "Product",
+        category: p.category || "Uncategorized",
+        price:    p.price || 0,
+        img:      p.images?.[0]?.url || p.images?.[0] || "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=500&q=85",
+        size:     item.size || "M",
+        color:    item.color || "Black",
+        colorHex: getColorHex(item.color || "Black"),
+        qty:      item.quantity || item.qty || 1,
+        maxQty:   p.stock || 5,
+        badge:    p.badge,
+      };
+    });
+
+    setItems(cartItems);
+  } catch (error) {
+    console.error("Error fetching cart:", error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleClearCart = async () => {
     try {

@@ -383,20 +383,20 @@ export default function WishlistPage() {
         const res = await getWishlist();
         if (res?.success && res?.wishlist) {
           const mapped = res.wishlist.map((w: any) => ({
-            id: w.product._id,
-            productId: w.product._id,
-            name: w.product.name,
-            category: w.product.category,
-            price: w.product.price,
-            originalPrice: w.product.originalPrice,
-            img: w.product.images[0]?.url || "",
-            badge: w.product.badge || undefined,
-            rating: w.product.rating || 0,
-            reviews: w.product.reviews || 0,
-            sizes: w.product.sizes || [],
-            inStock: w.product.stock > 0,
-            addedAt: new Date(w.createdAt).getTime(),
-          }));
+  id: w._id,                          // ✅ wishlist entry ID for removal
+  productId: w.product._id,           // ✅ product ID for cart/reference
+  name: w.product.name,
+  category: w.product.category,
+  price: w.product.price,
+  originalPrice: w.product.originalPrice,
+  img: w.product.images?.[0]?.url || w.product.images?.[0] || "",  // ✅ handles both formats
+  badge: w.product.badge || undefined,
+  rating: w.product.rating || 0,
+  reviews: w.product.reviews || 0,
+  sizes: w.product.sizes || [],
+  inStock: w.product.stock > 0,
+  addedAt: new Date(w.createdAt).getTime(),
+}));
           setItems(mapped);
         } else {
           setItems([]);

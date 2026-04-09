@@ -30,10 +30,16 @@ export interface UpdateCartPayload {
 
 //   Get the user's cart
 
-export const getCart = async (): Promise<CartItem[] | null> => {
+export interface CartResponse {
+  cart: {
+    items: CartItem[];
+  };
+}
+
+export const getCart = async (): Promise<CartResponse | CartItem[] | null> => {
   try {
     const res = await axiosInstance.get("/cart");
-    return res.data.cart; // backend should return { cart: [...] }
+    return res.data; // return the full response, not just res.data.cart
   } catch (error) {
     console.error("Get Cart Error:", error);
     return null;

@@ -552,7 +552,7 @@ export default function Navbar({
               )}
             </button>
 
-            {/* DESKTOP NAV LINKS */}
+            {/* DESKTOP NAV LINKS - Admin Dashboard link removed */}
             <div className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => {
                 const isActive = pathname === link.path || pathname?.startsWith(link.path + "/");
@@ -609,21 +609,6 @@ export default function Navbar({
                   </div>
                 );
               })}
-
-              {/* Admin Dashboard Link - Desktop */}
-              {isAdmin && (
-                <button
-                  onClick={() => handleNavigation("/admin")}
-                  className="flex items-center gap-1 px-4 py-2 text-base font-medium tracking-wide rounded-lg transition-all duration-200 cursor-pointer ml-2"
-                  style={{ 
-                    color: getHoverColor(),
-                    backgroundColor: isElectronicsPage ? "rgba(239, 68, 68, 0.1)" : "rgba(128, 0, 0, 0.1)",
-                  }}
-                >
-                  <LayoutDashboard className="w-4 h-4" style={{ color: getHoverColor() }} />
-                  <span>Admin</span>
-                </button>
-              )}
             </div>
 
             {/* RIGHT ICONS */}
@@ -734,6 +719,7 @@ export default function Navbar({
                             )}
                           </div>
 
+                          {/* Admin Dashboard link kept in user menu dropdown only */}
                           {isAdmin && (
                             <motion.button
                               custom={0}
@@ -881,7 +867,7 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* MOBILE MENU */}
+        {/* MOBILE MENU - Admin Dashboard link removed */}
         <AnimatePresence>
           {menuOpen && (
             <motion.div
@@ -915,25 +901,7 @@ export default function Navbar({
                   />
                 </form>
 
-                {isAdmin && (
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0 }}
-                  >
-                    <button
-                      onClick={() => handleNavigation("/admin")}
-                      className="flex items-center gap-2 w-full px-3 py-3 text-base font-medium rounded-xl transition-all mb-2"
-                      style={{ 
-                        color: getHoverColor(),
-                        backgroundColor: isElectronicsPage ? "rgba(239, 68, 68, 0.1)" : "#fff0f0"
-                      }}
-                    >
-                      <LayoutDashboard className="w-5 h-5" style={{ color: getHoverColor() }} />
-                      Admin Dashboard
-                    </button>
-                  </motion.div>
-                )}
+                {/* Admin Dashboard link removed from mobile menu */}
 
                 {navLinks.map((link, i) => {
                   const isActive = pathname === link.path || pathname?.startsWith(link.path + "/");
@@ -995,6 +963,21 @@ export default function Navbar({
                           </span>
                         )}
                       </div>
+
+                      {/* Admin Dashboard link kept in mobile user menu only */}
+                      {isAdmin && (
+                        <button 
+                          onClick={() => handleNavigation("/admin")}
+                          className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-base font-medium transition-all duration-200"
+                          style={{ 
+                            color: getHoverColor(),
+                            backgroundColor: isElectronicsPage ? "rgba(239, 68, 68, 0.1)" : "#fff0f0"
+                          }}
+                        >
+                          <LayoutDashboard className="w-5 h-5" style={{ color: getHoverColor() }} />
+                          Admin Dashboard
+                        </button>
+                      )}
 
                       <button 
                         onClick={() => handleNavigation("/profile")}
