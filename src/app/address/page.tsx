@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 import { useState, useEffect } from "react";
 import {
   MapPin, Plus, Pencil, Trash2, ChevronDown, ChevronUp,
@@ -486,8 +487,14 @@ function OrderSummary({ order, loading }: { order: OrderData | null; loading: bo
 
 // ── Main Page ─────────────────────────────────────────────────────────────────
 export default function AddressPage() {
+  // const searchParams = useSearchParams();
+  // const orderId = searchParams.get("orderId");
   const searchParams = useSearchParams();
-  const orderId = searchParams.get("orderId");
+const [orderId, setOrderId] = useState<string | null>(null);
+
+useEffect(() => {
+  setOrderId(searchParams.get("orderId"));
+}, [searchParams]);
   const router = useRouter();
   
   const [addresses, setAddresses] = useState<Address[]>([]);
