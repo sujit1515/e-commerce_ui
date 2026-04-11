@@ -571,9 +571,9 @@
 // }
 
 
-
 "use client";
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, Suspense } from "react";
 import {
   ShieldCheck, CreditCard, Smartphone, Landmark, Package,
   ChevronDown, ChevronUp, ArrowRight, Check, Lock, Wifi, Zap,
@@ -592,7 +592,6 @@ const BANKS = [
   "Kotak Bank", "Yes Bank", "HSBC", "Citibank",
 ];
 
-// ✅ Added "stripe" to the type
 type Method = "upi" | "card" | "netbanking" | "cod" | "stripe";
 
 // ── Small input ───────────────────────────────────────────────────────────────
@@ -612,7 +611,7 @@ function Input({
         </label>
       )}
       <div className={`relative rounded-xl border transition-all duration-200 bg-white
-        ${focused ? "border-maroon ring-2 ring-maroon/10" : "border-gray-200 hover:border-gray-300"}`}>
+        ${focused ? "border-red-700 ring-2 ring-red-700/10" : "border-gray-200 hover:border-gray-300"}`}>
         <input
           type={type}
           value={value}
@@ -669,7 +668,7 @@ function MethodBlock({
 
   return (
     <div className={`rounded-2xl border-2 transition-all duration-300 overflow-hidden bg-white
-      ${active ? "border-maroon shadow-md shadow-maroon/10" : "border-gray-100 hover:border-gray-200 shadow-sm"}`}>
+      ${active ? "border-red-700 shadow-md" : "border-gray-100 hover:border-gray-200 shadow-sm"}`}>
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between px-5 py-4 text-left"
@@ -684,13 +683,13 @@ function MethodBlock({
           </div>
         </div>
         <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-colors
-          ${active ? "bg-maroon/10 text-maroon" : "bg-gray-100 text-gray-400"}`}>
+          ${active ? "bg-red-50 text-red-700" : "bg-gray-100 text-gray-400"}`}>
           {active ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </div>
       </button>
 
       {active && children && (
-        <div className="px-5 pb-5 pt-1 border-t border-maroon/10 animate-slideDown">
+        <div className="px-5 pb-5 pt-1 border-t border-red-100 animate-slideDown">
           {children}
         </div>
       )}
@@ -698,38 +697,48 @@ function MethodBlock({
   );
 }
 
-// ── Main page ─────────────────────────────────────────────────────────────────
-export default function PaymentPage() {
+// ── Loading fallback ──────────────────────────────────────────────────────────
+function PaymentPageFallback() {
+  return (
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-[#F8F4F0] flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent" />
+          <p className="mt-4 text-gray-500">Loading payment details...</p>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
+}
+
+// ── Inner page (uses useSearchParams — must be inside Suspense) ───────────────
+function PaymentPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
-  // ✅ Default to "stripe" so it's preselected
   const [activeMethod, setActiveMethod] = useState<Method>("stripe");
 
-  // Order data state
   const [order, setOrder] = useState<any>(null);
   const [orderItems, setOrderItems] = useState<any[]>([]);
   const [orderSummary, setOrderSummary] = useState({ subtotal: 0, shipping: 0, tax: 0 });
   const [loadingOrder, setLoadingOrder] = useState(true);
 
-  // Card form state (kept for future use)
   const [cardNum,  setCardNum]  = useState("");
   const [cardName, setCardName] = useState("");
   const [expiry,   setExpiry]   = useState("");
   const [cvv,      setCvv]      = useState("");
   const [saveCard, setSaveCard] = useState(false);
+  const [upiId,    setUpiId]    = useState("");
+  const [bank,     setBank]     = useState("");
 
-  // UPI / Netbanking state (kept for future use)
-  const [upiId, setUpiId] = useState("");
-  const [bank,  setBank]  = useState("");
-
-  // Processing
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error,   setError]   = useState("");
 
-  // ── Fetch order data ────────────────────────────────────────────────────────
+  // Fetch order data
   useEffect(() => {
     const fetchOrderData = async () => {
       if (!orderId) {
@@ -737,15 +746,12 @@ export default function PaymentPage() {
         setLoadingOrder(false);
         return;
       }
-
       try {
         setLoadingOrder(true);
         const response = await getOrderByIdApi(orderId);
-
         if (response?.success && response?.order) {
           const orderData = response.order;
           setOrder(orderData);
-
           const items = orderData.items.map((item: any) => ({
             name:  item.product?.name || "Product",
             size:  item.size  || "One Size",
@@ -753,9 +759,7 @@ export default function PaymentPage() {
             qty:   item.quantity,
             price: item.price,
           }));
-
           setOrderItems(items);
-
           const subtotal = items.reduce(
             (sum: number, item: any) => sum + item.price * item.qty, 0
           );
@@ -770,7 +774,6 @@ export default function PaymentPage() {
         setLoadingOrder(false);
       }
     };
-
     fetchOrderData();
   }, [orderId]);
 
@@ -783,22 +786,18 @@ export default function PaymentPage() {
     return d.length > 2 ? `${d.slice(0, 2)} / ${d.slice(2)}` : d;
   };
 
-  // ── handlePay ───────────────────────────────────────────────────────────────
   const handlePay = async () => {
     setError("");
-
     if (!orderId) {
       setError("Order ID not found. Please go back and try again.");
       return;
     }
 
-    // ── STRIPE ────────────────────────────────────────────────────────────────
+    // Stripe
     if (activeMethod === "stripe") {
       setLoading(true);
       try {
-        // Get token — change key if you store it differently
         const token = localStorage.getItem("token");
-
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}payment/create-checkout-session`,
           {
@@ -810,11 +809,8 @@ export default function PaymentPage() {
             body: JSON.stringify({ orderId }),
           }
         );
-
         const data = await res.json();
-
         if (data?.url) {
-          // ✅ Redirect user to Stripe hosted checkout
           window.location.href = data.url;
         } else {
           setError(data?.error || "Failed to create Stripe session. Please try again.");
@@ -828,12 +824,11 @@ export default function PaymentPage() {
       return;
     }
 
-    // ── COD ───────────────────────────────────────────────────────────────────
+    // COD
     if (activeMethod === "cod") {
       setLoading(true);
       try {
         const response = await placeOrderApi(orderId);
-
         if (response?.success) {
           setSuccess(true);
           setTimeout(() => {
@@ -854,14 +849,14 @@ export default function PaymentPage() {
     setError("Please select a payment method to continue.");
   };
 
-  // ── Loading state ───────────────────────────────────────────────────────────
+  // Loading state
   if (loadingOrder) {
     return (
       <>
         <Navbar />
         <div className="min-h-screen bg-[#F8F4F0] flex items-center justify-center">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-maroon border-t-transparent" />
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-black border-t-transparent" />
             <p className="mt-4 text-gray-500">Loading order details...</p>
           </div>
         </div>
@@ -870,7 +865,7 @@ export default function PaymentPage() {
     );
   }
 
-  // ── COD Success state ───────────────────────────────────────────────────────
+  // COD Success state
   if (success) {
     return (
       <>
@@ -878,21 +873,21 @@ export default function PaymentPage() {
         <div className="min-h-screen bg-[#F8F4F0] flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl shadow-xl p-10 max-w-sm w-full text-center">
             <div className="relative inline-flex mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-maroon/5 border border-maroon/10 flex items-center justify-center">
-                <Check className="w-8 h-8 text-maroon" />
+              <div className="w-16 h-16 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center">
+                <Check className="w-8 h-8 text-green-600" />
               </div>
-              <div className="absolute -inset-2 rounded-3xl bg-maroon/5 animate-ping"
+              <div className="absolute -inset-2 rounded-3xl bg-green-50 animate-ping"
                 style={{ animationDuration: "2s" }} />
             </div>
             <h2 className="font-display font-bold text-black text-3xl mb-2">Order Placed!</h2>
             <p className="text-gray-400 text-sm mb-1">Your order has been confirmed</p>
-            <p className="font-black text-maroon text-xl mb-7">
+            <p className="font-black text-red-700 text-xl mb-7">
               ₹{(total + 2).toFixed(2)}
             </p>
             <button
               onClick={() => router.push("/orders")}
-              className="w-full bg-maroon text-white font-bold text-sm tracking-wider uppercase
-                py-3.5 rounded-xl hover:bg-maroon/80 transition-colors"
+              className="w-full bg-black hover:bg-red-700 text-white font-bold text-sm tracking-wider uppercase
+                py-3.5 rounded-xl transition-colors"
             >
               View My Orders
             </button>
@@ -907,7 +902,7 @@ export default function PaymentPage() {
     );
   }
 
-  // ── Main render ─────────────────────────────────────────────────────────────
+  // Main render
   return (
     <>
       <style>{`
@@ -916,17 +911,6 @@ export default function PaymentPage() {
         *{font-family:'DM Sans',sans-serif;}
         @keyframes slideDown{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
         .animate-slideDown{animation:slideDown 0.22s ease;}
-        .text-maroon{color:#800000;}
-        .bg-maroon{background-color:#800000;}
-        .border-maroon{border-color:#800000;}
-        .hover\\:bg-maroon\\/80:hover{background-color:rgba(128,0,0,0.8);}
-        .shadow-maroon\\/10{--tw-shadow-color:rgba(128,0,0,0.1);}
-        .shadow-maroon\\/20{--tw-shadow-color:rgba(128,0,0,0.2);}
-        .ring-maroon\\/10{--tw-ring-color:rgba(128,0,0,0.1);}
-        .bg-maroon\\/5{background-color:rgba(128,0,0,0.05);}
-        .border-maroon\\/10{border-color:rgba(128,0,0,0.1);}
-        .border-maroon\\/20{border-color:rgba(128,0,0,0.2);}
-        .text-maroon\\/10{color:rgba(128,0,0,0.1);}
       `}</style>
 
       <Navbar />
@@ -939,7 +923,7 @@ export default function PaymentPage() {
             <h1 className="font-black text-black text-2xl sm:text-3xl tracking-tight">
               Payment Method
             </h1>
-            <div className="flex items-center gap-1.5 bg-maroon/5 border border-maroon/20 text-maroon
+            <div className="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-700
               text-[10px] font-black tracking-[0.18em] uppercase px-3 py-1.5 rounded-full">
               <ShieldCheck className="w-3.5 h-3.5" /> Secure SSL
             </div>
@@ -954,13 +938,12 @@ export default function PaymentPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 lg:gap-8 items-start">
 
-            {/* ── LEFT: payment methods ── */}
+            {/* LEFT: payment methods */}
             <div className="space-y-3">
 
-              {/* ✅ STRIPE — enabled & preselected */}
+              {/* Stripe — enabled & preselected */}
               <MethodBlock
-                id="stripe"
-                active={activeMethod === "stripe"}
+                id="stripe" active={activeMethod === "stripe"}
                 onToggle={() => setActiveMethod("stripe")}
                 icon={Zap}
                 title="Pay Online — Card / UPI / Wallet"
@@ -969,20 +952,15 @@ export default function PaymentPage() {
                 disabled={false}
               >
                 <div className="pt-3 space-y-3">
-                  {/* What Stripe supports */}
                   <div className="grid grid-cols-3 gap-2">
-                    {["Visa", "Mastercard", "RuPay", "UPI", "Wallets", "NetBanking"].map((label) => (
-                      <div
-                        key={label}
+                    {["Visa", "Mastercard", "RuPay", "UPI", "Wallets", "NetBanking"].map(label => (
+                      <div key={label}
                         className="py-2 px-2 text-[10px] font-bold rounded-xl border border-violet-100
-                          text-violet-600 bg-violet-50 text-center"
-                      >
+                          text-violet-600 bg-violet-50 text-center">
                         {label}
                       </div>
                     ))}
                   </div>
-
-                  {/* Info box */}
                   <div className="bg-violet-50 border border-violet-100 rounded-xl p-4
                     text-xs text-violet-700 font-medium leading-relaxed flex items-start gap-2">
                     <ShieldCheck className="w-4 h-4 flex-shrink-0 mt-0.5 text-violet-500" />
@@ -991,8 +969,6 @@ export default function PaymentPage() {
                       complete payment. Your card details are never stored on our servers.
                     </span>
                   </div>
-
-                  {/* Recommended badge */}
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-black tracking-widest uppercase
                       text-violet-600 bg-violet-100 px-2.5 py-1 rounded-full">
@@ -1007,8 +983,7 @@ export default function PaymentPage() {
 
               {/* UPI — disabled */}
               <MethodBlock
-                id="upi"
-                active={activeMethod === "upi"}
+                id="upi" active={activeMethod === "upi"}
                 onToggle={() => setActiveMethod("upi")}
                 icon={Smartphone}
                 title="UPI (Google Pay, PhonePe, BHIM)"
@@ -1031,13 +1006,12 @@ export default function PaymentPage() {
 
               {/* Card — disabled */}
               <MethodBlock
-                id="card"
-                active={activeMethod === "card"}
+                id="card" active={activeMethod === "card"}
                 onToggle={() => setActiveMethod("card")}
                 icon={CreditCard}
                 title="Credit / Debit / ATM Card"
                 subtitle="Visa, Mastercard, RuPay & More"
-                iconBg="bg-maroon/5 text-maroon"
+                iconBg="bg-red-50 text-red-700"
                 disabled={true}
               >
                 <div className="space-y-4 pt-3">
@@ -1065,7 +1039,7 @@ export default function PaymentPage() {
                     <div
                       onClick={() => setSaveCard(!saveCard)}
                       className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all flex-shrink-0
-                        ${saveCard ? "bg-maroon border-maroon" : "border-gray-300 group-hover:border-maroon"}`}
+                        ${saveCard ? "bg-black border-black" : "border-gray-300 group-hover:border-black"}`}
                     >
                       {saveCard && <Check className="w-3 h-3 text-white" />}
                     </div>
@@ -1078,8 +1052,7 @@ export default function PaymentPage() {
 
               {/* Netbanking — disabled */}
               <MethodBlock
-                id="netbanking"
-                active={activeMethod === "netbanking"}
+                id="netbanking" active={activeMethod === "netbanking"}
                 onToggle={() => setActiveMethod("netbanking")}
                 icon={Landmark}
                 title="Netbanking"
@@ -1104,8 +1077,7 @@ export default function PaymentPage() {
 
               {/* COD — enabled */}
               <MethodBlock
-                id="cod"
-                active={activeMethod === "cod"}
+                id="cod" active={activeMethod === "cod"}
                 onToggle={() => setActiveMethod("cod")}
                 icon={Package}
                 title="Cash on Delivery (COD)"
@@ -1114,8 +1086,8 @@ export default function PaymentPage() {
                 disabled={false}
               >
                 <div className="pt-3">
-                  <div className="bg-maroon/5 border border-maroon/20 rounded-xl p-4
-                    text-xs text-maroon font-medium leading-relaxed">
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-4
+                    text-xs text-red-700 font-medium leading-relaxed">
                     ⚠️ An additional handling fee of <strong>₹2</strong> applies for Cash on
                     Delivery orders. Payment must be made in exact change to the delivery agent.
                   </div>
@@ -1123,9 +1095,9 @@ export default function PaymentPage() {
               </MethodBlock>
             </div>
 
-            {/* ── RIGHT: Order Summary ── */}
+            {/* RIGHT: Order Summary */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden lg:sticky lg:top-6">
-              <div className="h-1 bg-gradient-to-r from-maroon via-maroon to-maroon" />
+              <div className="h-1 bg-gradient-to-r from-black via-red-700 to-black" />
               <div className="p-6">
                 <h2 className="font-bold text-black text-lg mb-5">Order Summary</h2>
 
@@ -1155,8 +1127,8 @@ export default function PaymentPage() {
                   <div className="flex justify-between text-sm items-center">
                     <span className="text-gray-500">Shipping</span>
                     {orderSummary.shipping === 0
-                      ? <span className="text-[10px] font-black tracking-wider text-maroon
-                          bg-maroon/5 border border-maroon/20 px-2 py-0.5 rounded-full">FREE</span>
+                      ? <span className="text-[10px] font-black tracking-wider text-green-600
+                          bg-green-50 border border-green-200 px-2 py-0.5 rounded-full">FREE</span>
                       : <span className="font-semibold text-black">₹{orderSummary.shipping.toFixed(2)}</span>
                     }
                   </div>
@@ -1166,8 +1138,8 @@ export default function PaymentPage() {
                   </div>
                   {activeMethod === "cod" && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-maroon">COD Fee</span>
-                      <span className="font-semibold text-maroon">₹2.00</span>
+                      <span className="text-red-600">COD Fee</span>
+                      <span className="font-semibold text-red-600">₹2.00</span>
                     </div>
                   )}
                 </div>
@@ -1175,17 +1147,17 @@ export default function PaymentPage() {
                 {/* Total */}
                 <div className="flex justify-between items-center mb-6">
                   <span className="font-bold text-black text-base">Total Amount</span>
-                  <span className="font-black text-maroon text-2xl">
+                  <span className="font-black text-red-700 text-2xl">
                     ₹{(total + (activeMethod === "cod" ? 2 : 0)).toFixed(2)}
                   </span>
                 </div>
 
-                {/* CTA button — label changes based on method */}
+                {/* CTA */}
                 <button
                   onClick={handlePay}
                   disabled={loading}
-                  className="w-full bg-maroon hover:bg-maroon/80 disabled:bg-gray-400 text-white font-black
-                    text-sm tracking-wide py-4 rounded-xl transition-all shadow-md shadow-maroon/20
+                  className="w-full bg-black hover:bg-red-700 disabled:bg-gray-400 text-white font-black
+                    text-sm tracking-wide py-4 rounded-xl transition-all shadow-md
                     hover:shadow-xl active:scale-[0.98] flex items-center justify-center gap-2"
                 >
                   {loading ? (
@@ -1199,16 +1171,14 @@ export default function PaymentPage() {
                     </span>
                   ) : (
                     <>
-                      {activeMethod === "stripe" ? (
-                        <><Zap className="w-4 h-4" /> Pay with Stripe</>
-                      ) : (
-                        <>Complete Purchase <ArrowRight className="w-4 h-4" /></>
-                      )}
+                      {activeMethod === "stripe"
+                        ? <><Zap className="w-4 h-4" /> Pay with Stripe</>
+                        : <>Complete Purchase <ArrowRight className="w-4 h-4" /></>
+                      }
                     </>
                   )}
                 </button>
 
-                {/* Method hint below button */}
                 {activeMethod === "stripe" && (
                   <p className="text-center text-[10px] text-gray-400 mt-2 font-medium">
                     You'll be redirected to Stripe's secure checkout
@@ -1231,12 +1201,20 @@ export default function PaymentPage() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
 
       <Footer />
     </>
+  );
+}
+
+// ── Default export — wraps in Suspense (REQUIRED for useSearchParams) ─────────
+export default function PaymentPage() {
+  return (
+    <Suspense fallback={<PaymentPageFallback />}>
+      <PaymentPageInner />
+    </Suspense>
   );
 }
