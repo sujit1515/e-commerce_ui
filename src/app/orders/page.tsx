@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Navbar from "@/components/Common/Navbar";
 import Footer from "@/components/Common/Footer";
-// import { getOrders } from "@/api/orders"; // ← uncomment when API is ready
+import { getMyOrdersApi } from "@/api/order";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface OrderProduct {
@@ -25,17 +25,22 @@ interface Order {
   _id: string;
   orderId: string;
   createdAt: string;
-  status: "processing" | "packed" | "shipped" | "delivered" | "cancelled";
+  status: "processing" | "packed" | "shipped" | "delivered" | "cancelled" | string;
   total: number;
   items: OrderProduct[];
   trackingNumber?: string;
   deliveredAt?: string;
 }
 
-type FilterKey = "all" | "processing" | "shipped" | "delivered" | "cancelled";
+type FilterKey = "all" | "processing" | "packed" | "shipped" | "delivered" | "cancelled";
 
 // ── Status config ─────────────────────────────────────────────────────────────
-const STATUS_CONFIG = {
+const STATUS_CONFIG: Record<string, {
+  label: string;
+  icon: React.ComponentType<any>;
+  badgeCls: string;
+  trackProgress: number;
+}> = {
   processing: {
     label: "Processing",
     icon: Clock,
@@ -70,57 +75,6 @@ const STATUS_CONFIG = {
 
 const TRACK_STEPS = ["Ordered", "Packed", "Shipped", "Delivered"];
 
-// ── Mock data (replace with API call) ─────────────────────────────────────────
-const MOCK_ORDERS: Order[] = [
-  {
-    _id: "1",
-    orderId: "#ORD-20481",
-    createdAt: "2026-04-03T10:00:00Z",
-    status: "delivered",
-    total: 349,
-    deliveredAt: "2026-04-07T14:30:00Z",
-    items: [
-      { _id: "p1", name: "Merino Wool Blazer", price: 229, images: [], size: "M", color: "Charcoal", quantity: 1 },
-      { _id: "p2", name: "Slim Chinos", price: 120, images: [], size: "32×30", color: "Navy", quantity: 1 },
-    ],
-  },
-  {
-    _id: "2",
-    orderId: "#ORD-20219",
-    createdAt: "2026-03-28T09:00:00Z",
-    status: "shipped",
-    total: 512,
-    trackingNumber: "1Z999AA10123456784",
-    items: [
-      { _id: "p3", name: "Oxford Dress Shirt", price: 129, images: [], size: "L", color: "White", quantity: 1 },
-      { _id: "p4", name: "Leather Derby Shoes", price: 299, images: [], size: "42", color: "Brown", quantity: 1 },
-      { _id: "p5", name: "Silk Pocket Square", price: 84, images: [], size: "OS", color: "Burgundy", quantity: 1 },
-    ],
-  },
-  {
-    _id: "3",
-    orderId: "#ORD-19874",
-    createdAt: "2026-03-10T11:00:00Z",
-    status: "delivered",
-    total: 189,
-    deliveredAt: "2026-03-14T16:00:00Z",
-    items: [
-      { _id: "p6", name: "Cashmere Crewneck", price: 189, images: [], size: "M", color: "Camel", quantity: 1 },
-    ],
-  },
-  {
-    _id: "4",
-    orderId: "#ORD-19301",
-    createdAt: "2026-02-21T08:00:00Z",
-    status: "processing",
-    total: 234,
-    items: [
-      { _id: "p7", name: "Tailored Trousers", price: 159, images: [], size: "32×32", color: "Charcoal", quantity: 1 },
-      { _id: "p8", name: "Linen Summer Shirt", price: 75, images: [], size: "L", color: "Ecru", quantity: 1 },
-    ],
-  },
-];
-
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", {
@@ -128,7 +82,7 @@ function formatDate(iso: string) {
   });
 }
 
-function getTrackProgress(status: Order["status"]) {
+function getTrackProgress(status: string) {
   return STATUS_CONFIG[status]?.trackProgress ?? 0;
 }
 
@@ -164,7 +118,7 @@ function ProductThumbs({ items }: { items: OrderProduct[] }) {
 }
 
 // ── Track Bar ─────────────────────────────────────────────────────────────────
-function TrackBar({ status }: { status: Order["status"] }) {
+function TrackBar({ status }: { status: string }) {
   const progress = getTrackProgress(status);
   const isCancelled = status === "cancelled";
 
@@ -175,6 +129,11 @@ function TrackBar({ status }: { status: Order["status"] }) {
         Order cancelled
       </div>
     );
+  }
+
+  // If status is unknown, don't show track bar
+  if (!STATUS_CONFIG[status]) {
+    return null;
   }
 
   return (
@@ -205,7 +164,14 @@ function TrackBar({ status }: { status: Order["status"] }) {
 
 // ── Order Card ────────────────────────────────────────────────────────────────
 function OrderCard({ order }: { order: Order }) {
-  const cfg = STATUS_CONFIG[order.status];
+  // Get config with fallback for unknown statuses
+  const cfg = STATUS_CONFIG[order.status] || {
+    label: order.status || "Unknown",
+    icon: AlertCircle,
+    badgeCls: "bg-gray-50 text-gray-800 border border-gray-200",
+    trackProgress: 0,
+  };
+  
   const StatusIcon = cfg.icon;
   const itemNames = order.items.slice(0, 2).map(i => i.name).join(", ")
     + (order.items.length > 2 ? ` +${order.items.length - 2} more` : "");
@@ -317,25 +283,46 @@ function EmptyState({ filtered }: { filtered: boolean }) {
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<FilterKey>("all");
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
       setIsLoading(true);
+      setError(null);
       try {
-        // ── Replace with real API call ──────────────────────────────
-        // const res = await getOrders();
-        // if (res?.success) setOrders(res.orders);
-        // ───────────────────────────────────────────────────────────
-        await new Promise(r => setTimeout(r, 600)); // simulate network
-        setOrders(MOCK_ORDERS);
-      } catch (err) {
+        const response = await getMyOrdersApi();
+        
+        // Log to see what statuses are coming from API
+        console.log("API Response:", response);
+        
+        let ordersData: Order[] = [];
+        
+        // Flexible response handling for different API response structures
+        if (response && response.orders) {
+          ordersData = response.orders;
+          console.log("Order statuses from response.orders:", ordersData.map((o: Order) => o.status));
+        } else if (Array.isArray(response)) {
+          ordersData = response;
+          console.log("Order statuses from array:", ordersData.map((o: Order) => o.status));
+        } else if (response && response.data) {
+          ordersData = response.data;
+          console.log("Order statuses from response.data:", ordersData.map((o: Order) => o.status));
+        } else {
+          ordersData = [];
+        }
+        
+        setOrders(ordersData);
+      } catch (err: any) {
         console.error("Failed to fetch orders:", err);
+        setError(typeof err === 'string' ? err : err?.message || "Failed to load orders");
+        setOrders([]);
       } finally {
         setIsLoading(false);
       }
     };
+    
     fetchOrders();
   }, []);
 
@@ -353,6 +340,7 @@ export default function OrdersPage() {
   const FILTERS: { key: FilterKey; label: string }[] = [
     { key: "all", label: "All" },
     { key: "processing", label: "Processing" },
+    { key: "packed", label: "Packed" },
     { key: "shipped", label: "Shipped" },
     { key: "delivered", label: "Delivered" },
     { key: "cancelled", label: "Cancelled" },
@@ -369,6 +357,30 @@ export default function OrdersPage() {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
             </svg>
             <p className="text-maroon/60 text-sm">Loading your orders…</p>
+          </div>
+        </div>
+        <Footer />
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Navbar wishlistCount={0} />
+        <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#F8F4F0" }}>
+          <div className="text-center max-w-md mx-auto px-4">
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
+              <AlertCircle className="w-8 h-8 text-red-500" />
+            </div>
+            <h3 className="font-bold text-black text-xl mb-2">Failed to load orders</h3>
+            <p className="text-black/40 text-sm mb-6">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="flex items-center gap-2 mx-auto bg-maroon hover:bg-maroon/80 text-white font-bold text-sm px-6 py-3 rounded-2xl transition-colors"
+            >
+              <RefreshCcw className="w-4 h-4" /> Try Again
+            </button>
           </div>
         </div>
         <Footer />
