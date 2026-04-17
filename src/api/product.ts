@@ -107,7 +107,7 @@ export const getAllProducts = async (
 
     if (filters.category) params.category = filters.category;
 
-    // ✅ IMPORTANT FIX (array → comma string)
+    // IMPORTANT FIX (array → comma string)
     if (filters.sizes?.length) {
       params.size = filters.sizes.join(",");
     }
@@ -123,7 +123,7 @@ export const getAllProducts = async (
     if (filters.page) params.page = filters.page;
     if (filters.limit) params.limit = filters.limit;
 
-    // ✅ SORTING
+    // SORTING
     if (filters.sortBy) params.sortBy = filters.sortBy;
     if (filters.sortOrder) params.sortOrder = filters.sortOrder;
 

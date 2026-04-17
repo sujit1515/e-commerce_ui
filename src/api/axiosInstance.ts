@@ -5,7 +5,7 @@ const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL
 });
 
-// ✅ REQUEST INTERCEPTOR — attaches token to every request
+//  REQUEST INTERCEPTOR — attaches token to every request
 axiosInstance.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
@@ -20,7 +20,7 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// ✅ RESPONSE INTERCEPTOR — handles token expiry
+//  RESPONSE INTERCEPTOR — handles token expiry
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {

@@ -9,7 +9,7 @@ import {
 
 import Navbar from "@/components/Common/Navbar";
 import Footer from "@/components/Common/Footer";
-import { getWishlist, removeFromWishlist } from "@/api/wishlist"; 
+import { getWishlist, removeFromWishlist } from "@/api/wishlist";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 interface WishItem {
@@ -90,18 +90,18 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
   };
 
   const handleRemove = async () => {
-  setIsRemoving(true);
-  setRemoving(true);
+    setIsRemoving(true);
+    setRemoving(true);
 
-  try {
-    await removeFromWishlist(item.id);
-    setTimeout(() => onRemove(item.id), 300);
-  } catch (error) {
-    console.error("Failed to remove from wishlist:", error);
-    setIsRemoving(false);
-    setRemoving(false);
-  }
-};
+    try {
+      await removeFromWishlist(item.id);
+      setTimeout(() => onRemove(item.id), 300);
+    } catch (error) {
+      console.error("Failed to remove from wishlist:", error);
+      setIsRemoving(false);
+      setRemoving(false);
+    }
+  };
 
   return (
     <div
@@ -114,7 +114,7 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
     >
       {/* Image */}
       <div className="relative overflow-hidden bg-maroon/5" style={{ aspectRatio: "3/4" }}>
-        <img src={item.img} alt={item.name} className="w-full h-full object-cover object-top group-hover:scale-[1.05] transition-transform duration-700 ease-out"/>
+        <img src={item.img} alt={item.name} className="w-full h-full object-cover object-top group-hover:scale-[1.05] transition-transform duration-700 ease-out" />
         {item.badge && (
           <span className={`absolute top-3 left-3 text-[9px] font-black tracking-[0.15em] uppercase px-2.5 py-1 rounded-full ${BADGE_STYLE[item.badge]}`}>
             {item.badge}
@@ -134,8 +134,8 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
         >
           {isRemoving ? (
             <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
             </svg>
           ) : (
             <X className="w-3.5 h-3.5" />
@@ -152,13 +152,12 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
       <div className="p-4 flex flex-col flex-1">
         <div className="flex items-center gap-1 mb-1.5">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Star 
-              key={i} 
-              className={`w-2.5 h-2.5 ${
-                i < Math.floor(item.rating) 
-                  ? "fill-maroon text-maroon" 
+            <Star
+              key={i}
+              className={`w-2.5 h-2.5 ${i < Math.floor(item.rating)
+                  ? "fill-maroon text-maroon"
                   : "fill-maroon/20 text-maroon/20"
-              }`} 
+                }`}
             />
           ))}
           <span className="text-[10px] text-maroon/40 ml-0.5">({item.reviews})</span>
@@ -185,11 +184,10 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
               <button
                 key={s}
                 onClick={() => setSize(s)}
-                className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition-all ${
-                  selectedSize === s 
-                    ? "border-maroon bg-maroon text-white" 
+                className={`text-[10px] font-bold px-2 py-1 rounded-lg border transition-all ${selectedSize === s
+                    ? "border-maroon bg-maroon text-white"
                     : "border-maroon/20 text-black/60 hover:border-maroon hover:text-maroon"
-                }`}
+                  }`}
               >
                 {s}
               </button>
@@ -201,21 +199,21 @@ function GridCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
           onClick={handleCart}
           disabled={!item.inStock || isRemoving}
           className={`mt-auto w-full py-2.5 rounded-xl text-[11px] font-black tracking-wider uppercase flex items-center justify-center gap-1.5 transition-all duration-200
-            ${!item.inStock 
-              ? "bg-maroon/10 text-maroon/40 cursor-not-allowed" 
-              : !selectedSize 
-                ? "bg-maroon/10 text-black/60 hover:bg-maroon hover:text-white border border-dashed border-maroon/30" 
-                : cartFlash 
-                  ? "bg-maroon text-white shadow-md border-l-4 border-maroon-light" 
+            ${!item.inStock
+              ? "bg-maroon/10 text-maroon/40 cursor-not-allowed"
+              : !selectedSize
+                ? "bg-maroon/10 text-black/60 hover:bg-maroon hover:text-white border border-dashed border-maroon/30"
+                : cartFlash
+                  ? "bg-maroon text-white shadow-md border-l-4 border-maroon-light"
                   : "bg-maroon text-white hover:bg-maroon-dark shadow-md hover:shadow-lg"
             }`}
         >
-          {!item.inStock 
-            ? "Notify Me" 
-            : cartFlash 
-              ? <><Check className="w-3.5 h-3.5 text-maroon-light" /> Added!</> 
-              : !selectedSize 
-                ? "Select Size" 
+          {!item.inStock
+            ? "Notify Me"
+            : cartFlash
+              ? <><Check className="w-3.5 h-3.5 text-maroon-light" /> Added!</>
+              : !selectedSize
+                ? "Select Size"
                 : <><ShoppingCart className="w-3.5 h-3.5" /> Add to Cart</>}
         </button>
       </div>
@@ -237,17 +235,17 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
     setTimeout(() => setCart(false), 1800);
   };
 
- const handleRemove = async () => {
-  setIsRemoving(true);
+  const handleRemove = async () => {
+    setIsRemoving(true);
 
-  try {
-    await removeFromWishlist(item.id);
-    onRemove(item.id);
-  } catch (error) {
-    console.error("Failed to remove from wishlist:", error);
-    setIsRemoving(false);
-  }
-};
+    try {
+      await removeFromWishlist(item.id);
+      onRemove(item.id);
+    } catch (error) {
+      console.error("Failed to remove from wishlist:", error);
+      setIsRemoving(false);
+    }
+  };
 
   return (
     <div
@@ -257,7 +255,7 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
     >
       {/* Image */}
       <div className="relative rounded-xl overflow-hidden bg-maroon/5 flex-shrink-0 w-24 h-28 sm:w-32 sm:h-36">
-        <img src={item.img} alt={item.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"/>
+        <img src={item.img} alt={item.name} className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500" />
         {item.badge && <span className={`absolute top-2 left-2 text-[8px] font-black tracking-wider uppercase px-1.5 py-0.5 rounded-full ${BADGE_STYLE[item.badge]}`}>{item.badge}</span>}
         {!item.inStock && <div className="absolute inset-0 bg-white/70 flex items-center justify-center"><span className="text-[9px] font-black text-maroon/50 tracking-wider uppercase">Out of Stock</span></div>}
       </div>
@@ -269,15 +267,15 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
             <p className="text-[10px] text-maroon/50 font-bold tracking-wider uppercase mb-0.5">{item.category}</p>
             <h3 className="font-bold text-black text-sm sm:text-base leading-snug truncate">{item.name}</h3>
           </div>
-          <button 
-            onClick={handleRemove} 
+          <button
+            onClick={handleRemove}
             disabled={isRemoving}
             className="flex-shrink-0 w-7 h-7 rounded-lg hover:bg-maroon/10 flex items-center justify-center text-black/40 hover:text-maroon transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isRemoving ? (
               <svg className="animate-spin w-3.5 h-3.5" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
               </svg>
             ) : (
               <Trash2 className="w-3.5 h-3.5" />
@@ -288,13 +286,12 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
         <div className="flex items-center gap-3 mb-2">
           <div className="flex gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Star 
-                key={i} 
-                className={`w-3 h-3 ${
-                  i < Math.floor(item.rating) 
-                    ? "fill-maroon text-maroon" 
+              <Star
+                key={i}
+                className={`w-3 h-3 ${i < Math.floor(item.rating)
+                    ? "fill-maroon text-maroon"
                     : "fill-maroon/20 text-maroon/20"
-                }`} 
+                  }`}
               />
             ))}
           </div>
@@ -307,14 +304,13 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
         {item.inStock && (
           <div className="flex flex-wrap gap-1 mb-3">
             {item.sizes.map(s => (
-              <button 
-                key={s} 
-                onClick={() => setSize(s)} 
-                className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-all ${
-                  selectedSize === s 
-                    ? "border-maroon bg-maroon text-white" 
+              <button
+                key={s}
+                onClick={() => setSize(s)}
+                className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border transition-all ${selectedSize === s
+                    ? "border-maroon bg-maroon text-white"
                     : "border-maroon/20 text-black/50 hover:border-maroon hover:text-maroon"
-                }`}
+                  }`}
               >
                 {s}
               </button>
@@ -322,19 +318,19 @@ function ListCard({ item, onRemove, onAddToCart, index }: { item: WishItem; onRe
           </div>
         )}
 
-        <button 
-          onClick={handleCart} 
-          disabled={!item.inStock || isRemoving} 
+        <button
+          onClick={handleCart}
+          disabled={!item.inStock || isRemoving}
           className={`self-start flex items-center gap-1.5 text-[11px] font-black tracking-wider uppercase px-4 py-2 rounded-xl transition-all 
-            ${!item.inStock 
-              ? "bg-maroon/10 text-black/40 cursor-not-allowed" 
-              : cartFlash 
-                ? "bg-maroon text-white border-l-4 border-maroon-light" 
+            ${!item.inStock
+              ? "bg-maroon/10 text-black/40 cursor-not-allowed"
+              : cartFlash
+                ? "bg-maroon text-white border-l-4 border-maroon-light"
                 : "bg-maroon text-white hover:bg-maroon-dark shadow-sm"
             }`}
         >
-          {cartFlash 
-            ? <><Check className="w-3 h-3 text-maroon-light" /> Added</> 
+          {cartFlash
+            ? <><Check className="w-3 h-3 text-maroon-light" /> Added</>
             : <><ShoppingCart className="w-3 h-3" /> {selectedSize ? "Add to Cart" : "Select Size"}</>}
         </button>
       </div>
@@ -383,20 +379,20 @@ export default function WishlistPage() {
         const res = await getWishlist();
         if (res?.success && res?.wishlist) {
           const mapped = res.wishlist.map((w: any) => ({
-  id: w._id,                          // ✅ wishlist entry ID for removal
-  productId: w.product._id,           // ✅ product ID for cart/reference
-  name: w.product.name,
-  category: w.product.category,
-  price: w.product.price,
-  originalPrice: w.product.originalPrice,
-  img: w.product.images?.[0]?.url || w.product.images?.[0] || "",  // ✅ handles both formats
-  badge: w.product.badge || undefined,
-  rating: w.product.rating || 0,
-  reviews: w.product.reviews || 0,
-  sizes: w.product.sizes || [],
-  inStock: w.product.stock > 0,
-  addedAt: new Date(w.createdAt).getTime(),
-}));
+            id: w._id,                          // ✅ wishlist entry ID for removal
+            productId: w.product._id,           // ✅ product ID for cart/reference
+            name: w.product.name,
+            category: w.product.category,
+            price: w.product.price,
+            originalPrice: w.product.originalPrice,
+            img: w.product.images?.[0]?.url || w.product.images?.[0] || "",  // ✅ handles both formats
+            badge: w.product.badge || undefined,
+            rating: w.product.rating || 0,
+            reviews: w.product.reviews || 0,
+            sizes: w.product.sizes || [],
+            inStock: w.product.stock > 0,
+            addedAt: new Date(w.createdAt).getTime(),
+          }));
           setItems(mapped);
         } else {
           setItems([]);
@@ -448,8 +444,8 @@ export default function WishlistPage() {
         <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: "#F8F4F0" }}>
           <div className="text-center">
             <svg className="animate-spin w-10 h-10 mx-auto mb-4 text-maroon" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
             </svg>
             <p className="text-maroon/60">Loading your wishlist...</p>
           </div>
@@ -527,33 +523,30 @@ export default function WishlistPage() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
-                <button 
-                  onClick={() => setView("grid")} 
-                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                    view === "grid" 
-                      ? "bg-maroon text-white" 
+                <button
+                  onClick={() => setView("grid")}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${view === "grid"
+                      ? "bg-maroon text-white"
                       : "bg-white/50 text-black/60 hover:bg-maroon/10"
-                  }`}
+                    }`}
                 >
                   Grid
                 </button>
-                <button 
-                  onClick={() => setView("list")} 
-                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                    view === "list" 
-                      ? "bg-maroon text-white" 
+                <button
+                  onClick={() => setView("list")}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${view === "list"
+                      ? "bg-maroon text-white"
                       : "bg-white/50 text-black/60 hover:bg-maroon/10"
-                  }`}
+                    }`}
                 >
                   List
                 </button>
                 <button
                   onClick={handleShare}
-                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                    shared 
-                      ? "bg-maroon text-white" 
+                  className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-all ${shared
+                      ? "bg-maroon text-white"
                       : "bg-white/50 text-black/60 hover:bg-maroon/10"
-                  }`}
+                    }`}
                 >
                   <Share2 className="w-4 h-4" />
                   {shared ? "Copied!" : "Share"}
@@ -575,10 +568,10 @@ export default function WishlistPage() {
               </select>
             </div>
 
-            <div className={`${view === "grid" 
-              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" 
+            <div className={`${view === "grid"
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
               : "flex flex-col gap-4"
-            }`}>
+              }`}>
               {sorted.map((item, i) => view === "grid" ? (
                 <GridCard key={item.id} item={item} onRemove={handleRemove} onAddToCart={handleAddToCart} index={i} />
               ) : (
@@ -589,9 +582,9 @@ export default function WishlistPage() {
         )}
       </div>
       <Footer />
-      
+
       {toast && <Toast message={toast.msg} onUndo={handleUndo} onClose={() => setToast(null)} />}
-      
+
       {cartSnack && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5
           bg-maroon-dark text-white text-sm font-bold px-5 py-3.5 rounded-2xl shadow-2xl

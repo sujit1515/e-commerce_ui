@@ -13,7 +13,7 @@ export interface ProfileResponse {
   message?: string;
 }
 
-// ✅ GET profile (requires auth token)
+// GET profile (requires auth token)
 export const getProfile = async (): Promise<ProfileResponse | null> => {
   try {
     const res = await axiosInstance.get("/profile/");
@@ -24,7 +24,7 @@ export const getProfile = async (): Promise<ProfileResponse | null> => {
   }
 };
 
-// ✅ UPDATE profile (requires auth token)
+// UPDATE profile (requires auth token)
 // Sends multipart/form-data so the image File goes through multer → Cloudinary
 export const updateProfile = async (data: {
   name?: string;
@@ -42,7 +42,7 @@ export const updateProfile = async (data: {
     if (data.address) formData.append("address", data.address);
     if (data.image)   formData.append("image", data.image); // ✅ key must match upload.single("image")
 
-    // ✅ Do NOT set Content-Type manually — axios sets it with the correct boundary automatically
+    // Do NOT set Content-Type manually — axios sets it with the correct boundary automatically
     const res = await axiosInstance.put("/profile/update", formData);
 
     return res.data;

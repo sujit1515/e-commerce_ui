@@ -1,6 +1,6 @@
 import axiosInstance from "./axiosInstance";
 
-// 🟢 1. BUY NOW → CREATE ORDER
+//  BUY NOW → CREATE ORDER
 export const createOrderApi = async (data: {
   productId: string;
   quantity: number;
@@ -18,7 +18,7 @@ export const createOrderApi = async (data: {
 
 
 
-// 🟢 2. ADD ADDRESS TO ORDER
+// ADD ADDRESS TO ORDER
 export const addAddressToOrderApi = async (
   orderId: string,
   addressId: string
@@ -37,7 +37,7 @@ export const addAddressToOrderApi = async (
 
 
 
-// 🟢 3. PLACE ORDER (COD)
+//  PLACE ORDER (COD)
 export const placeOrderApi = async (orderId: string) => {
   try {
     const res = await axiosInstance.put(`/order/${orderId}/pay`);
@@ -50,7 +50,7 @@ export const placeOrderApi = async (orderId: string) => {
 
 
 
-// 🟢 4. GET ORDER BY ID (Payment / Success Page)
+//  GET ORDER BY ID (Payment / Success Page)
 export const getOrderByIdApi = async (orderId: string) => {
   try {
     const res = await axiosInstance.get(`/order/${orderId}`);
@@ -62,8 +62,7 @@ export const getOrderByIdApi = async (orderId: string) => {
 };
 
 
-
-// 🟢 5. GET MY ORDERS (Order History)
+// GET MY ORDERS (Order History)
 export const getMyOrdersApi = async () => {
   try {
     const res = await axiosInstance.get("/order/my-orders");
