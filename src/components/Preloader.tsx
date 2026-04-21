@@ -10,7 +10,7 @@ const Preloader = () => {
     const handleLoad = () => {
       setTimeout(() => {
         setIsLoading(false)
-      }, 1500) // Minimum display time
+      }, 1500) 
     }
 
     if (document.readyState === 'complete') {
