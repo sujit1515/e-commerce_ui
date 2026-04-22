@@ -612,18 +612,48 @@
 //   );
 // }
 
+
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import { ProductCard } from "./SeasonalMinimal/Productcard";
 import { SeasonTabs } from "./SeasonalMinimal/Seasontabs";
-import { productsBySeason, seasonMeta, type Season } from "./SeasonalMinimal/Products";
+import { getProductsBySeason, type Product } from "@/api/seasonalProducts";
+import { seasonMeta, type Season } from "./SeasonalMinimal/Products";
 
 export default function CuratedSelection() {
   const [activeSeason, setActiveSeason] = useState<Season>("summer");
   const [isAnimating, setIsAnimating] = useState(false);
   const [displaySeason, setDisplaySeason] = useState<Season>("summer");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+
+  // Fetch products when season changes
+  useEffect(() => {
+    fetchProductsBySeason(displaySeason);
+  }, [displaySeason]);
+
+  const fetchProductsBySeason = async (season: Season) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getProductsBySeason(season, 1, 4);
+      if (response.success && response.products) {
+        setProducts(response.products);
+      } else {
+        setProducts([]);
+      }
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setError("Failed to load products");
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Cross-fade when season changes
   const handleSeasonChange = (season: Season) => {
@@ -662,7 +692,6 @@ export default function CuratedSelection() {
   };
 
   const meta = seasonMeta[displaySeason];
-  const products = productsBySeason[displaySeason];
 
   return (
     <>
@@ -776,7 +805,7 @@ export default function CuratedSelection() {
 
             {/* Animated tagline — re-mounts on season change */}
             <p
-              key={displaySeason}              /* key triggers re-animation */
+              key={displaySeason}
               className="animate-tagline text-base max-w-md mx-auto italic"
               style={{
                 color: "#800000",
@@ -800,54 +829,87 @@ export default function CuratedSelection() {
             className="curated-grid season-grid-wrapper grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4"
             style={{ gap: "2rem", opacity: 1, transform: "translateY(0)" }}
           >
-            {products.map((product, index) => (
-              <div
-                key={`${displaySeason}-${product.id}`}
-                className="animate-fade-up"
-                style={{
-                  animationDelay: `${index * 0.08}s`,
-                  animationFillMode: "backwards",
-                }}
-              >
-                <ProductCard product={product} />
+            {loading ? (
+              // Loading skeletons
+              Array(4).fill(0).map((_, index) => (
+                <div key={`skeleton-${index}`} className="animate-pulse">
+                  <div className="bg-gray-200 rounded-xl aspect-[3/4] mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              ))
+            ) : error ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-red-600 mb-4">{error}</p>
+                <button
+                  onClick={() => fetchProductsBySeason(displaySeason)}
+                  className="px-6 py-2 bg-maroon text-white rounded-full hover:bg-maroon/90 transition-colors"
+                  style={{ backgroundColor: "#800000" }}
+                >
+                  Try Again
+                </button>
               </div>
-            ))}
+            ) : products.length === 0 ? (
+              <div className="col-span-full text-center py-12">
+                <p className="text-gray-500 mb-2">No products available for {displaySeason} season yet</p>
+                <p className="text-sm text-gray-400">Check back soon for new arrivals!</p>
+              </div>
+            ) : (
+              products.map((product, index) => (
+                <div
+                  key={`${displaySeason}-${product._id}`}
+                  className="animate-fade-up"
+                  style={{
+                    animationDelay: `${index * 0.08}s`,
+                    animationFillMode: "backwards",
+                  }}
+                >
+                  <ProductCard product={product} />
+                </div>
+              ))
+            )}
           </div>
 
           {/* ── View All CTA ── */}
-          <div className="mt-12 text-center">
-            <button
-              className="view-all-btn inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-500 hover:shadow-2xl active:translate-y-0 group"
-              style={{
-                backgroundColor: "#800000",
-                color: "#fff",
-                fontFamily: "'Cormorant Garamond', Georgia, serif",
-                letterSpacing: "0.12em",
-                fontWeight: 500,
-              }}
-            >
-              <span className="relative z-10 flex items-center gap-2 cursor-pointer">
-                View{" "}
-                {activeSeason.charAt(0).toUpperCase() + activeSeason.slice(1)}{" "}
-                Collection
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={2}
-                  stroke="currentColor"
-                  className="w-4 h-4 transition-all duration-500 group-hover:translate-x-2 group-hover:scale-110"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                  />
-                </svg>
-              </span>
-              <div className="absolute inset-0 bg-gradient-to-r from-[#4a0000] to-[#5C0000] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-full" />
-            </button>
-          </div>
+          {products.length > 0 && (
+            <div className="mt-12 text-center">
+              <button
+                className="view-all-btn inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium tracking-wider uppercase transition-all duration-500 hover:shadow-2xl active:translate-y-0 group"
+                style={{
+                  backgroundColor: "#800000",
+                  color: "#fff",
+                  fontFamily: "'Cormorant Garamond', Georgia, serif",
+                  letterSpacing: "0.12em",
+                  fontWeight: 500,
+                }}
+                onClick={() => {
+                  // Navigate to shop page with season filter
+                  window.location.href = `/shop?season=${activeSeason}`;
+                }}
+              >
+                <span className="relative z-10 flex items-center gap-2 cursor-pointer">
+                  View{" "}
+                  {activeSeason.charAt(0).toUpperCase() + activeSeason.slice(1)}{" "}
+                  Collection
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                    stroke="currentColor"
+                    className="w-4 h-4 transition-all duration-500 group-hover:translate-x-2 group-hover:scale-110"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
+                  </svg>
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#4a0000] to-[#5C0000] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-full" />
+              </button>
+            </div>
+          )}
 
         </div>
       </section>

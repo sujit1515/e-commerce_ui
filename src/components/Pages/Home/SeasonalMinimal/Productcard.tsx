@@ -3,12 +3,26 @@
 import { useState } from "react";
 import { ShoppingBag } from "lucide-react";
 import { WishlistButton } from "./Wishlistbutton";
-import type { Product } from "./Products";
+import type { Product } from "@/api/seasonalProducts";
 
-// Replace with your actual API when available
-async function toggleWishlist(id: string) {
-  // Stub – swap for real API call
-  return { success: true, isInWishlist: true, message: "" };
+// Wishlist API function
+async function toggleWishlistAPI(productId: string) {
+  const token = localStorage.getItem('userToken');
+  try {
+    const response = await fetch('/api/wishlist/toggle', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ productId })
+    });
+    const data = await response.json();
+    return { success: data.success, isInWishlist: data.isInWishlist };
+  } catch (error) {
+    console.error('Wishlist error:', error);
+    return { success: false, isInWishlist: false };
+  }
 }
 
 export function ProductCard({ product }: { product: Product }) {
@@ -19,24 +33,45 @@ export function ProductCard({ product }: { product: Product }) {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleAddToCart = () => {
+    // Add to cart logic
+    console.log(`Added to cart: ${product.name}`);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 1800);
   };
 
   const handleBuyNow = () => {
     console.log(`Buy now: ${product.name}`);
+    // Redirect to checkout or product page
   };
 
   const handleWishlistToggle = async () => {
     try {
       setLoading(true);
-      const res = await toggleWishlist(product.id.toString());
+      const res = await toggleWishlistAPI(product._id);
       if (res.success) setWished(res.isInWishlist);
     } catch (err) {
       console.error("Wishlist error:", err);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Get first image from product images array
+  const productImage = product.images?.[0] || '';
+  
+  // Generate consistent color based on product ID for fallback
+  const getBgColor = (id: string) => {
+    const colors = ['#f5f0e8', '#f0ede6', '#ededec', '#eee9e0', '#e8e4df', '#eae7e2'];
+    const index = parseInt(id.slice(-2), 16) % colors.length;
+    return colors[index];
+  };
+
+  // Get season-appropriate emoji
+  const getSeasonEmoji = () => {
+    if (product.season === 'summer') return '☀️';
+    if (product.season === 'winter') return '❄️';
+    if (product.season === 'rainy') return '🌧️';
+    return '👕';
   };
 
   return (
@@ -49,7 +84,7 @@ export function ProductCard({ product }: { product: Product }) {
       <div
         className="relative rounded-xl overflow-hidden mb-4 aspect-[3/4] border border-gray-100 transition-all duration-500"
         style={{
-          backgroundColor: product.bg,
+          backgroundColor: getBgColor(product._id),
           boxShadow: isHovered
             ? "0 20px 40px rgba(128,0,0,0.15)"
             : "0 4px 20px rgba(128,0,0,0.10)",
@@ -62,9 +97,9 @@ export function ProductCard({ product }: { product: Product }) {
           loading={loading}
         />
 
-        {!imageError && product.image ? (
+        {!imageError && productImage ? (
           <img
-            src={product.image}
+            src={productImage}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             onError={() => setImageError(true)}
@@ -79,7 +114,18 @@ export function ProductCard({ product }: { product: Product }) {
                   : "drop-shadow(0 4px 12px rgba(128,0,0,0.08))",
               }}
             >
-              {product.emoji}
+              {getSeasonEmoji()}
+            </span>
+          </div>
+        )}
+
+        {/* Season badge */}
+        {product.season && product.season !== 'all' && (
+          <div className="absolute top-3 left-3 z-10">
+            <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold bg-white/90 backdrop-blur-sm shadow-sm">
+              {product.season === 'summer' && '☀️ Summer'}
+              {product.season === 'winter' && '❄️ Winter'}
+              {product.season === 'rainy' && '🌧️ Rainy'}
             </span>
           </div>
         )}
@@ -146,13 +192,11 @@ export function ProductCard({ product }: { product: Product }) {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.backgroundColor = "#5C0000";
-                e.currentTarget.style.boxShadow =
-                  "0 6px 16px rgba(128,0,0,0.4)";
+                e.currentTarget.style.boxShadow = "0 6px 16px rgba(128,0,0,0.4)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.backgroundColor = "#800000";
-                e.currentTarget.style.boxShadow =
-                  "0 2px 6px rgba(128,0,0,0.2)";
+                e.currentTarget.style.boxShadow = "0 2px 6px rgba(128,0,0,0.2)";
               }}
             >
               <span className="relative z-10">Buy Now</span>
@@ -171,12 +215,10 @@ export function ProductCard({ product }: { product: Product }) {
                 transition: "background-color 0.3s, box-shadow 0.3s",
               }}
               onMouseEnter={(e) => {
-                if (!addedToCart)
-                  e.currentTarget.style.backgroundColor = "#4a0000";
+                if (!addedToCart) e.currentTarget.style.backgroundColor = "#4a0000";
               }}
               onMouseLeave={(e) => {
-                if (!addedToCart)
-                  e.currentTarget.style.backgroundColor = "#800000";
+                if (!addedToCart) e.currentTarget.style.backgroundColor = "#800000";
               }}
             >
               <span className="relative z-10">
