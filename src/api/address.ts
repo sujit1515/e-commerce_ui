@@ -19,7 +19,7 @@ export interface Address {
 export const addAddress = async (data: Address) => {
   const res = await axiosInstance.post("/address/add", {
     ...data,
-    postalCode: data.zip, // ✅ FIX HERE
+    postalCode: data.zip, 
   });
   return res.data;
 };
@@ -34,7 +34,7 @@ export const getAddresses = async () => {
 export const updateAddress = async (id: string, data: Address) => {
   const res = await axiosInstance.put(`/address/update/${id}`, {
     ...data,
-    postalCode: data.zip, // ✅ FIX HERE
+    postalCode: data.zip,
   });
   return res.data;
 };

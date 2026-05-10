@@ -24,9 +24,7 @@ const electronicsCategories = [
   { name: "Gaming", icon: Gamepad2, href: "/electronics/gaming", color: "pink" },
   { name: "TV & Audio", icon: Tv, href: "/electronics/tv-audio", color: "indigo" },
   { name: "Tablets", icon: Tablet, href: "/electronics/tablets", color: "teal" },
-  { name: "Storage", icon: HardDrive, href: "/electronics/storage", color: "yellow" },
-  { name: "Components", icon: Cpu, href: "/electronics/components", color: "lime" },
-  { name: "Speakers", icon: Speaker, href: "/electronics/speakers", color: "rose" },
+ 
 ];
 
 const quickLinks = [
