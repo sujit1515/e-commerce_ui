@@ -24,7 +24,6 @@ const electronicsCategories = [
   { name: "Gaming", icon: Gamepad2, href: "/electronics/gaming", color: "pink" },
   { name: "TV & Audio", icon: Tv, href: "/electronics/tv-audio", color: "indigo" },
   { name: "Tablets", icon: Tablet, href: "/electronics/tablets", color: "teal" },
- 
 ];
 
 const quickLinks = [
@@ -162,28 +161,28 @@ export default function ElectronicsNavbar({ onCategorySelect, navbarVisible = tr
       >
         <div className="w-full h-full px-3 sm:px-4 lg:px-6">
           
-          {/* Desktop View - Horizontal Scrollable Categories */}
+          {/* Desktop View - Evenly Spaced Categories */}
           <div className="hidden md:flex items-center justify-between h-full gap-4">
-            {/* Categories - Horizontal Scroll */}
-            <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide flex-1">
+            {/* Categories - Evenly distributed */}
+            <div className="flex items-center justify-between gap-1 flex-1">
               {electronicsCategories.map((category) => (
                 <button
                   key={category.name}
                   onClick={() => handleNavigation(category.href, category.name)}
                   className={`category-chip flex items-center gap-1.5 px-3 py-1.5 rounded-full 
-                    transition-all duration-200 whitespace-nowrap
+                    transition-all duration-200 whitespace-nowrap flex-shrink-0
                     ${pathname === category.href 
                       ? "bg-red-500/20 text-red-500 border border-red-500/30" 
                       : "text-gray-400 hover:text-white hover:bg-white/5"
                     }`}
                 >
-                  <category.icon className="w-3.5 h-3.5" />
+                  <category.icon className="w-3.5 h-3.5 flex-shrink-0" />
                   <span className="text-xs font-medium">{category.name}</span>
                 </button>
               ))}
             </div>
 
-            {/* Quick Links */}
+            {/* Quick Links - Fixed width */}
             <div className="flex items-center gap-2 flex-shrink-0 pl-4 border-l border-gray-800">
               {quickLinks.map((link) => (
                 <button
@@ -193,7 +192,7 @@ export default function ElectronicsNavbar({ onCategorySelect, navbarVisible = tr
                     bg-gradient-to-r from-red-500/10 to-red-600/10 text-red-400 hover:text-red-300
                     hover:from-red-500/20 hover:to-red-600/20 transition-all duration-200 whitespace-nowrap"
                 >
-                  <link.icon className="w-3 h-3" />
+                  <link.icon className="w-3 h-3 flex-shrink-0" />
                   {link.name}
                 </button>
               ))}
